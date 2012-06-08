@@ -1,0 +1,42 @@
+<?php
+$lang["Administration of %s"] = "Administration of %s";
+ 
+$lang["home"] = "home";
+ 
+$lang["setup"] = "setup";
+ 
+$lang["users"] = "users";
+ 
+$lang["modules"] = "modules";
+ 
+$lang["id"] = "id";
+$lang["login"] = "Login";
+$lang["passwd"] = "Mot de passe";
+$lang["last_login_time"] = "Dernière connexion";
+$lang["last_login_ip"] = "Dernière IP";
+$lang["edit"] = "Modifier";
+$lang["delete"] = "Supprimer";
+$lang["name"] = "Nom";
+$lang["version"] = "Version";
+$lang["last_edit"] = "Dernière modification";
+$lang["user_updated"] = "Utilisateur mis à jour";
+$lang["user_added"] = "Utilisateur ajouté";
+$lang["user_deleted"] = "Utilisateur supprimé";
+$lang["module_%s_does_not_match_require_format"] = "Le module %s n'a pas le format requis";
+$lang["could_not_include_file_%s"] = "Impossible d'inclure le fichier %s";
+$lang["could_not_get_vars"] = "Impossible de récupérer les variables";
+$lang["module_is_not_installed"] = "module_is_not_installed";
+$lang["available_modules"] = "Modules disponibles";
+$lang["installed_modules"] = "Modules installés";
+$lang["install"] = "Installer";
+$lang["app_installed"] = "Application installée";
+$lang["sql_error"] = "Erreur SQL";
+$lang["error"] = "Erreur";
+$lang["uninstall"] = "désinstaller";
+$lang["app_uninstalled"] = "application désinstallée";
+$lang["could not install app"] = "Impossible d'installer l'application";
+
+$lang["Gestio."] = "Gestio."; 
+$lang["log out"] = "log out"; 
+$lang["la Coloc'"] = "la Coloc'"; 
+$lang["Logout"] = "Déconnexion"; ?>

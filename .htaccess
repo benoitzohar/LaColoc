@@ -1,0 +1,3 @@
+Options +FollowSymlinks
+RewriteEngine On
+RewriteRule ^(app|coloc|action)/(.+)$ /?$1=$2 [L]

@@ -1,0 +1,186 @@
+/**
+ *  @description Gestio Javascript Core
+ *  @requires jquery 1.4 > *
+ *  @author Benoit Zohar
+ */
+
+var Gestio = $.inherit(
+{
+
+    __constructor: function ()
+    {
+
+        
+    },
+    
+    
+    /**
+     *	ajaxRequest: execute an ajax request with a queue
+     *	@param: obj: object: object that wants to execute an ajax request
+     *	@param: callback: function: function to execute if the ajax request is a success
+     *	@param: queue: string: if not defined, equals to 'main'
+     *	@param: forceURL: string: url to replace the actual url
+     *	@param:	forceDataType: string: datatype to replace the data type of the request by default (json)
+     *	@return: boolean: return false if the url is not set for ajax request
+     **/
+    ajaxRequest: function (obj, callback, queue, forceURL, forceDataType)
+    {
+
+        //console.log('ajaxRequest(',obj,',', callback,',', queue,',', forceURL,',',forceDataType,')');
+        if (!this.url || this.url == '')
+        {
+            this.debug("url is not set for ajax request");
+            return false;
+        }
+
+        if (!queue || queue == '') queue = 'main';
+
+        var m = "";
+        if (obj.loading_message != null)
+        {
+            this.display('message', '', obj.loading_message);
+        }
+
+        var vmthis = this;
+
+        var actual_url = this.url;
+        if (forceURL) actual_url = forceURL;
+
+        var actual_data_type = 'json';
+        if (forceDataType) actual_data_type = forceDataType;
+
+        $.ajaxq(queue, {
+            url: actual_url,
+            data: obj,
+            type: 'POST',
+            dataType: actual_data_type,
+            success: function (reponse, status, xhr)
+            {
+                //console.log('ajaxRequest Response:',reponse);
+                if (!reponse)
+                {
+                    vmthis.display('message', 'err', vmthis.lang('server_did_not_respond'));
+                    vmthis.debug('Server did not respond for: ' + obj.ajax_method);
+                }
+                else
+                {
+                    if (actual_data_type == 'json' && (!reponse.status || reponse.status === false)) vmthis.display('message', 'err', reponse.message);
+
+                    if (callback) callback(reponse, status, xhr);
+
+                    else vmthis.display('loading_wheel', 'hide');
+                }
+            },
+            error: function (xhr, status, err)
+            {	
+            	vmthis.debug('AJAX ERROR. XHR=' +xhr+', STATUS='+status+', ERR='+err);
+                // Test if user is not logged anymore
+                if (err && typeof(err) === 'string' && err.match('class="login_input"')) window.location.reload();
+
+                if (status == 'parsererror') status = vmthis.lang('fatal_error_occured_on_server');
+                vmthis.display('message', 'err', status);
+                vmthis.display('loading_wheel', 'hide');
+            }
+        });
+
+    },
+
+    
+    getDate: function (cdate, output_format)
+    {
+        if (!cdate) return false;
+        if (!output_format) output_format = 'timestamp';
+
+        var date_object = this.getDateObject(cdate);
+        if (output_format == 'object') return date_object;
+        else if (output_format == 'string' || output_format == 'string_no_hours' || output_format == 'string_with_minutes')
+        {
+            if (date_object.getTime() == 0) return '';
+            var date_string = this.getPreferences('dateformat');
+            var date_day = date_object.getDate();
+            var date_month = date_object.getMonth() + 1;
+            date_string = date_string.replace('d', date_day < 10 ? '0' + date_day.toString() : date_day);
+            date_string = date_string.replace('m', date_month < 10 ? '0' + date_month.toString() : date_month);
+            date_string = date_string.replace('Y', date_object.getFullYear());
+            if (output_format == 'string_no_hours') return date_string;
+            var minutes = '0';
+            if (output_format == 'string_with_minutes') minutes = date_object.getMinutes();
+            if (parseInt(minutes, 10) < 10) minutes = '0'+minutes;
+            var hours = date_object.getHours();
+            if (parseInt(hours, 10) < 10) hours = '0'+hours;
+            date_string += ' ' + hours + ':' + minutes;
+            return date_string;
+        }
+        else if (output_format == 'ISO8601')
+        {
+            var date_iso = "";
+            var date_day = date_object.getDate();
+            var date_month = date_object.getMonth() + 1;
+            date_iso += date_object.getFullYear();
+            date_iso += "-";
+            date_iso += date_month < 10 ? '0' + date_month.toString() : date_month;
+            date_iso += "-";
+            date_iso += date_day < 10 ? '0' + date_day.toString() : date_day;
+            date_iso += "T";
+            date_iso += date_object.getHours() < 10 ? '0' + date_object.getHours() : date_object.getHours();
+            date_iso += ":";
+            date_iso += date_object.getMinutes() < 10 ? '0' + date_object.getMinutes().toString() : date_object.getMinutes();
+            date_iso += ":";
+            date_iso += date_object.getSeconds() < 10 ? '0' + date_object.getSeconds().toString() : date_object.getSeconds();
+
+            return date_iso
+        }
+
+        return cdate;
+    },
+
+    /**
+     *	getDateObject: to get the given date as an object
+     *	@param: date: date: date as string or timestamp
+     *	@return: a date object
+     **/
+    getDateObject: function (date)
+    {
+        //console.log('getDateObject(',date,')');
+        // Construction de l'objet date
+        var d = new Date();
+        // If date is already an object
+        if (typeof(date) === 'object') return date;
+        // if date is a string
+        else if (date && isNaN(date) && date != '')
+        {
+            var rx;
+            var dateformat = this.getPreferences('dateformat');
+            var delimiter = dateformat.match(/\w(.)\w(.)\w/);
+            delimiter = delimiter[1];
+
+            if (delimiter == '/') rx = date.match(/(\d+)\/(\d+)\/(\d+) ?(\d*):?0?0?/);
+            else if (delimiter == '.') rx = date.match(/(\d+)\.(\d+)\.(\d+) ?(\d*):?0?0?/);
+            else if (delimiter == '-') rx = date.match(/(\d+)\-(\d+)\-(\d+) ?(\d*):?0?0?/);
+
+            if (rx == null) return null;
+
+            if (dateformat == 'd' + delimiter + 'm' + delimiter + 'Y')
+            {
+                d = new Date(rx[3], rx[2] - 1, rx[1], rx[4] || 0);
+            }
+            else if (dateformat == 'm' + delimiter + 'd' + delimiter + 'Y')
+            {
+                d = new Date(rx[3], rx[1] - 1, rx[2], rx[4] || 0);
+            }
+            else if (dateformat == 'Y' + delimiter + 'm' + delimiter + 'd')
+            {
+                d = new Date(rx[1], rx[2] - 1, rx[3], rx[4] || 0);
+            }
+        }
+        // Else if date is timestamp
+        else if (!isNaN(date))
+        {
+            d.setTime(date * 1000);
+        }
+
+        return d;
+    }
+
+
+});

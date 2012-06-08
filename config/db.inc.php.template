@@ -1,0 +1,26 @@
+<?php
+
+//	Your database type
+//	Default is mysql, but you can choose any type 
+//	of database supported by the ADOdbLite project
+$gestio_db_config['type'] = '{gestio_db_type}';
+
+//	The host for your database
+//	Default is localhost
+$gestio_db_config['host'] = '{gestio_db_host}';
+
+//	The user used to connect to your database
+//	try to avoid to use the root user
+$gestio_db_config['user'] = '{gestio_db_user}';
+
+//	The password of the database user
+$gestio_db_config['pass'] = '{gestio_db_pass}';
+
+//	The database name
+$gestio_db_config['database'] = '{gestio_db_name}';
+
+
+
+$gestio_db_config['tables'] = array();
+
+?>

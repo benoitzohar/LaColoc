@@ -1,0 +1,16 @@
+<?php
+
+$gestio_config['title'] = "{server_title}";
+
+// this unique key should be only known by you. it's used to encode passwords
+// you can put here anything
+$gestio_config['uniqueKey'] = '{server_unique_key}';
+
+$gestio_config['url'] = '{server_url}';
+$gestio_config['path'] = '{server_path}';
+
+$gestio_config['default_lang'] = '{server_lang}';
+
+$gestio_config['admin_password'] = '{admin_password}';
+
+?>
