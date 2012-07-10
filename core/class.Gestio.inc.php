@@ -38,23 +38,20 @@ class Gestio {
 	//Javascript files
 	public static $js_files = array(
 		// libs
-		'libs/jquery-1.6.4.min',
-		'libs/jquery.inherit-1.3.2',
+		'libs/jquery-1.7.2.min',
 		
 		// Core
-		'core/gestio',
-		
-		'gestio',
-		'gestio.user'
+		'core/lc',
+		'core/com',
+		'core/fn',
+		'core/ui',
 	);
 	
 	// Javascript files for desktop only
 	public static $js_files_desktop = array(
 		'libs/jquery-ui-1.8.16.custom.min',
 		'libs/jquery.ediTable',
-		'libs/jquery.reflection',
 		'libs/jquery.tipTip.minified',
-		'gestio.admin',
 	);
 	
 	// Javascript files for tablet only
@@ -154,9 +151,9 @@ class Gestio {
 		
 		$tpl->assign('title',self::$title);
 		
+		$tpl->assign('GESTIO_URL',self::$url);
 		$tpl->assign('GESTIO_TPL',self::$url.'templates/');
 		$tpl->assign('GESTIO_IMG',self::$url.'templates/images/');
-		
 		$tpl->assign('GESTIO_JS',self::$url.'js/');
 
 		// Javascripts

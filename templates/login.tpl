@@ -6,7 +6,7 @@
 		<title>{$title}</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<link rel="icon" type="image/png" href="{$GESTIO_IMG}/favicon.png" />
-		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-ui-1.8.5.js"></script>
 		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery.tipTip.minified.js"></script>
 		

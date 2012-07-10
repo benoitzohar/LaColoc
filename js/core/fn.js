@@ -1,93 +1,18 @@
 /**
- *  @description Gestio Javascript Core
- *  @requires jquery 1.4 > *
+ *  @description LaColoc Functions
  *  @author Benoit Zohar
  */
 
-var Gestio = $.inherit(
-{
-
-    __constructor: function ()
-    {
-
-        
-    },
+var fn = {
+	
+	debug : function(a,b) {
+		if (console && console.log) {
+			if (b !== null) console.log('[DEBUG]',a,b);
+			else console.log('[DEBUG]',a);
+		}
+	},
     
-    
-    /**
-     *	ajaxRequest: execute an ajax request with a queue
-     *	@param: obj: object: object that wants to execute an ajax request
-     *	@param: callback: function: function to execute if the ajax request is a success
-     *	@param: queue: string: if not defined, equals to 'main'
-     *	@param: forceURL: string: url to replace the actual url
-     *	@param:	forceDataType: string: datatype to replace the data type of the request by default (json)
-     *	@return: boolean: return false if the url is not set for ajax request
-     **/
-    ajaxRequest: function (obj, callback, queue, forceURL, forceDataType)
-    {
-
-        //console.log('ajaxRequest(',obj,',', callback,',', queue,',', forceURL,',',forceDataType,')');
-        if (!this.url || this.url == '')
-        {
-            this.debug("url is not set for ajax request");
-            return false;
-        }
-
-        if (!queue || queue == '') queue = 'main';
-
-        var m = "";
-        if (obj.loading_message != null)
-        {
-            this.display('message', '', obj.loading_message);
-        }
-
-        var vmthis = this;
-
-        var actual_url = this.url;
-        if (forceURL) actual_url = forceURL;
-
-        var actual_data_type = 'json';
-        if (forceDataType) actual_data_type = forceDataType;
-
-        $.ajaxq(queue, {
-            url: actual_url,
-            data: obj,
-            type: 'POST',
-            dataType: actual_data_type,
-            success: function (reponse, status, xhr)
-            {
-                //console.log('ajaxRequest Response:',reponse);
-                if (!reponse)
-                {
-                    vmthis.display('message', 'err', vmthis.lang('server_did_not_respond'));
-                    vmthis.debug('Server did not respond for: ' + obj.ajax_method);
-                }
-                else
-                {
-                    if (actual_data_type == 'json' && (!reponse.status || reponse.status === false)) vmthis.display('message', 'err', reponse.message);
-
-                    if (callback) callback(reponse, status, xhr);
-
-                    else vmthis.display('loading_wheel', 'hide');
-                }
-            },
-            error: function (xhr, status, err)
-            {	
-            	vmthis.debug('AJAX ERROR. XHR=' +xhr+', STATUS='+status+', ERR='+err);
-                // Test if user is not logged anymore
-                if (err && typeof(err) === 'string' && err.match('class="login_input"')) window.location.reload();
-
-                if (status == 'parsererror') status = vmthis.lang('fatal_error_occured_on_server');
-                vmthis.display('message', 'err', status);
-                vmthis.display('loading_wheel', 'hide');
-            }
-        });
-
-    },
-
-    
-    getDate: function (cdate, output_format)
-    {
+    getDate: function (cdate, output_format) {
         if (!cdate) return false;
         if (!output_format) output_format = 'timestamp';
 
@@ -139,9 +64,8 @@ var Gestio = $.inherit(
      *	@param: date: date: date as string or timestamp
      *	@return: a date object
      **/
-    getDateObject: function (date)
-    {
-        //console.log('getDateObject(',date,')');
+    getDateObject: function (date) {
+
         // Construction de l'objet date
         var d = new Date();
         // If date is already an object
@@ -183,4 +107,4 @@ var Gestio = $.inherit(
     }
 
 
-});
+}

@@ -52,7 +52,7 @@ $app 	= $_REQUEST['app'];
 $action = $_REQUEST['action'];
 $params = $_REQUEST['params'];
 
-if (!empty($app)) {
+if (!empty($app) && $app != 'main') {
 
 	// make sure the app is installed for the user
 	$installed_modules = gestio_module::get_installed_modules(Gestio::$user->get_var('id'),false,true);

@@ -3,12 +3,10 @@
 	<head>
 		<title>{$title}</title>
 		
-		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-1.4.2.js"></script>
+		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-1.7.2.min.js"></script>
 		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-ui-1.8.5.js"></script>
-		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery.reflection.js"></script>
 		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery.ediTable.js"></script>
-		<script type="text/javascript" src="{$GESTIO_JS}gestio.js"></script>
-		<script type="text/javascript" src="{$GESTIO_JS}gestio.admin.js"></script>
+		<script type="text/javascript" src="{$GESTIO_JS}admin/lc.admin.js"></script>
 		
 		<link rel="stylesheet" href="{$GESTIO_ADMIN_TPL}admin.css" type="text/css" />
 		<link rel="stylesheet" href="{$GESTIO_TPL}jquery_ui/redmond/jquery-ui-1.8.5.custom.css" type="text/css" />
