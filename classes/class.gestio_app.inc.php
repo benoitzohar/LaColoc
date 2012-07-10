@@ -137,7 +137,7 @@ class gestio_app {
 		return true;
 	}
 	
-	static public function get_all($user = false,$order = false) {
+	static public function get_all($user = false,$order = false, $only_names = false) {
 
 		$res = array();
     	
@@ -152,7 +152,8 @@ class gestio_app {
     	$sql = GDB::db()->Execute($request);
     	if ($sql)
 	    	while (!$sql->EOF){
-	    		array_push($res,new gestio_app($sql->fields['name'],$sql->fields['title'],$sql->fields['version'],$sql->fields['last_edit'],$sql->fields['logo'],$sql->fields['page_setup'],$sql->fields['page_admin'],$sql->fields['page_main'],$sql->fields['tables']));
+	    		if ($only_names) array_push($res,$sql->fields['name']);
+		    	else array_push($res,new gestio_app($sql->fields['name'],$sql->fields['title'],$sql->fields['version'],$sql->fields['last_edit'],$sql->fields['logo'],$sql->fields['page_setup'],$sql->fields['page_admin'],$sql->fields['page_main'],$sql->fields['tables']));
 	    		$sql->MoveNext();
 	    	}
     	return $res;

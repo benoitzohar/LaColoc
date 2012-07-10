@@ -89,7 +89,7 @@ class Gestio {
 		'jquery_mobile/jquery.mobile-1.0rc1.min'
 	);
 	
-	function __construct() {
+	function __construct($options = array()) {
 		
 		if (!empty(self::$path))			$prefix = self::$path;
 		else if (GESTIO_IS_ADMIN === true)	$prefix = '../';
@@ -116,11 +116,13 @@ class Gestio {
 		} else self::$is_installed = false;
 
 		// Include Smarty templates
-		if(@include_once($prefix.'libs/smarty/Smarty.class.php')) {
-			if (self::$is_installed !== false)
-					self::$tpl = new Smarty();		
+		if ($options['no_template'] !== true) {
+			if(@include_once($prefix.'libs/smarty/Smarty.class.php')) {
+				if (self::$is_installed !== false)
+						self::$tpl = new Smarty();		
+			}
+			else self::throwFatalError("Could not find the template engine (SMARTY).");	
 		}
-		else self::throwFatalError("Could not find the template engine (SMARTY).");	
 
 	}
 	
@@ -327,6 +329,6 @@ class Gestio {
 	
 }
 
-new Gestio();
+new Gestio($gestio_global_options);
 
 ?>

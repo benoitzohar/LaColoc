@@ -160,12 +160,16 @@ class GestioSession {
 		}
 		
 		if (!self::$instance->userIsLogged()) {	
-			Gestio::$tpl->assign('title',lang('la Coloc\''));
-			$login_tpl = 'login.tpl';
-			if (GESTIO_IS_ADMIN === true) $login_tpl = 'admin/'.$login_tpl;
-			Gestio::display(false,$login_tpl);
-			exit;
+			if (Gestio::$tpl) {
+				Gestio::$tpl->assign('title',lang('la Coloc\''));
+				$login_tpl = 'login.tpl';
+				if (GESTIO_IS_ADMIN === true) $login_tpl = 'admin/'.$login_tpl;
+				Gestio::display(false,$login_tpl);
+				exit;
+			}
+			return false;
 		}
+		return true;
 	}
 	
 	

@@ -212,8 +212,8 @@ class gestio_module {
 	 *		Static part
 	 **/
 	
-    public static function get_installed_modules($user = false,$order = false) {
-    	return gestio_app::get_all($user,$order);
+    public static function get_installed_modules($user = false,$order = false,$only_names = false) {
+    	return gestio_app::get_all($user,$order,$only_names);
     }
     
     public static function get_available_modules(){
