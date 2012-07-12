@@ -37,7 +37,7 @@ switch ($page){
 	
 	case "setup" :
 		
-		Gestio::$tpl->display('admin/setup.tpl');
+		Gestio::display('main','admin/setup.tpl');
 		break;
 
 	case "users":
@@ -55,7 +55,7 @@ switch ($page){
 		Gestio::$tpl->assign('users',$users);
 		Gestio::$tpl->assign('fields',$fields);
 		
-		Gestio::$tpl->display('admin/users.tpl');
+		Gestio::display('main','admin/users.tpl');
 		
 	break;	
 	case "modules":
@@ -91,11 +91,11 @@ switch ($page){
 		Gestio::$tpl->assign('available_modules_fields',$available_modules_fields);
 		Gestio::$tpl->assign('available_modules',$available_modules);
 		
-		Gestio::$tpl->display('admin/modules.tpl');		
+		Gestio::display('main','admin/modules.tpl');		
 		
 	break;
     default:
-    	Gestio::$tpl->display('admin/index.tpl');
+    	Gestio::display('main','admin/index.tpl');
     break;
 }
 

@@ -13,10 +13,15 @@
 		<link rel="stylesheet" href="{$GESTIO_TPL}default.css" type="text/css" />
 		<link rel="stylesheet" href="{$GESTIO_TPL}/libs/tipTip.css" type="text/css" />
 		
-		<!-- start Mixpanel --><script type="text/javascript">(function(d,c){ var a,b,g,e;a=d.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"===d.location.protocol?"https:":"http:")+'//api.mixpanel.com/site_media/js/api/mixpanel.2.js';b=d.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);c._i=[];c.init=function(a,d,f){ var b=c;"undefined"!==typeof f?b=c[f]=[]:f="mixpanel";g="disable track track_links track_forms register register_once unregister identify name_tag set_config".split(" ");for(e=0;e<
-g.length;e++)(function(a){ b[a]=function(){ b.push([a].concat(Array.prototype.slice.call(arguments,0))) }})(g[e]);c._i.push([a,d,f]) };window.mixpanel=c})(document,[]);
-mixpanel.init("9de720f03cc5d0263d1d87f720dcb77b");</script><!-- end Mixpanel -->
-
+			<script type="text/javascript">
+	  var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-33326287-1']); _gaq.push(['_trackPageview']);
+	  (function() {
+	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	  })();
+	</script>
+	
 	</head>
 	<body>
 	
