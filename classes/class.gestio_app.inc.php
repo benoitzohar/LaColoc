@@ -64,7 +64,7 @@ class gestio_app {
 	public function getLastEdit() { return $this->last_edit; } 
 	public function getLogo() { 
 		if (!empty($this->logo))
-			return Gestio::$url.'modules/'.$this->name.'/'.$this->logo;
+			return $this->logo;
 		else if (is_file(Gestio::$path.'modules/'.$this->name.'/img/logo.png')) {
 			return Gestio::$url.'modules/'.$this->name.'/img/logo.png';
 		}

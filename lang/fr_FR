@@ -2,11 +2,8 @@
 $lang["Administration of %s"] = "Administration of %s";
  
 $lang["home"] = "home";
- 
 $lang["setup"] = "setup";
- 
 $lang["users"] = "users";
- 
 $lang["modules"] = "modules";
  
 $lang["id"] = "id";
@@ -36,12 +33,11 @@ $lang["uninstall"] = "désinstaller";
 $lang["app_uninstalled"] = "application désinstallée";
 $lang["could not install app"] = "Impossible d'installer l'application";
 
-$lang["Gestio."] = "Gestio."; 
-$lang["log out"] = "log out"; 
+$lang["Home"] = "Accueil";
 $lang["la Coloc'"] = "la Coloc'"; 
 $lang["Logout"] = "Déconnexion"; 
 $lang["user_not_connected"] = "Utilisateur non connecté.";
  
-$lang["no_dialog_file_for_the_app"] = "no_dialog_file_for_the_app"; 
-$lang["action_not_available_for_this_app"] = "action_not_available_for_this_app"; 
-$lang["this_application_is_not_installed_for_this_user"] = "this_application_is_not_installed_for_this_user"; ?>
+$lang["no_dialog_file_for_the_app"] = "Fichier de dialogue inexistant pour l'application"; 
+$lang["action_not_available_for_this_app"] = "Action non disponible pour l'application"; 
+$lang["this_application_is_not_installed_for_this_user"] = "Cette application n'est pas installée pour l'utilisateur";  ?>

@@ -47,12 +47,15 @@ if (!GestioSession::checkLogin()) {
 	json_exit(false,false,lang("user_not_connected"));
 }
 
-
+print_r($_REQUEST);
 $app 	= $_REQUEST['app'];
 $action = $_REQUEST['action'];
 $params = $_REQUEST['params'];
 
-if (!empty($app) && $app != 'main') {
+// default app is main
+if (empty($app)) $app = 'main';
+
+if ($app != 'main') {
 
 	// make sure the app is installed for the user
 	$installed_modules = gestio_module::get_installed_modules(Gestio::$user->get_var('id'),false,true);

@@ -7,7 +7,7 @@ var fn = {
 	
 	debug : function(a,b) {
 		if (console && console.log) {
-			if (b !== null) console.log('[DEBUG]',a,b);
+			if (b !== null && typeof b != 'undefined') console.log('[DEBUG]',a,b);
 			else console.log('[DEBUG]',a);
 		}
 	},

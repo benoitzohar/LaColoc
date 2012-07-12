@@ -59,7 +59,7 @@ $gestio_module[$app_name]['last_edit'] = '03-04-2012';
  *	default in 'img/logo.png'
  *
  **/
-$gestio_module[$app_name]['logo'] = 'img/logo.png';
+$gestio_module[$app_name]['logo'] = 'icon-list';
 
 
 /*

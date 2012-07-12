@@ -11,7 +11,7 @@ var ui = {
 	},
 
 
-	msg : function(msg,type) {
+	message : function(msg,type) {
 		alert(msg); //@TODO	
 	},
 	

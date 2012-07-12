@@ -8,10 +8,19 @@ var com = {
 	url : false,
 	file : 'webservice.php',
 
+	/*
+	 *	init()
+	 */
 	init : function(dialog_url) {
 		if (dialog_url) this.url = dialog_url;
 	},
 	
+	/*
+	 *	dialog()
+	 *	param:	action	
+	 *	param:	original_data
+	 *	param:	res
+	 */
 	dialog : function(action,original_data,res) {
 		switch (action) {
 			case 'a': break;
@@ -19,24 +28,50 @@ var com = {
 		}
 	},
 	
+	/*
+	 *	onResponse()
+	 *	param:	rep	
+	 *	param:	status
+	 *	param:	xhr
+	 */
 	onResponse : function(rep, status, xhr) {
+		if (!rep || !rep.status || !rep.data) return com.onError(xhr,status,rep);
 		
+		var d = rep.data;
+		var cur_app = lc.getCurrentApp();
+		var target = this;
+		if (cur_app && cur_app == d.app) target = apps[d.app];
+		
+		if (target && target.dialog) target.dialog(d.action,d.params,d.result);
+		
+		ui.loading(false);
 	},
 	
+	/*
+	 *	onError()
+	 *	param:	xhr	
+	 *	param:	status
+	 *	param:	err
+	 */
 	onError : function(xhr,status,err) {
-		
+		fn.debug('Error : ',err.message);
+		ui.message('error : '+err.message);
+		ui.loading(false);
+		return false;
 	},
 	
 	/*
 	 *	send()
-	 *	
+	 *	param:	action	String
+	 *	param:	params	Object/String
+	 *	param:	app		String	Name of the app that call
 	 */
 	send : function(action,params,app) {
 		if (!app) {
-			if (this.current_app) 	app = this.current_app;
+			if (lc.current_app) 	app = lc.current_app;
 			else					app = 'main';
 		}
-		
+
 		var obj = {
 			app : app,
 			action : action,
@@ -54,7 +89,7 @@ var com = {
      */
     ajaxRequest: function (obj) {
 
-        if (!this.url) {
+        if (!this.url ||!this.file) {
             fn.debug("url is not set for ajax request");
             return false;
         }
@@ -66,30 +101,8 @@ var com = {
             data: obj,
             type: 'POST',
             dataType: 'json',
-            success: function (reponse, status, xhr)
-            {
-                //console.log('ajaxRequest Response:',reponse);
-                if (!reponse)
-                {
-                    ui.message(vmthis.lang('server_did_not_respond'),'error');
-                    fn.debug('Server did not respond for: ' + obj.action);
-                }
-                else {
-	                ui.loading(false);
-                }
-            },
-            error: function (xhr, status, err)
-            {	
-            	fn.debug('AJAX ERROR. XHR=' +xhr+', STATUS='+status+', ERR='+err);
-                // Test if user is not logged anymore
-                if (err && typeof(err) === 'string' && err.match('class="login_input"')) {
-                	window.location.reload();
-                }
-
-                if (status == 'parsererror') status = vmthis.lang('fatal_error_occured_on_server');
-                vmthis.display('message', 'err', status);
-                vmthis.display('loading_wheel', 'hide');
-            }
+            success: this.onResponse,
+            error: this.onError
         });
 
     }

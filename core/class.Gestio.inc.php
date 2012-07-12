@@ -29,16 +29,12 @@ class Gestio {
 	
 	//Errors
 	public static $errors = array();
-	
-	//Device (desktop, tablet, phone)
-	public static $devices = array('desktop','tablet','phone');
-	public static $other_devices = array('phone','tablet');
-	public static $current_device;
-	
+		
 	//Javascript files
 	public static $js_files = array(
 		// libs
 		'libs/jquery-1.7.2.min',
+		'bootstrap.min',
 		
 		// Core
 		'core/lc',
@@ -49,42 +45,18 @@ class Gestio {
 	
 	// Javascript files for desktop only
 	public static $js_files_desktop = array(
-		'libs/jquery-ui-1.8.16.custom.min',
+	//	'libs/jquery-ui-1.8.16.custom.min',
 		'libs/jquery.ediTable',
 		'libs/jquery.tipTip.minified',
 	);
-	
-	// Javascript files for tablet only
-	public static $js_files_tablet = array(
-		'libs/jquery.mobile-1.0rc1.min'
-	);
-	
-	// Javascript files for phone only
-	public static $js_files_phone = array(
-		'libs/jquery.mobile-1.0rc1.min'
-	);
-	
+		
 	// CSS files
 	public static $css_files = array(
-		
+		'bootstrap.min',
+		'tipTip',
+		'lacoloc',
 	);
 	
-	// CSS files for desktop only
-	public static $css_files_desktop = array(
-		'libs/tipTip',
-		'default',
-		
-	);
-	
-	// CSS files for tablet only
-	public static $css_files_tablet = array(
-		'jquery_mobile/jquery.mobile-1.0rc1.min'
-	);
-
-	// CSS files for phone only
-	public static $css_files_phone = array(
-		'jquery_mobile/jquery.mobile-1.0rc1.min'
-	);
 	
 	function __construct($options = array()) {
 		
@@ -131,8 +103,6 @@ class Gestio {
 	
 	static function init_template() {
 		
-		$device = self::getDevice();
-		
 		//check current app
 		$current_app_name = false;
 		if (Gestio::$app && Gestio::$app->getName()) {
@@ -149,17 +119,14 @@ class Gestio {
 		
 		$tpl->caching = 0;
 		
-		$tpl->assign('title',self::$title);
-		
-		$tpl->assign('GESTIO_URL',self::$url);
 		$tpl->assign('GESTIO_TPL',self::$url.'templates/');
-		$tpl->assign('GESTIO_IMG',self::$url.'templates/images/');
+		$tpl->assign('GESTIO_IMG',self::$url.'img/');
 		$tpl->assign('GESTIO_JS',self::$url.'js/');
+		$tpl->assign('GESTIO_CSS',self::$url.'css/');
 
 		// Javascripts
 		$js_include = '';
-		$js_files = array_merge(self::$js_files,self::${'js_files_'.$device});
-		foreach($js_files as $k => $js_file) {
+		foreach(self::$js_files as $k => $js_file) {
 			$js_files[$k] = self::$url.'js/'.$js_file.'.js';
 		}
 		//include app specific JS (all files in the folder)
@@ -177,20 +144,17 @@ class Gestio {
 		
 		// Css
 		$css_include = '';
-		$css_files = array_merge(self::$css_files,self::${'css_files_'.$device});
-		foreach($css_files as $k => $css_file) {
-			$css_files[$k] = self::$url.'templates/'.$css_file;
+		foreach(self::$css_files as $k => $css_file) {
+			$css_files[$k] = self::$url.'css/'.$css_file;
 		}
 		//include app specific CSS
 		if ($current_app_name) {
 			$current_app_css_folder = 'modules/'.$current_app_name.'/css/';
 			if (is_file(self::$path.$current_app_css_folder.$current_app_name.'.css')) 
 				$css_files[] = self::$url.$current_app_css_folder.$current_app_name;
-			if (is_file(self::$path.$current_app_css_folder.$current_app_name.'_'.$device.'.css')) 
-				$css_files[] = self::$url.$current_app_css_folder.$current_app_name.'_'.$device;
 		}
 		foreach($css_files as $css_file) {
-			$css_include .= '<link rel="stylesheet" href="'.$css_file.'.css" type="text/css" />'."\n";
+			$css_include .= '<link rel="stylesheet" href="'.$css_file.'.css" />'."\n";
 		}
 		
 		$tpl->assign('GESTIO_CSS_FILES',$css_include);
@@ -198,29 +162,20 @@ class Gestio {
 		$tpl->assign('GESTIO_ADMIN_TPL',self::$url.'templates/admin/');
 		$tpl->assign('GESTIO_ADMIN_IMG',self::$url.'templates/admin/images/');
 		
-		// Set header var depending on the device used
+		// Set header var 
 		$header_tpl_path = self::$path.'templates/header.tpl';
 		if (is_file($header_tpl_path)) {
-			if (in_array(self::$current_device,self::$other_devices) && is_file(self::$path.'templates/'.self::$current_device.'/header.tpl')) {
-				$header_tpl_path = self::$path.'templates/'.self::$current_device.'/header.tpl';
-			}
 			$tpl->assign('GESTIO_HEADER_TPL',$header_tpl_path);
 		}
-		// Set footer var depending on the device used
+		// Set footer var 
 		$footer_tpl_path = self::$path.'templates/footer.tpl';
 		if (is_file($footer_tpl_path)) {
-			if (in_array(self::$current_device,self::$other_devices) && is_file(self::$path.'templates/'.self::$current_device.'/footer.tpl')) {
-				$footer_tpl_path = self::$path.'templates/'.self::$current_device.'/footer.tpl';
-			}
 			$tpl->assign('GESTIO_FOOTER_TPL',$footer_tpl_path);
 		}
 		
-		// Set menu var depending on the device used
+		// Set menu var 
 		$menu_tpl_path = self::$path.'templates/menu.tpl';
 		if (is_file($menu_tpl_path)) {
-			if (in_array(self::$current_device,self::$other_devices) && is_file(self::$path.'templates/'.self::$current_device.'/menu.tpl')) {
-				$menu_tpl_path = self::$path.'templates/'.self::$current_device.'/menu.tpl';
-			}
 			$tpl->assign('GESTIO_MENU_TPL',$menu_tpl_path);
 		}
 				
@@ -232,27 +187,25 @@ class Gestio {
 	
 		self::init_template();
 		
-		$display = false;
+		if (empty($app)) $app = 'main';
+		
+		// Set some vars
+		self::$tpl->assign('title',self::$title);
+		self::$tpl->assign('GESTIO_URL',self::$url);
+		self::$tpl->assign('GESTIO_CURRENT_APP',$app);
+		self::$tpl->assign('GESTIO_INITIAL_DATA',self::getInitialData());
+		self::$tpl->assign('GESTIO_LANG',self::getLang(true));
 
-		if (!$app || $app == 'main') {
-			$display = true;
+		// choose the template to show
+		if ($app == 'main') {
 			self::$tpl->template_dir = self::$path.'templates';
 		}
-		else if (is_dir(self::$path.'modules/'.$app.'/templates')) {	
-			$display = true;
+		else if (is_dir(self::$path.'modules/'.$app.'/templates')) {
 			self::$tpl->template_dir = self::$path.'modules/'.$app.'/templates';
 		}
 		
-		// Check template specific dir
-		if ($display) {
-			if (in_array(self::$current_device,self::$other_devices) && is_file(self::$tpl->template_dir.'/'.self::$current_device.'/'.$template)) {
-				self::$tpl->template_dir = self::$tpl->template_dir.'/'.self::$current_device;
-			} else if (!is_file(self::$tpl->template_dir.'/'.$template)) {
-				$display = false;
-			}
-		} 
-		
-		if ($display) {
+		// if template exists : show it
+		if (is_file(self::$tpl->template_dir.'/'.$template)) {
 			self::$tpl->display($template);
 		}
 		// Fallback if template doesn't exist
@@ -263,38 +216,16 @@ class Gestio {
 		
 	}
 	
-	static function getDevice() {
-		if (!empty(self::$current_device)) return self::$current_device;
-		$_GestioSession = GestioSession::getInstance();
-		
-		// check if device is forced
-		if (!empty($_GET['device']) && in_array($_GET['device'],self::$devices)) {
-			$_GestioSession->setSession('device',$_GET['device']);
-		}
-		
-		// Check if device is stocked into session
-		$session_device = $_GestioSession->getSession('device');
-		if (!empty($session_device) && in_array($session_device,self::$devices)) {
-			self::$current_device = $session_device;
-			return $session_device;
-		} 
-		
-		//Try to catch device type from user agent
-		$device = 'desktop';
-		require_once self::$path.'libs/mdetect.php';		
-		$_mdetect = new uagent_info();
-		
-		if($_mdetect->DetectTierIphone()) {
-			$device = 'phone';
-		} else if ($_mdetect->DetectTierTablet()) {
-			$device = 'tablet';
-		}
-		
-		$_GestioSession->setSession('device',$device);
-		self::$current_device = $device;
-		return $device;
+	static function getInitialData() {
+		$data = array();
+		return base64_encode(json_encode($data));
 	}
 	
+	static function getLang($short_version = false) {
+		if ($short_version) return substr(self::$default_lang,0,2);
+		return self::$default_lang;
+	}
+		
 	static function encodePassword($password = '',$uniqueKey = '') {
 		if (empty($password)) return false;
 		if (!empty($uniqueKey)) {
@@ -320,7 +251,7 @@ class Gestio {
 	}
 	
 	static function throwError($err) {
-		echo '<div style="border:1px solid gray;"><b>GESTIO FATAL ERROR:</b><br /><p>'.$err.'</p></div>';
+		echo '<div style="border:1px solid gray;"><b>FATAL ERROR:</b><br /><p>'.$err.'</p></div>';
 	}
 	
 	

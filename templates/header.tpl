@@ -1,29 +1,28 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html>
-	<head>
+<!DOCTYPE html>
+<html lang="{$GESTIO_LANG}">
+  <head>
+   		<meta charset="utf-8">
 		<title>{$title}</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="icon" type="image/png" href="{$GESTIO_IMG}/favicon.png" />
-		{$GESTIO_JS_FILES}
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="description" content="">
+		<meta name="author" content="Benoit Zohar">
+
 		{$GESTIO_CSS_FILES}
 		
-		<script> function initLC() { lc.init('{$GESTIO_URL}'); } </script>
-		
-		<script type="text/javascript">
-	  var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-33326287-1']); _gaq.push(['_trackPageview']);
-	  (function() {
-	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-	  })();
-	</script>		
+		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+	    <!--[if lt IE 9]>
+	      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	    <![endif]-->
+
+		<link rel="shortcut icon" type="image/png" href="{$GESTIO_IMG}favicon.png" />
+		<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{$GESTIO_IMG}apple-touch-icon-144-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{$GESTIO_IMG}apple-touch-icon-114-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{$GESTIO_IMG}apple-touch-icon-72-precomposed.png">
+		<link rel="apple-touch-icon-precomposed" href="{$GESTIO_IMG}apple-touch-icon-57-precomposed.png">
+		<script> window.addEventListener("load",function() { setTimeout(function(){ window.scrollTo(0, 0);}, 0);}); </script>
 	</head>
-	<body onload="initLC();">
-	
-		<img id="ajax-loader" src="{$GESTIO_IMG}ajax-loader.gif" />
-		<div id="ajax-error"><img src="{$GESTIO_IMG}ajax-error.png"><span></span></div>
-
-	
-		<div id="content">
-
-{include file="$GESTIO_MENU_TPL"}
+	<body>
+		{include file="$GESTIO_MENU_TPL"}
+	   
+	    <div id="content" class="container">
+	    
