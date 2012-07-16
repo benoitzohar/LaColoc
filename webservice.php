@@ -43,11 +43,10 @@ $gestio_global_options = array('no_template' => true);
 require_once('init.inc.php');
 
 // test if user is connected
-if (!GestioSession::checkLogin()) {
+if (!LCSession::checkLogin()) {
 	json_exit(false,false,lang("user_not_connected"));
 }
 
-print_r($_REQUEST);
 $app 	= $_REQUEST['app'];
 $action = $_REQUEST['action'];
 $params = $_REQUEST['params'];
@@ -58,17 +57,17 @@ if (empty($app)) $app = 'main';
 if ($app != 'main') {
 
 	// make sure the app is installed for the user
-	$installed_modules = gestio_module::get_installed_modules(Gestio::$user->get_var('id'),false,true);
+	$installed_modules = Module::get_installed_modules(LC::$user->getId(),false,true);
 
 	if (!in_array($app,$installed_modules)) {
 		json_exit(false,false,lang('this_application_is_not_installed_for_this_user'));
 	}
 
-	$dialog_file_path = Gestio::$path.'modules/'.$app.'/class.dialog.inc.php';
+	$dialog_file_path = LC::$path.'modules/'.$app.'/class.dialog.inc.php';
 	$class_name = 'Dialog_'.$app;
 }
 else {
-	$dialog_file_path = Gestio::$path.'class.dialog.inc.php';
+	$dialog_file_path = LC::$path.'class.dialog.inc.php';
 	$class_name = 'Dialog';
 }
 
@@ -86,7 +85,7 @@ if (!method_exists($class_name,$action)) {
 }
 
 // send the app's method returned value
-$res = $D->$action();
+$res = $D->$action($params);
 if ($res === null) {
 	json_exit(false,false,lang('an_unknown_error_append'));
 }

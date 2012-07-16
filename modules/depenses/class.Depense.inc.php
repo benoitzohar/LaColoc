@@ -1,47 +1,34 @@
 <?php
 
-class Depense {
+class Depense extends Entity {
 
-	static protected $_tablename = 'gestio_depenses';
-	static protected $_primary = 'id';
-	static protected $_cols = array('id','user','cost','comment','recursive','date_created','date_updated');
+	public static $classname = 'Depense';
+	public static $fields = array('id','user_id','cost','comment','repeat','targeted_users','created','updated','deleted');
+	public static $table = 'lc_depenses';
 	
+	protected $_classname;
+	protected $_fields;
+	protected $_table;
+		
 	private $error_msg = array();
 	private $warning_msg = array();
 
 	protected $id;
-	protected $user;
+	protected $user_id;
 	protected $cost;
 	protected $comment;
-	protected $recursive;
+	protected $repeat;
+	protected $targeted_users;
 	protected $date_created;
 	protected $date_updated;
 	
-	protected $edited_fields = array();
+	public function __construct($id,$infos = false){
 	
-	public function __construct($primary,$data) {
+		$this->_classname = self::$classname;
+		$this->_fields = self::$fields;
+		$this->_table = self::$table;
 	
-		if($data && count($data) > 0) {
-			foreach(self::$_cols as $col) {
-				$this->$col = $data[$col];
-			}
-		}
-		
-		if (!empty($primary)) {
-			if ($data && count($data) > 0) {
-				$this->$_primary = $primary;
-			}
-			else {
-		       	$res = GDB::Execute("SELECT * FROM ".self::$_tablename."  WHERE ".self::$_primary."='{$primary}' LIMIT 1;");
-		    	if (!$res->EOF){
-		    		foreach(self::$_cols as $col) {
-		    			$this->$col = $res->fields[$col];
-		    		}
-		    	}
-		    	else return null;
-			}
-		}
-		else return null;
+		parent::__construct($id,$infos);
 	}
 	
 	public function __destruct() {
@@ -49,46 +36,18 @@ class Depense {
 			debug($this->error_msg,__FILE__,__LINE__);
 		}
 	}
-	public function get($fieldname) {
-		return $this->$fieldname;
-	}
-	public function set($fieldname,$value,$no_flag = false) {
-		$this->$fieldname = $value;
-		if (!$no_flag && !in_array($fieldname,$this->edited_fields)) {
-			$this->edited_fields[] = $fieldname;
-		}
+	
+	// Static Methods
+	static function getDepensesForUser($user_id,$order = false,$as_array = false,$include_deleted = false) {
+		return parent::get(self::$classname,array('user_id' => $user_id),$order,$as_array,$include_deleted);
 	}
 	
-	public function save() {
-		
-		$data = array();
-		
-		//make sure changes have been made
-		if (count($this->edited_fields) == 0) return false;
-		
-		// get all the changes made
-		foreach($this->edited_fields as $field) {
-			$data[$field] = $this->$field;
-		}
-		
-		// save update time
-		if (in_array('date_updated',self::$_cols)) $data['date_updated'] = time();
-		
-		// update db
-		if ($this->$_primary) {
-			$update_res = GDB::Update(self::$_tablename,$data,$_primary."=".$this->$_primary);
-		}
-		// insert in db
-		else {
-			if (in_array('date_created',self::$_cols)) $data['date_created'] = time();
-			$insert_res = GDB::Insert(self::$tablename,$data);
-		}
+	static function getSumForUser($user_id) {
+		return GDB::db()->GetOne("SELECT SUM(cost) FROM ".self::$table." WHERE user_id = ?",array($user_id));
 	}
 
-	// Static Methods
-	
-	static function getDepensesForUser($user_id) {
-	
+	static function getSumForGroup($group_id) {
+		return GDB::db()->GetOne("SELECT SUM(cost) FROM ".self::$table." WHERE user_id IN (SELECT id FROM ".User::$table." WHERE group_id = ?)",array($group_id));
 	}
 
 }

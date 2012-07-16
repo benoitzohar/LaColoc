@@ -1,8 +1,9 @@
 <?php
 
+require_once "class.DepenseApp.inc.php";
 require_once "class.Depense.inc.php";
 
 
-Gestio::display(Gestio::$app->getName(),'main.tpl');
+LC::display(LC::$app->getName(),'main.tpl');
 
 ?>

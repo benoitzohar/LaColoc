@@ -36,7 +36,7 @@ var com = {
 	 */
 	onResponse : function(rep, status, xhr) {
 		if (!rep || !rep.status || !rep.data) return com.onError(xhr,status,rep);
-		
+		if (rep.message) fn.debug('message = ',rep.message);
 		var d = rep.data;
 		var cur_app = lc.getCurrentApp();
 		var target = this;

@@ -1,12 +1,12 @@
 <?
 
 // Include Core classes
-require_once('core/class.GestioSession.inc.php');
-require_once('core/class.Gestio.inc.php');
+require_once('core/class.LCSession.inc.php');
+require_once('core/class.LC.inc.php');
 
 
 // If application is not installed
-if (Gestio::$is_installed === false) {
+if (LC::$is_installed === false) {
 	require_once('admin/setup/index.php');
 	exit;
 }

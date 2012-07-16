@@ -23,7 +23,7 @@ $app_name = 'depenses';
  *		[Please make sure that this file is encoded in UTF-8 if you 
  *		 use special characters !]
  **/
-$gestio_module[$app_name]['title'] = 'Dépenses';
+$lc_module[$app_name]['title'] = 'Dépenses';
 
 
 /*
@@ -35,7 +35,7 @@ $gestio_module[$app_name]['title'] = 'Dépenses';
  *	 numerical characters, and your very first version NEEDS to be 1.0,
  *   otherwise your App won't update properly ... ]
  **/
-$gestio_module[$app_name]['version'] = '1.0';
+$lc_module[$app_name]['version'] = '1.0';
 
 
 
@@ -46,7 +46,7 @@ $gestio_module[$app_name]['version'] = '1.0';
  *		[Please use a DD-MM-YYYY date format !]
  *
  **/
-$gestio_module[$app_name]['last_edit'] = '03-04-2012';
+$lc_module[$app_name]['last_edit'] = '03-04-2012';
 
 
 /*
@@ -55,11 +55,11 @@ $gestio_module[$app_name]['last_edit'] = '03-04-2012';
  *	put your logo in [your_app]/images/logo.png, this
  *	variable should have as a value : 'images/logo.png')
  *
- *	This is optionnal, Gestio- will try to find a logo by
+ *	This is optionnal, LC- will try to find a logo by
  *	default in 'img/logo.png'
  *
  **/
-$gestio_module[$app_name]['logo'] = 'icon-list';
+$lc_module[$app_name]['logo'] = 'icon-list';
 
 
 /*
@@ -69,7 +69,7 @@ $gestio_module[$app_name]['logo'] = 'icon-list';
  *	[your_app]/setup/tables-*.*.sql
  **/
 
-$gestio_module[$app_name]['tables'] = array('gestio_depenses');
+$lc_module[$app_name]['tables'] = array('lc_depenses');
 
 
 /**
@@ -91,9 +91,9 @@ $gestio_module[$app_name]['tables'] = array('gestio_depenses');
  *
  */ 
  
-$gestio_module[$app_name]['pages']['setup'] = 'setup.php';
-$gestio_module[$app_name]['pages']['admin'] = 'admin.php';
-$gestio_module[$app_name]['pages']['main'] 	= 'main.php';
+$lc_module[$app_name]['pages']['setup'] = 'setup.php';
+$lc_module[$app_name]['pages']['admin'] = 'admin.php';
+$lc_module[$app_name]['pages']['main'] 	= 'main.php';
 
 
 ?>

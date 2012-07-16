@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="{$GESTIO_LANG}">
 	<head>
 		<meta charset="utf-8">
 		<title>{$title}</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" lang="fr" content="{$GESTIO_SITE_DESCRIPTION}">
+		<meta name="author" content="Benoit Zohar">
+		
 		<link rel="icon" type="image/png" href="{$GESTIO_IMG}favicon.png" />
 
 		<link rel="stylesheet" href="{$GESTIO_CSS}login.css" type="text/css" />

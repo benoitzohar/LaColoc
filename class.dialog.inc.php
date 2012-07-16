@@ -4,7 +4,7 @@ class Dialog {
 	
 	
 	public function test() {
-		return array('bonjour','comment ça va?');
+		return array('bonjour','comment ca va?');
 	}
 	
 }

@@ -34,22 +34,6 @@ class GDB {
 		return self::$gdb->ErrorMsg();
 	}
 	
-	// Automagical DB functions
-	
-	public static function Select($table,$where,$column = '*',$limit = false,$extra = false) {	
-	}
-	
-	public static function Insert($table,$data) {
-		if (!self::$gdb) return false;
-		return self::$gdb->AutoExecute($table,$data,'INSERT');
-	}
-	
-	
-	public static function Update($table,$data,$where) {
-		if (!self::$gdb) return false;
-		return self::$gdb->AutoExecute($table,$data,'UPDATE',$where);
-	}
-	
 	
 }
 

@@ -5,19 +5,19 @@ function lang(){
 	$key = array_shift($params);
 	$current_lang = '';
 	
-	if (!is_file(Gestio::$path.'lang/'.$current_lang)){
-		$current_lang = Gestio::$default_lang;
+	if (!is_file(LC::$path.'lang/'.$current_lang)){
+		$current_lang = LC::$default_lang;
 	}
 
-	include (Gestio::$path.'lang/'.$current_lang);
+	include (LC::$path.'lang/'.$current_lang);
 
 	// Temporary : add missing key to the end of the file
 	if (empty($lang[$key])){
-		$content = file_get_contents(Gestio::$path.'lang/'.$current_lang);
+		$content = file_get_contents(LC::$path.'lang/'.$current_lang);
 		$content = str_replace('<?php','',$content);
 		$content = str_replace('?>','',$content);
-		file_put_contents(Gestio::$path.'lang/'.$current_lang, '<?php'.$content."\n".'$lang["'.$key.'"] = "'.$key.'"; ?>');
-		include (Gestio::$path.'lang/'.$current_lang);
+		file_put_contents(LC::$path.'lang/'.$current_lang, '<?php'.$content."\n".'$lang["'.$key.'"] = "'.$key.'"; ?>');
+		include (LC::$path.'lang/'.$current_lang);
 	}
 	
 	// Should not append : avoid returning empty translated string
@@ -29,10 +29,10 @@ function lang(){
 }
 
 function include_all_in($path){
-	$handle = opendir(Gestio::$path.$path);
+	$handle = opendir(LC::$path.$path);
 	while ($file = readdir($handle)) {
-		if (is_file(Gestio::$path.$path.$file)){
-			include_once(Gestio::$path.$path.$file);
+		if (is_file(LC::$path.$path.$file)){
+			include_once(LC::$path.$path.$file);
 		}
 	}
 }
@@ -55,6 +55,12 @@ function get_insert_query_values($fields,$values){
 	$res_fields .= ') ';
 	$res_vals .= ') ';
 	return $res_fields.$res_vals;
+}
+
+function clean_array($origin_array,$keys_to_preserve = array()) {
+	$res = array();
+	foreach($keys_to_preserve as $k) $res[$k] = $origin_array[$k];
+	return $res;
 }
 
 /******    DEBUG FUNCTIONS  **********/
@@ -97,6 +103,7 @@ function ajax_exit(){
 	header("HTTP/1.0 403 Bad Request");
 	exit;
 }
+
 
 /******** Posted Data Handling ******/
 

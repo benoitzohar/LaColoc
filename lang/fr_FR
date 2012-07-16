@@ -40,4 +40,6 @@ $lang["user_not_connected"] = "Utilisateur non connecté.";
  
 $lang["no_dialog_file_for_the_app"] = "Fichier de dialogue inexistant pour l'application"; 
 $lang["action_not_available_for_this_app"] = "Action non disponible pour l'application"; 
-$lang["this_application_is_not_installed_for_this_user"] = "Cette application n'est pas installée pour l'utilisateur";  ?>
+$lang["this_application_is_not_installed_for_this_user"] = "Cette application n'est pas installée pour l'utilisateur";  
+$lang["Profile"] = "Profile"; 
+$lang["site_description_content"] = "Partagez vos ressources entre colocs et gérez vos dépenses, courses, etc... Ce service est gratuit (et le restera !) et évolue continuellement. Inscription rapide, prise en main immédiate. Ce site est compatible avec votre tablette et votre téléphone ;)"; ?>
