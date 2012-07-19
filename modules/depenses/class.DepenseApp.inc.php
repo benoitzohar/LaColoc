@@ -4,7 +4,7 @@ class DepenseApp {
 
 	private $error_msg = array();
 	
-	private $editable_fields = array('user_id','cost','comment','repeat','targeted_users');
+	private $editable_fields = array('user_id','cost','comment','date','repeat','targeted_users');
 
 	public function __construct() {
 		

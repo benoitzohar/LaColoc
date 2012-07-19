@@ -15,7 +15,7 @@ class Dialog_depenses {
 		$this->init();
 		if (empty($p['cost'])) return array('message' => lang('you_cannot_add_an_empty_cost'),'type' => 'alert','go_back' => true);
 		
-		$p['user_id'] = LC::$user->getId();
+		$p['user_id'] = LC::M()->user->getId();
 
 		$this->app->addDepense($p);
 		$this->app->updateTotal();
@@ -28,7 +28,7 @@ class Dialog_depenses {
 		if (empty($p['id'])) return null;
 		if (empty($p['cost'])) return array('message' => lang('you_cannot_add_an_empty_cost'),'type' => 'alert','go_back' => true);
 		
-		$p['user_id'] = LC::$user->getId();
+		$p['user_id'] = LC::M()->user->getId();
 		
 		if ($this->app->editDepense($p) === null) return null;
 		$this->app->updateTotal();
@@ -47,7 +47,7 @@ class Dialog_depenses {
 
 	public function getAllInfos($p = array()) {
 		$this->init();
-		if (!empty($p['user_id']) && $p['user_id'] != LC::$user->getId() && !User::is_in_group($p['user_id'],LC::$user->getGroup(true))) 
+		if (!empty($p['user_id']) && $p['user_id'] != LC::M()->user->getId() && !User::is_in_group($p['user_id'],LC::M()->user->getGroup(true))) 
 			return array('message' => lang('no_rights_on_this_user'),'type' => 'alert');
 		
 		$users = array();
@@ -57,7 +57,7 @@ class Dialog_depenses {
 		if (!empty($p['user_id'])) array_push($to_check,$p['user_id']);
 		// load all users from the group
 		else {
-			$gr = LC::$user->getGroup();
+			$gr = LC::M()->user->getGroup();
 			$to_check = $gr->getUsers(true); 
 		}
 		

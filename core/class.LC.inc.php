@@ -1,13 +1,17 @@
 <?php
 
+//@TODO : change self::$users, self::$group, self::$user by a non-static method (for socket ....)
+
 class LC {
+
+	public static $instances = array();
 
 	public static $current_version = 0.01;
 	
 	public static $is_installed;
 	
 	//Template
-	public static $tpl;
+	public $tpl;
 	
 	// Config
 	public static $title;
@@ -20,45 +24,45 @@ class LC {
 	// Database
 	public static $db;
 	
-	//Current user
-	public static $user;
-	public static $admin;
-	
-	//Current Application
-	public static $app;
-	
-	//Errors
-	public static $errors = array();
-		
 	//Javascript files
 	public static $js_files = array(
 		// libs
 		'libs/jquery-1.7.2.min',
-		'bootstrap.min',
-		
+		'libs/bootstrap.min',
+		'libs/bootstrap-datepicker',
 		// Core
 		'core/lc',
 		'core/com',
 		'core/fn',
 		'core/ui',
 	);
-	
-	// Javascript files for desktop only
-	public static $js_files_desktop = array(
-	//	'libs/jquery-ui-1.8.16.custom.min',
-		'libs/jquery.ediTable',
-		'libs/jquery.tipTip.minified',
-	);
 		
 	// CSS files
 	public static $css_files = array(
 		'bootstrap.min',
+		'datepicker',
 		'tipTip',
 		'lacoloc',
 	);
 	
+	//Current user
+	public $user;
+	public $admin;
 	
-	function __construct($options = array()) {
+	// Group / Users
+	public $group;
+	public $users;
+	
+	//Current Application
+	public $app;
+	
+	//Errors
+	public $errors = array();
+	
+	public $initial_data = array();
+	
+	
+	public function __construct($options = array()) {
 		
 		if (!empty(self::$path))			$prefix = self::$path;
 		else if (GESTIO_IS_ADMIN === true)	$prefix = '../';
@@ -89,28 +93,28 @@ class LC {
 		if ($options['no_template'] !== true) {
 			if(@include_once($prefix.'libs/smarty/Smarty.class.php')) {
 				if (self::$is_installed !== false)
-						self::$tpl = new Smarty();		
+						$this->tpl = new Smarty();		
 			}
-			else self::throwFatalError("Could not find the template engine (SMARTY).");	
+			else $this->throwFatalError("Could not find the template engine (SMARTY).");	
 		}
 
 	}
 	
-	function __destruct() {
-		if (count(self::$errors)>0) {
-			self::throwError();
+	public function __destruct() {
+		if (count($this->errors)>0) {
+			$this->throwError();
 		}
 	}
 	
-	static function init_template() {
+	public function init_template() {
 		
 		//check current app
 		$current_app_name = false;
-		if (LC::$app && LC::$app->getName()) {
-			$current_app_name = LC::$app->getName();
+		if ($this->app && $this->app->getName()) {
+			$current_app_name = $this->app->getName();
 		}
 		
-		$tpl = self::$tpl;
+		$tpl = $this->tpl;
 		
 		$tpl->template_dir 	= self::$path.'templates';
 		
@@ -180,55 +184,170 @@ class LC {
 			$tpl->assign('GESTIO_MENU_TPL',$menu_tpl_path);
 		}
 				
-		self::$tpl = $tpl;
+		$this->tpl = $tpl;
 
 	}
 	
-	static function display($app,$template) {
+	public function display($app,$template) {
 	
-		self::init_template();
-		
-		if (empty($app)) $app = 'main';
+		$this->init_template();
+		$this->initInfos($app);
 		
 		// Set some vars
-		self::$tpl->assign('title',self::$title);
-		self::$tpl->assign('GESTIO_URL',self::$url);
-		self::$tpl->assign('GESTIO_CURRENT_APP',$app);
-		self::$tpl->assign('GESTIO_INITIAL_DATA',self::getInitialData());
-		self::$tpl->assign('GESTIO_LANG',self::getLang(true));
-		self::$tpl->assign('GESTIO_SITE_DESCRIPTION',lang('site_description_content'));
+		$this->tpl->assign('title',self::$title);
+		$this->tpl->assign('GESTIO_URL',self::$url);
+		$this->tpl->assign('GESTIO_CURRENT_APP',$this->app);
+		$this->tpl->assign('GESTIO_INITIAL_DATA',$this->getInitialData());
+		$this->tpl->assign('GESTIO_LANG',self::getLang(true));
+		$this->tpl->assign('GESTIO_SITE_DESCRIPTION',lang('site_description_content'));
 
 		// choose the template to show
 		if ($app == 'main') {
-			self::$tpl->template_dir = self::$path.'templates';
+			$this->tpl->template_dir = self::$path.'templates';
 		}
 		else if (is_dir(self::$path.'modules/'.$app.'/templates')) {
-			self::$tpl->template_dir = self::$path.'modules/'.$app.'/templates';
+			$this->tpl->template_dir = self::$path.'modules/'.$app.'/templates';
 		}
 		
 		// if template exists : show it
-		if (is_file(self::$tpl->template_dir.'/'.$template)) {
-			self::$tpl->display($template);
+		if (is_file($this->tpl->template_dir.'/'.$template)) {
+			$this->tpl->display($template);
 		}
 		// Fallback if template doesn't exist
 		else {
-			self::$tpl->template_dir = self::$path.'templates';
-			self::$tpl->display('oops.tpl');
+			$this->tpl->template_dir = self::$path.'templates';
+			$this->tpl->display('oops.tpl');
 		}
 		
 	}
 	
-	static function getInitialData() {
-		$data = array();
-		return base64_encode(json_encode($data));
+	public function tadd($name,$value = '') {
+		if (is_array($name)) 	$this->tpl->assign($name);
+		else 					$this->tpl->assign($name,$value);
+		
 	}
 	
-	static function getLang($short_version = false) {
+	public function initInfos($app = 'main') {
+	
+		// init app
+		if (!empty($app)) $this->app = $app;
+		if (empty($this->app)) $this->app = 'main';
+	
+		// self::$user should be initialized by the LCSession checklogin()
+		if ($this->user) {
+			$this->group = new Group($this->user->get_var('group_id'));
+			$this->users = $this->group->getUsers();
+		}
+		
+		$this->loadMainInitialData();
+		
+	}
+	
+	public function loadMainInitialData() {
+		$data = array('users' => array());
+		
+		$user_private_data = array('passwd','last_login_ip');
+		
+		if ($this->user) 	$data['current_user'] = $this->user->getId();
+		if ($this->group) 	$data['group'] = $this->group->toArray();
+		if ($this->users) {
+			foreach($this->users as $u) {
+				if (!$u) continue;
+				$data['users'][$u->getId()] = $u->toArray();	
+				// clean some data (private data)
+				foreach($user_private_data as $k) {
+					$data['users'][$u->getId()][$k] = false;
+					unset($data['users'][$u->getId()][$k]);
+				}
+				
+			}
+		}
+		$this->addInitialData($data,'main');
+		
+		return true;
+	}
+	
+	public function getInitialData() {
+		$data = $this->initial_data;
+		return json_encode($data);
+	}
+	
+	public function addInitialData($data,$app = false){
+		if (empty($app)) $app = 'main';
+		if (is_array($this->initial_data[$app]))	$this->initial_data[$app] = array_merge_recursive($this->initial_data[$app],$data);
+		else $this->initial_data[$app] = $data;
+	}
+	
+	public function getLang($short_version = false) {
 		if ($short_version) return substr(self::$default_lang,0,2);
 		return self::$default_lang;
 	}
+	
+	public function getPreference($preference_name = '',$app = false,$as_object = false,$from_group_only = false) {
+		// get preference for current user	
+		if ($this-user) {
+			$user_pref = Preference::getPreferencesForUser($this->user->getId(),$preference_name,$app,!$as_object);
+			if ($user_pref && is_array($user_pref) && count($user_pref) > 0){
+				if ($as_object) return $user_pref[0];
+				else if (is_array($user_pref[0]) && array_key_exists($preference_name, $user_pref[0])) {
+					return  $user_pref[0][$preference_name];
+				}
+			}
+			// fallback : get pref from current group
+			else if ($this->group){
+				$group_pref = Preference::getPreferencesForGroup($this->group->getId(),$preference_name,$app,!$as_object);
+				if ($group_pref && is_array($group_pref) && count($group_pref) > 0){
+				if ($as_object) return $group_pref[0];
+				else if (is_array($group_pref[0]) && array_key_exists($preference_name, $group_pref[0])) {
+					return  $group_pref[0][$preference_name];
+				}
+			}
+
+			}
+		}
+		return false;
+	}
+	
+	public function setPreference($preference_name = '',$value = '',$group = false,$app = false) {
+		if (empty($preference_name)) return false;
+		if (empty($app)) $app = 'main';
 		
-	static function encodePassword($password = '',$uniqueKey = '') {
+		$existing_obj = false;
+		if ($group && $this->group) {
+			$group_pref = Preference::getPreferencesForGroup($this->group->getId(),$preference_name,$app);
+			if ($group_pref && is_array($group_pref) && count($group_pref) > 0 && is_object($group_pref[0])){
+				$existing_obj = $group_pref[0];
+			}
+
+		}
+		else if ($this->user) {
+			$user_pref = Preference::getPreferencesForUser($this->user->getId(),$preference_name,$app);
+			if ($user_pref && is_array($user_pref) && count($user_pref) > 0 && is_object($user_pref[0])){
+				$existing_obj = $user_pref[0];
+			}
+		}
+		
+		if ($existing_obj) {
+			$existing_obj->set_var('val',$value);
+			return true;
+		}
+	
+		$pref_ar = array(
+			'app' => $app,
+			'name' => $preference_name,
+			'val' => $value
+		);
+		if ($group && $this->group) $pref_ar['group_id'] = $this->group->getId();
+		else if ($this->user)		$pref_ar['user_id'] = $this->user->getId();
+		else return false;
+		
+		$new_obj = new Preference(false,$pref_ar);
+		
+		return $new_obj;
+	}
+	
+		
+	public function encodePassword($password = '',$uniqueKey = '') {
 		if (empty($password)) return false;
 		if (!empty($uniqueKey)) {
 			return crypt($password,$uniqueKey);
@@ -237,7 +356,7 @@ class LC {
 	}
 	
 	
-	static function checkPassword($password_to_check = '',$crypted_value = '') {
+	public function checkPassword($password_to_check = '',$crypted_value = '') {
 		if (empty($password_to_check)) return false;
 		if (empty($crypted_value)) {
 			$crypted_value = self::$admin_password;
@@ -256,9 +375,15 @@ class LC {
 		echo '<div style="border:1px solid gray;"><b>FATAL ERROR:</b><br /><p>'.$err.'</p></div>';
 	}
 	
-	
+	static function getInstance($uuid = 'default',$params = array()) {
+		if (!self::$instances[$uuid]) self::$instances[$uuid] = new LC($params);
+		return self::$instances[$uuid];
+	}
+	static function M($uuid = 'default') {
+		return self::getInstance($uuid);
+	}	
 }
 
-new LC($gestio_global_options);
+LC::getInstance('default',$gestio_global_options);
 
 ?>

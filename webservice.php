@@ -57,7 +57,7 @@ if (empty($app)) $app = 'main';
 if ($app != 'main') {
 
 	// make sure the app is installed for the user
-	$installed_modules = Module::get_installed_modules(LC::$user->getId(),false,true);
+	$installed_modules = Module::get_installed_modules(LC::M()->user->getId(),false,true);
 
 	if (!in_array($app,$installed_modules)) {
 		json_exit(false,false,lang('this_application_is_not_installed_for_this_user'));

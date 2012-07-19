@@ -9,7 +9,7 @@ class GDB {
 		//$db_conn->debug = true;
 		$db_conn->createdatabase = true ;
 		$res = $db_conn->Connect($gestio_db_config['host'],$gestio_db_config['user'],$gestio_db_config['pass'],$gestio_db_config['database']);
-
+		$db_conn->Execute("SET NAMES UTF8");
 		self::$gdb =& $db_conn;
 		return $db_conn;
 	}
@@ -28,6 +28,22 @@ class GDB {
 		if (!self::$gdb) return false;
 		return self::$gdb->Execute($param);
 	}
+	
+	public static function GetAll($param) {
+		if (!self::$gdb) return false;
+		return self::$gdb->GetAll($param);
+	}
+	
+	public static function GetOne($param) {
+		if (!self::$gdb) return false;
+		return self::$gdb->GetOne($param);
+	}
+	
+	public static function GetRow($param) {
+		if (!self::$gdb) return false;
+		return self::$gdb->GetRow($param);
+	}
+	
 	
 	public static function ErrorMsg() {
 		if (!self::$gdb) return false;

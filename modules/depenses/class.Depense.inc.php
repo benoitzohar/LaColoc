@@ -3,7 +3,7 @@
 class Depense extends Entity {
 
 	public static $classname = 'Depense';
-	public static $fields = array('id','user_id','cost','comment','repeat','targeted_users','created','updated','deleted');
+	public static $fields = array('id','user_id','cost','comment','date','repeat','targeted_users','created','updated','deleted');
 	public static $table = 'lc_depenses';
 	
 	protected $_classname;
@@ -17,6 +17,7 @@ class Depense extends Entity {
 	protected $user_id;
 	protected $cost;
 	protected $comment;
+	protected $date;
 	protected $repeat;
 	protected $targeted_users;
 	protected $date_created;
@@ -43,11 +44,11 @@ class Depense extends Entity {
 	}
 	
 	static function getSumForUser($user_id) {
-		return GDB::db()->GetOne("SELECT SUM(cost) FROM ".self::$table." WHERE user_id = ?",array($user_id));
+		return GDB::GetOne("SELECT SUM(cost) FROM ".self::$table." WHERE user_id = ?",array($user_id));
 	}
 
 	static function getSumForGroup($group_id) {
-		return GDB::db()->GetOne("SELECT SUM(cost) FROM ".self::$table." WHERE user_id IN (SELECT id FROM ".User::$table." WHERE group_id = ?)",array($group_id));
+		return GDB::GetOne("SELECT SUM(cost) FROM ".self::$table." WHERE user_id IN (SELECT id FROM ".User::$table." WHERE group_id = ?)",array($group_id));
 	}
 
 }

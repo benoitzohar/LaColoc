@@ -3,7 +3,7 @@
 class User extends Entity {
 	
 	public static $classname = 'User';
-	public static $fields = array('id','login','passwd','last_login_time','last_login_ip','group_id','created','updated','deleted');
+	public static $fields = array('id','login','passwd','firstname','lastname','last_login_time','last_login_ip','group_id','created','updated','deleted');
 	public static $table = 'lc_users';
 	
 	protected $_classname;
@@ -17,9 +17,11 @@ class User extends Entity {
 	protected $id;
 	protected $login;
 	protected $passwd;
-	protected $group_id;
+	protected $firstname;
+	protected $lastname;
 	protected $last_login_time;
 	protected $last_login_ip;
+	protected $group_id;
 	protected $created;
 	protected $updated;
 	protected $deleted;

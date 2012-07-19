@@ -23,14 +23,51 @@ body {
 	background: #f5f5f5;
 }
 
-
-
 .hidden{
 	display:none;
 }
 .visible {
 	display:block;
 }
+
+.rotate180 {
+	-webkit-animation: bounceIn 0.7s ease-in-out;
+	-moz-animation: bounceIn 0.7s ease-in-out;
+	-ms-animation: bounceIn 0.7s ease-in-out;
+	-o-animation: bounceIn 0.7s ease-in-out;
+	animation: bounceIn 0.7s ease-in-out;
+}
+
+@-webkit-keyframes bounceIn{  
+	from {-webkit-transform: rotate(0deg);}
+    75%  {-webkit-transform: rotate(-200deg);}
+    90%  {-webkit-transform: rotate(-175deg);}
+    to   {-webkit-transform: rotate(-180deg);} 
+} 
+@-moz-keyframes bounceIn{	
+    from {-moz-transform: rotate(0deg);}
+    75%  {-moz-transform: rotate(-200deg);}
+    90%  {-moz-transform: rotate(-175deg);}
+    to   {-moz-transform: rotate(-180deg);} 
+}     
+@-ms-keyframes bounceIn{
+	from {-moz-transform: rotate(0deg);}
+    75%  {-moz-transform: rotate(-200deg);}
+    90%  {-moz-transform: rotate(-175deg);}
+    to   {-moz-transform: rotate(-180deg);} 
+} 
+@-o-keyframes bounceIn{
+	from {-o-transform: rotate(0deg);}
+    75%  {-o-transform: rotate(-200deg);}
+    90%  {-o-transform: rotate(-175deg);}
+    to   {-o-transform: rotate(-180deg);} 
+} 
+@keyframes bounceIn{	
+	from {transform: rotate(0deg);}
+    75%  {transform: rotate(-200deg);}
+    90%  {transform: rotate(-175deg);}
+    to   {transform: rotate(-180deg);} 
+}  
 
 
 /***** Logo ****/

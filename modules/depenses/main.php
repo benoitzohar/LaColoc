@@ -1,9 +1,20 @@
 <?php
 
-require_once "class.DepenseApp.inc.php";
-require_once "class.Depense.inc.php";
+require_once LC::$path."modules/depenses/class.dialog.inc.php";
+
+$dialog_depenses = new Dialog_depenses();
+
+LC::M()->addInitialData($dialog_depenses->getAllInfos(),'depenses');
+
+LC::M()->tadd(array(
+	'lang' => array(
+		'add' => lang('Add'),
+		'cancel' => lang('Cancel'),
+		'add_expense'=> lang('Add_an_expense')
+	)
+));
 
 
-LC::display(LC::$app->getName(),'main.tpl');
+LC::M()->display(LC::M()->app->getName(),'main.tpl');
 
 ?>

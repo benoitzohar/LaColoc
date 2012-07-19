@@ -22,6 +22,10 @@
 	</head>
 	<body>
 	
+	<p id="description" style="position:absolute;bottom:0px;width:70%;left:15%;text-align:center;">
+		{$GESTIO_SITE_DESCRIPTION}
+	</p>
+	
 	<form action="" method="post" id="login_form">
 	
 		<div id="form_div">

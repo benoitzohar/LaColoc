@@ -103,6 +103,8 @@ abstract class Entity {
 		return false;
 	}
 	
+	public function toArray($keys = false) { return $this->to_array($keys); }
+	
 	public function delete() {
 		$query = "DELETE FROM ".$this->_table." WHERE id = ".$this->id." LIMIT 1;";
 		if (!GDB::db()->Execute($query)) {

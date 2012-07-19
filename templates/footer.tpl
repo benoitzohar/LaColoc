@@ -2,7 +2,7 @@
 </div>
  <footer><p>&copy; LaColoc.fr 2012</p></footer>
 {$GESTIO_JS_FILES}
-<script> lc.init('{$GESTIO_URL}','{$GESTIO_CURRENT_APP}','{$GESTIO_INITIAL_DATA}'); </script>
+<script> lc.init('{$GESTIO_URL}','{$GESTIO_CURRENT_APP}',{$GESTIO_INITIAL_DATA}); </script>
 <script type="text/javascript">
 var _gaq = _gaq || []; _gaq.push(['_setAccount', 'UA-33326287-1']); _gaq.push(['_trackPageview']);
 (function() {

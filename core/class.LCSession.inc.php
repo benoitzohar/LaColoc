@@ -23,7 +23,7 @@ class LCSession {
 	
 	function logUserIn($login,$password,$remember = false,$already_salted = false) {
 		if (!$already_salted) {
-			$password = LC::encodePassword($password);
+			$password = LC::M()->encodePassword($password);
 		}
 		
 		if (GESTIO_IS_ADMIN === true) {
@@ -52,7 +52,7 @@ class LCSession {
 			$current_user->set_var('last_login_time',time());
 			$current_user->set_var('last_login_ip',$_SERVER['REMOTE_ADDR']);
 			
-			LC::$user = $current_user;
+			LC::M()->user = $current_user;
 			return true;
 		}
 		return false;
@@ -82,7 +82,7 @@ class LCSession {
 			return ($session_login || $cookie_login);
 		}
 		else {	
-			if (!empty(LC::$user)) return true;
+			if (!empty(LC::M()->user)) return true;
 			
 			// Try to login from the session
 			$session_login = $this->logUserIn($this->getSession('login'),$this->getSession('password'),false,true);
@@ -160,11 +160,11 @@ class LCSession {
 		}
 		
 		if (!self::$instance->userIsLogged()) {	
-			if (LC::$tpl) {
-				LC::$tpl->assign('title',lang('la Coloc\''));
+			if (LC::M()->tpl) {
+				LC::M()->tpl->assign('title',lang('la Coloc\''));
 				$login_tpl = 'login.tpl';
 				if (GESTIO_IS_ADMIN === true) $login_tpl = 'admin/'.$login_tpl;
-				LC::display(false,$login_tpl);
+				LC::M()->display(false,$login_tpl);
 				exit;
 			}
 			return false;
