@@ -26,6 +26,7 @@ class DepenseApp {
 	public function deleteDepense($id) {
 		$dep = new Depense($id);
 		$dep->set_var('deleted',time());
+		return true;
 	}
 	
 	public function editDepense($p) {

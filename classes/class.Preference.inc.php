@@ -31,15 +31,17 @@ class Preference extends Entity {
 		parent::__construct($id,$infos);
 	}
 	
-	static function getPreferencesForUser($user_id = 0,$preference_name = '',$as_array = false,$order = '') {
+	static function getPreferencesForUser($user_id = 0,$preference_name = '',$app = '',$as_array = false,$order = '') {
 		if (empty($user_id)) return false;
+		if (empty($app)) $app = 'main';
 		$where = array('user_id' => $user_id);
 		if (!empty($preference_name)) $where['name'] = $preference_name;
 		return parent::get(self::$classname,$where,$order,$as_array,true);
 	}
 	
-	static function getPreferencesForGroup($group_id = 0,$preference_name = '',$as_array = false,$order = '') {
+	static function getPreferencesForGroup($group_id = 0,$preference_name = '',$app = '',$as_array = false,$order = '') {
 		if (empty($group_id)) return false;
+		if (empty($app)) $app = 'main';
 		$where = array('group_id' => $group_id);
 		if (!empty($preference_name)) $where['name'] = $preference_name;
 		return parent::get(self::$classname,$where,$order,$as_array,true);

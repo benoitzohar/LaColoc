@@ -1,6 +1,7 @@
 <!-- closing contener div-->
 </div>
  <footer><p>&copy; LaColoc.fr 2012</p></footer>
+<script type="text/javascript" src="{$GESTIO_URL}js/core/lang.js.php?lang={$GESTIO_LANG_LONG}"></script>
 {$GESTIO_JS_FILES}
 <script> lc.init('{$GESTIO_URL}','{$GESTIO_CURRENT_APP}',{$GESTIO_INITIAL_DATA}); </script>
 <script type="text/javascript">

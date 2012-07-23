@@ -11,7 +11,9 @@ var lc = {
 	current_user : false,
 	
 	users : {},
-	group : false,
+	group : {},
+	
+	preferences : {},
 
 	init : function(url,app,initial_data) {
 		if (com) 	com.init(url);
@@ -29,7 +31,7 @@ var lc = {
 		if (!raw) return false;
 		console.log('loadData from MAIN:',raw);
 		// load simple data
-		var keys = ['current_user','group'];
+		var keys = ['current_user','group','preferences'];
 		for(var k in keys){
 			var r = raw[keys[k]];
 			if (typeof r != 'undefined' && r !== null) {
@@ -71,6 +73,29 @@ var lc = {
 			else			 return this.current_user;
 		}
 		return false;
+	},
+	
+	getCurrentGroup : function() {
+		return this.group;
+	},
+
+	
+	getUser : function(user_id) {
+		if (user_id) return this.users[user_id];
+		return false;
+	},
+	
+	getPreference : function(name,default_value) {
+		if (this.preferences && this.preferences.hasOwnProperty(name)) return this.preferences[name];
+		return default_value;
+	},
+	
+	savePreference : function(name,val,app) {
+		this.preferences[name] = val;
+		com.send('setPreference',{
+			name : name,
+			value : val
+		},app)
 	}
 
 }

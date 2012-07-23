@@ -21,12 +21,12 @@ var fn = {
         else if (output_format == 'string' || output_format == 'string_no_hours' || output_format == 'string_with_minutes')
         {
             if (date_object.getTime() == 0) return '';
-            var date_string = this.getPreferences('dateformat');
+            var date_string = lc.getPreference('dateformat','dd/mm/yyyy');
             var date_day = date_object.getDate();
             var date_month = date_object.getMonth() + 1;
-            date_string = date_string.replace('d', date_day < 10 ? '0' + date_day.toString() : date_day);
-            date_string = date_string.replace('m', date_month < 10 ? '0' + date_month.toString() : date_month);
-            date_string = date_string.replace('Y', date_object.getFullYear());
+            date_string = date_string.replace('dd', date_day < 10 ? '0' + date_day.toString() : date_day);
+            date_string = date_string.replace('mm', date_month < 10 ? '0' + date_month.toString() : date_month);
+            date_string = date_string.replace('yyyy', date_object.getFullYear());
             if (output_format == 'string_no_hours') return date_string;
             var minutes = '0';
             if (output_format == 'string_with_minutes') minutes = date_object.getMinutes();
@@ -74,7 +74,7 @@ var fn = {
         else if (date && isNaN(date) && date != '')
         {
             var rx;
-            var dateformat = this.getPreferences('dateformat');
+            var dateformat = lc.getPreference('dateformat','dd/mm/yyyy');
             var delimiter = dateformat.match(/\w(.)\w(.)\w/);
             delimiter = delimiter[1];
 

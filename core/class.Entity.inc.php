@@ -118,12 +118,12 @@ abstract class Entity {
         $db = GDB::db();
     	$res = array();
     	
-    	$deleted_str = (!$include_deleted?' AND ifnull(deleted,0) <> 1 ':'');
+    	$deleted_str = (!$include_deleted?' AND ifnull(deleted,0) = 0 ':'');
     	
     	$where_str = '';
     	if (is_array($where)) {
     		foreach($where as $wh_key => $wh_val) {
-    			$where_str .= 'AND '.$wh_key." = '".$wh_val."' ";
+    			$where_str .= 'AND '.mysql_real_escape_string($wh_key)." = '".mysql_real_escape_string($wh_val)."' ";
     		}
     		if (!empty($where_str)) {
     			$where_str = 'WHERE '.substr($where_str,3).$deleted_str;
@@ -131,7 +131,7 @@ abstract class Entity {
     	} else if (!empty($where)){
     		$where_str = 'WHERE '.$where.$deleted_str;
     	}
-    	
+
     	$order = $order? "ORDER BY ".mysql_real_escape_string($order)." ;" : ";";
     	$sql = $db->Execute("SELECT id FROM ".$classname::$table." ".$where_str." ".$order);
     	while (is_object($sql) && !$sql->EOF){
@@ -148,7 +148,7 @@ abstract class Entity {
     	if (empty($classname)) return array();
         $db = GDB::db();
     	$res = array();
-    	$deleted_str = (!$include_deleted?' WHERE ifnull(deleted,0) <> 1 ':'');
+    	$deleted_str = (!$include_deleted?' WHERE ifnull(deleted,0) = 0 ':'');
     	$order = $order? " ORDER BY ".mysql_real_escape_string($order)." ;" : ";";
 
     	$sql = $db->Execute("SELECT id FROM ".$classname::$table.$deleted_str.$order);

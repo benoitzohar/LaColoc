@@ -5,18 +5,14 @@ function lang(){
 	$key = array_shift($params);
 	$current_lang = '';
 	
-	if (!is_file(LC::$path.'lang/'.$current_lang)){
-		$current_lang = LC::$default_lang;
-	}
-
-	include (LC::$path.'lang/'.$current_lang);
-
+	$lang = get_lang_array($current_lang);
+	
 	// Temporary : add missing key to the end of the file
 	if (empty($lang[$key])){
 		$content = file_get_contents(LC::$path.'lang/'.$current_lang);
 		$content = str_replace('<?php','',$content);
 		$content = str_replace('?>','',$content);
-		file_put_contents(LC::$path.'lang/'.$current_lang, '<?php'.$content."\n".'$lang["'.$key.'"] = "'.$key.'"; ?>');
+		file_put_contents(LC::$path.'lang/'.$current_lang, '<?php'.$content."\n".'$lang["'.$key.'"] = "'.$key.'"; '."\n".'?>');
 		include (LC::$path.'lang/'.$current_lang);
 	}
 	
@@ -26,6 +22,15 @@ function lang(){
 	}
 	
 	return call_user_func_array('sprintf',array_merge(array($lang[$key]),$params));
+}
+
+function get_lang_array($clang) {
+	if (!is_file(LC::$path.'lang/'.$clang)){
+		$clang = LC::$default_lang;
+	}
+
+	include(LC::$path.'lang/'.$clang);
+	return $lang;
 }
 
 function include_all_in($path){

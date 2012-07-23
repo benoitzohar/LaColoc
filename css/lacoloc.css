@@ -14,8 +14,8 @@
 /****** General *****/
 * {
 	font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", georgia, Lucida, Arial, sans-serif;
-	font-weight: 300;
-	font-size:16px;
+	/*font-weight: 300;
+	font-size:16px;*/
 	letter-spacing:1px;
 }
 
@@ -29,6 +29,14 @@ body {
 .visible {
 	display:block;
 }
+
+
+input.numbered {
+	text-align: right;
+}
+
+
+
 
 .rotate180 {
 	-webkit-animation: bounceIn 0.7s ease-in-out;
@@ -70,6 +78,8 @@ body {
 }  
 
 
+
+
 /***** Logo ****/
 
 .logo_inactive {
@@ -108,21 +118,4 @@ body {
 
 #content {
 	min-height: 300px;
-}
-
-/******* Tables *****/
-
-table {
-	border: none;
-	border-spacing: 10px;
-}
-
-th {
-	border:none;
-	border-bottom: 1px dashed black;
-	padding-bottom: 5px;
-}
-
-td {
-	border:none;
 }

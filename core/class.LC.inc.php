@@ -56,6 +56,8 @@ class LC {
 	//Current Application
 	public $app;
 	
+	public $lang;
+	
 	//Errors
 	public $errors = array();
 	
@@ -107,6 +109,9 @@ class LC {
 	}
 	
 	public function init_template() {
+		
+		// init langs
+		$this->lang = get_lang_array(self::getLang());
 		
 		//check current app
 		$current_app_name = false;
@@ -199,7 +204,11 @@ class LC {
 		$this->tpl->assign('GESTIO_CURRENT_APP',$this->app);
 		$this->tpl->assign('GESTIO_INITIAL_DATA',$this->getInitialData());
 		$this->tpl->assign('GESTIO_LANG',self::getLang(true));
+		$this->tpl->assign('GESTIO_LANG_LONG',self::getLang());
 		$this->tpl->assign('GESTIO_SITE_DESCRIPTION',lang('site_description_content'));
+		
+		// Langs
+		$this->tpl->assign('lang',$this->lang);
 
 		// choose the template to show
 		if ($app == 'main') {

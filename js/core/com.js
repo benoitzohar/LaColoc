@@ -23,7 +23,9 @@ var com = {
 	 */
 	dialog : function(action,original_data,res) {
 		switch (action) {
-			case 'a': break;
+			case 'setPreference': 
+				
+				break;
 			default : fn.debug("action non gérée :"+action);
 		}
 	},
@@ -39,12 +41,17 @@ var com = {
 		if (rep.message) fn.debug('message = ',rep.message);
 		var d = rep.data;
 		var cur_app = lc.getCurrentApp();
-		var target = this;
+		var target = com;
 		if (cur_app && cur_app == d.app) target = apps[d.app];
-		
+	
 		if (target && target.dialog) target.dialog(d.action,d.params,d.result);
 		
 		ui.loading(false);
+		
+		// show alerts
+		if (d.result && d.result.type && d.result.message) {
+			if (d.result.type == 'alert') alert(d.result.message);
+		}
 	},
 	
 	/*
