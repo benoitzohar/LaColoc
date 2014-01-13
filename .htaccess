@@ -1,3 +1,10 @@
+ErrorDocument 404 /error.php?c=404
+ErrorDocument 403 /error.php?c=403
+ErrorDocument 500 /error.php?c=500
 Options +FollowSymlinks
 RewriteEngine On
-RewriteRule ^(app|coloc|action)/(.+)$ /?$1=$2 [L]
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(app|page|coloc|action)/(.+)$ /?$1=$2 [L]
+RewriteRule ^api/(.+)/(.+)$ /webservice.php?app=$1&action=$2 [L]
+RewriteRule ^auth/(.+)$ /?action=auth&option=$1 [QSA,L]

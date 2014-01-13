@@ -1,8 +1,8 @@
 <html>
 <head>
 	<title>{$title}</title>
-	{$GESTIO_JS_FILES}
-	{$GESTIO_CSS_FILES}
+	{$JS_FILES}
+	{$CSS_FILES}
 
 </head>
 

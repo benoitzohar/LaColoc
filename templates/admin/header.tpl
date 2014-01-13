@@ -4,7 +4,7 @@
 		<title>{$title}</title>
 		
 		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-1.7.2.min.js"></script>
-		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-ui-1.8.5.js"></script>
+		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery-ui-1.8.16.custom.min.js"></script>
 		<script type="text/javascript" src="{$GESTIO_JS}libs/jquery.ediTable.js"></script>
 		<script type="text/javascript" src="{$GESTIO_JS}admin/lc.admin.js"></script>
 		

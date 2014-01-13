@@ -160,7 +160,7 @@ class Gestio_install {
 		
 		$file_content = file_get_contents($filename);
 		
-		$file_content = str_replace('{gestio_prefix}','gestio_',$file_content);
+		$file_content = str_replace('{gestio_prefix}','lc_',$file_content);
 		$file_content = str_replace('{gestio_db}',$this->gestio_db_dbname,$file_content);
 		
 		//remove line endings

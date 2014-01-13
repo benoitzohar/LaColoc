@@ -56,7 +56,7 @@ var fn = {
             return date_iso
         }
 
-        return cdate;
+        return fn.parseInt(date_object.getTime()/1000);
     },
 
     /**
@@ -71,8 +71,7 @@ var fn = {
         // If date is already an object
         if (typeof(date) === 'object') return date;
         // if date is a string
-        else if (date && isNaN(date) && date != '')
-        {
+        else if (date && isNaN(date) && date != '') {
             var rx;
             var dateformat = lc.getPreference('dateformat','dd/mm/yyyy');
             var delimiter = dateformat.match(/\w(.)\w(.)\w/);
@@ -84,15 +83,15 @@ var fn = {
 
             if (rx == null) return null;
 
-            if (dateformat == 'd' + delimiter + 'm' + delimiter + 'Y')
+            if (dateformat == 'dd' + delimiter + 'mm' + delimiter + 'yyyy')
             {
                 d = new Date(rx[3], rx[2] - 1, rx[1], rx[4] || 0);
             }
-            else if (dateformat == 'm' + delimiter + 'd' + delimiter + 'Y')
+            else if (dateformat == 'mm' + delimiter + 'dd' + delimiter + 'yyyy')
             {
                 d = new Date(rx[3], rx[1] - 1, rx[2], rx[4] || 0);
             }
-            else if (dateformat == 'Y' + delimiter + 'm' + delimiter + 'd')
+            else if (dateformat == 'yyyy' + delimiter + 'mm' + delimiter + 'dd')
             {
                 d = new Date(rx[1], rx[2] - 1, rx[3], rx[4] || 0);
             }
@@ -104,7 +103,71 @@ var fn = {
         }
 
         return d;
-    }
+    },
+    
+    exists : function(a) {
+	    return (typeof(a)!='undefined' && a !== null);
+    },
+    
+    parseInt : function(val,base) {
+	    if (!base) base = 10;
+	    return parseInt(val,base);
+    },
 
+    isValidEmail : function(str) { console.log('str,',str,' test=', /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(str));
+	    return /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/.test(str);
+    },
+    
+    size : function(o) {
+	    if (!o) return 0;
+	    var size = 0, key;
+	    if (typeof o == 'array') return o.length;
+	    for (key in o) {
+	        if (o.hasOwnProperty(key)) size++;
+	    }
+    	return size;
+    },
+    
+    array_unique : function(arr) {
+		var o = {}, i, l = arr.length, r = [];
+		for(i=0; i<l;i+=1) o[arr[i]] = arr[i];
+		for(i in o) r.push(o[i]);
+		return r;
+	},
+	
+	merge : function(base_object,merging_object) {
+		var res = {};
+		if (typeof base_object !== 'object' || typeof merging_object !== 'object') return {};
+		for(k in base_object) res[k] = base_object[k];
+		for(k in merging_object) res[k] = merging_object[k];
+		return res;
+	},
+	
+	/**
+	 * getkeys() : return the keys of an object
+	 * param: obj	Object	
+	 * return	Array of String
+	 */
+	getKeys : function(obj){
+		var keys = [];
+		if (obj) {
+			for(var key in obj) keys.push(key);
+		}
+		return keys;
+	},
+
+	/**
+	 * inArray()
+	 * param:	ar	Array	
+	 * param:	value	String/Object : value to find
+	 * return Boolean	True if the value is in the array
+	 */
+	inArray : function(ar,value) {
+		if (!ar || !ar.length) return false; 
+		for(var i=0;i<ar.length;i++) {
+			if (ar[i] == value) return true;
+		}
+		return false;
+	}
 
 }

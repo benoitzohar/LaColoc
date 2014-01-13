@@ -1,8 +1,8 @@
 <?php
 header('Content-type: application/x-javascript');
-if (empty($_REQUEST['lang']) || !is_file('../../lang/'.$_REQUEST['lang'])) exit();
+if (empty($_REQUEST['lang']) || !is_file(dirname(__FILE__).'/../../lang/'.$_REQUEST['lang'])) exit();
 
-require_once('../../lang/'.$_REQUEST['lang']);
+require_once(dirname(__FILE__).'/../../lang/'.$_REQUEST['lang']);
 
 echo " function L(k) { \n var la = { \n";
 foreach($lang as $key => $val) {
