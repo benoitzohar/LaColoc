@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `{gestio_db}`.`{gestio_prefix}users` (
 `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
 `login` TEXT NOT NULL ,
 `passwd` TEXT NOT NULL ,
- `last_login_time` int(11) NOT NULL,
+`last_login_time` int(11) NOT NULL,
 `last_login_ip` TEXT NOT NULL
 ) ENGINE = MYISAM;
 

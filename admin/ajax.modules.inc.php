@@ -9,7 +9,7 @@ switch ($_REQUEST['action']){
 		if (!request_vars_not_empty('app_name'))
 			ajax_exit();
 		
-		$app_to_install = new gestio_module($_REQUEST['app_name']);
+		$app_to_install = new Module($_REQUEST['app_name']);
 		$new_app = $app_to_install->install();
 		if (is_object($new_app)) {
 			
@@ -33,7 +33,7 @@ switch ($_REQUEST['action']){
 		if (!request_vars_not_empty('app_name'))
 			ajax_exit();
 		
-		$app_to_uninstall = new gestio_module($_REQUEST['app_name']);
+		$app_to_uninstall = new Module($_REQUEST['app_name']);
 		if($app_to_uninstall->uninstall()) {
 			$res = array('display' => lang('app_uninstalled'),
 						 'name' 	 => $app_to_uninstall->get_var('name'),

@@ -1,4 +1,4 @@
-<?
+<?php
 
 function lang(){	
 	$params = func_get_args();
@@ -67,6 +67,38 @@ function clean_array($origin_array,$keys_to_preserve = array()) {
 		if (array_key_exists($k,$origin_array)) $res[$k] = $origin_array[$k];
 	}
 	return $res;
+}
+
+function isValidEmail($email){
+    return preg_match("/^[_a-z0-9-]+(\.[_a-z0-9+-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/i", $email);
+}
+
+/*
+ *  json_exit() Echo a jsonized array and exit
+ *  @param Boolean $status
+ *  @param Array $data OR String eg : "key1:param1,key2:param2"
+ *	@param String	$message
+ */
+function json_exit($status = false, $data = false, $message = '') {
+
+	$array_to_jsonize = array('status' => ($status?true:false),'message' => $message,'data' => array());
+	if ($data && is_array($data)) {
+		foreach ($data as $key => $param) $array_to_jsonize['data'][$key] = $param;
+	} 
+	else if ($data && is_string($data)) {
+		foreach (explode(',', $data) as $param) {
+			list($key, $value) = explode(':', $param);
+			$array_to_jsonize['data'][$key] = $value;
+		}
+	}
+	
+	// stop buffering
+	$buffer_content = ob_get_contents();
+	if (!empty($buffer_content)) $array_to_jsonize['message'] .= '['.$buffer_content.']';
+	ob_end_clean();
+	
+	echo @json_encode($array_to_jsonize);
+	exit;
 }
 
 /******    DEBUG FUNCTIONS  **********/

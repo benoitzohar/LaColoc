@@ -1,16 +1,14 @@
 #!/php -q
-<?php  /*  >php -q socket.php  */
-
-//phpinfo();
+<?php  /*  >php -q server.php  */
 
 error_reporting(E_ALL);
 set_time_limit(0);
 ob_implicit_flush();
 
-$master  = WebSocket("localhost",123456);
+$master  = WebSocket("0.0.0.0",10005);
 $sockets = array($master);
 $users   = array();
-$debug   = true;
+$debug   = false;
 
 while(true){
   $changed = $sockets;
@@ -108,9 +106,9 @@ function dohandshake($user,$buffer){
   $spaces2 = strlen(preg_replace($pattern, $replacement, $strkey2));
 
   if ($spaces1 == 0 || $spaces2 == 0 || $numkey1 % $spaces1 != 0 || $numkey2 % $spaces2 != 0) {
-        socket_close($user->socket);
-        console('failed');
-        return false;
+	socket_close($user->socket);
+	console('failed');
+	return false;
   }
 
   $ctx = hash_init('md5');

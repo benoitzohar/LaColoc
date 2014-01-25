@@ -1,6 +1,5 @@
 $(document).ready(function() {
   
-	$("#test").reflect({});
 	
 	$("#ajax-loader").ajaxStart(function(){
 		$(this).fadeIn();

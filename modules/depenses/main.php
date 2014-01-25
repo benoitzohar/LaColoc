@@ -8,17 +8,17 @@ LC::M()->addInitialData($dialog_depenses->getAllInfos(),'depenses');
 
 $devise = '€';
 if (LC::M()->user) {
-	$group = LC::M()->user->getGroup();
+	$group = LC::M()->user->getCurrentGroup();
 	if ($group) {
 		$devise = $group->getDevise();
 	}
 }
 
-LC::M()->tadd(array(
+LC::UI()->tadd(array(
 	'current_day' => date("d/m/Y"),
 	'devise' => $devise
 ));
 
-LC::M()->display(LC::M()->app->getName(),'main.tpl');
+LC::UI()->display(LC::M()->app->getName(),'main.tpl');
 
 ?>

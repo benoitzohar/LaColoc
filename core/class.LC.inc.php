@@ -14,12 +14,15 @@ class LC {
 	public $tpl;
 	
 	// Config
+	public static $config;
 	public static $title;
 	public static $path;
 	public static $uniqueKey;
 	public static $url;
 	public static $default_lang;
 	public static $admin_password;
+	public static $admin_email;
+	public static $status;
 	
 	// Database
 	public static $db;
@@ -31,12 +34,17 @@ class LC {
 		'libs/bootstrap.min',
 		'libs/bootstrap-datepicker',
 		'libs/jquery.base64.min',
+		'libs/jquery.ui.widget',
+		'libs/jquery.iframe-transport',
+		'libs/jquery.fileupload',
+		
 		
 		// Core
 		'core/lc',
 		'core/com',
 		'core/fn',
 		'core/ui',
+		'core/lc.profile',
 	);
 		
 	// CSS files
@@ -49,6 +57,7 @@ class LC {
 	
 	//Current user
 	public $user;
+	public $auth;
 	public $admin;
 	
 	// Group / Users
@@ -69,17 +78,20 @@ class LC {
 	public function __construct($options = array()) {
 		
 		if (!empty(self::$path))			$prefix = self::$path;
-		else if (GESTIO_IS_ADMIN === true)	$prefix = '../';
+		else if (LC_IS_ADMIN === true)	$prefix = '../';
 		else								$prefix = '';
 			
 		// Include config
 		if(include_once($prefix.'config/config.inc.php')) {
-			self::$title = $gestio_config['title'];
-			self::$path = $gestio_config['path'];
-			self::$url = $gestio_config['url'];
-			self::$uniqueKey = $gestio_config['uniqueKey'];
-			self::$default_lang = $gestio_config['default_lang'];
-			self::$admin_password = $gestio_config['admin_password'];
+			self::$title = $config['title'];
+			self::$path = $config['path'];
+			self::$url = $config['url'];
+			self::$uniqueKey = $config['uniqueKey'];
+			self::$default_lang = $config['default_lang'];
+			self::$admin_password = $config['admin_password'];
+			self::$admin_email = $config['admin_email'];
+			self::$status = $config['status'];
+			self::$config = $config;
 			
 		} else self::$is_installed = false;
 		
@@ -87,7 +99,7 @@ class LC {
 		if (@include_once($prefix.'config/db.inc.php')) {
 			@include_once($prefix.'libs/adodb5/adodb.inc.php');
 			if(@include_once('class.GDB.inc.php')) {
-				self::$db = new GDB($gestio_db_config);
+				self::$db = new GDB($db_config);
 				@include_once('class.Entity.inc.php');
 			}
 		} else self::$is_installed = false;
@@ -96,11 +108,16 @@ class LC {
 		if (!array_key_exists('no_template',$options) || $options['no_template'] !== true) {
 			if(@include_once($prefix.'libs/smarty/Smarty.class.php')) {
 				if (self::$is_installed !== false)
-						$this->tpl = new Smarty();		
+						$this->tpl = new Smarty();	
 			}
-			else $this->throwFatalError("Could not find the template engine (SMARTY).");	
+			else $this->throwFatalError("Could not find the template engine (SMARTY).");
 		}
-
+		
+		// init UI
+		$this->ui = new UI();
+		
+		// init langs
+		$this->lang = get_lang_array(self::getLang());
 	}
 	
 	public function __destruct() {
@@ -244,7 +261,7 @@ class LC {
 	
 		if ($this->user) {
 			$this->group = $this->user->getCurrentGroup();
-			$this->users = $this->group->getUsers();
+			if ($this->group) $this->users = $this->group->getUsers();
 		}
 		
 		$this->loadMainInitialData();
@@ -253,21 +270,14 @@ class LC {
 	
 	public function loadMainInitialData() {
 		$data = array('users' => array());
-		
-		$user_private_data = array('passwd','last_login_ip');
-		
+
 		if ($this->user) 	$data['current_user'] = $this->user->getId();
 		if ($this->group) 	$data['group'] = $this->group->toArray();
+		if (!$this->users && $this->user) $this->users = array($this->user); //get at least the current user
 		if ($this->users) {
 			foreach($this->users as $u) {
 				if (!$u) continue;
-				$data['users'][$u->getId()] = $u->toArray();	
-				// clean some data (private data)
-				foreach($user_private_data as $k) {
-					$data['users'][$u->getId()][$k] = false;
-					unset($data['users'][$u->getId()][$k]);
-				}
-				
+				$data['users'][$u->getId()] = $u->toArray(false,true);
 			}
 		}
 		$this->addInitialData($data,'main');
@@ -277,7 +287,7 @@ class LC {
 	
 	public function getInitialData() {
 		$data = $this->initial_data;
-		return json_encode($data);
+		return base64_encode(json_encode($data));
 	}
 	
 	public function addInitialData($data,$app = false){
@@ -354,7 +364,7 @@ class LC {
 		
 		return $new_obj;
 	}
-	
+
 		
 	public function encodePassword($password = '',$uniqueKey = '') {
 		if (empty($password)) return false;
@@ -374,6 +384,9 @@ class LC {
 		return (crypt($password_to_check,self::$uniqueKey) == $crypted_value);
 	}
 
+	static function isProd() { return empty(self::$status); }
+	static function isBeta() { return self::$status === 1; }
+	static function isAlpha() { return self::$status === 2; }
 	
 	static function throwFatalError($err) {
 		self::throwError($err);
@@ -391,9 +404,12 @@ class LC {
 	static function M($uuid = 'default') {
 		return self::getInstance($uuid);
 	}	
+	static function UI($uuid = 'default') {
+		return self::getInstance($uuid)->ui;
+	}
 }
 
-if (!isset($gestio_global_options)) $gestio_global_options = array();
-LC::getInstance('default',$gestio_global_options);
+if (!isset($LC_global_options)) $LC_global_options = array();
+LC::getInstance('default',$LC_global_options);
 
 ?>

@@ -25,12 +25,12 @@ var lc = {
 			if (initial_data && initial_data[app]) d = initial_data[app];
 			this.loadApp(app,d);
 		}
-		
+		ui.initProfilPictures();
 	},
 	
 	loadData : function(raw) {
 		if (!raw) return false;
-		console.log('loadData from MAIN:',raw);
+
 		// load simple data
 		var keys = ['current_user','group','preferences'];
 		for(var k in keys){
@@ -58,7 +58,7 @@ var lc = {
 			this.current_app = app;
 			apps[app].init(initial_data);
 		}
-	},
+	}, //8276
 	
 	getCurrentApp: function(full_object) {
 		if (this.current_app != false) {
@@ -79,6 +79,12 @@ var lc = {
 	getCurrentGroup : function() {
 		return this.group;
 	},
+	
+	switchGroup : function(new_group_id) {
+		if (!new_group_id) return false;
+		
+		com.send('switchGroup',{new_group_id:new_group_id},'main');
+	},
 
 	
 	getUser : function(user_id) {
@@ -97,6 +103,28 @@ var lc = {
 			name : name,
 			value : val
 		},app)
+	},
+	
+	
+	
+	initProfilForm : function(form) {
+		if (!form) return false;
+		form.find('input').keyup(function(e){
+			lc.onProfilInputChange($(this).attr('id'),form,e);
+		});
+	},
+	onProfilInputChange : function(id,form,evt) {
+		if (!id) return false;
+		switch (id) {
+			case 'profile_email': 
+			case 'profile_password':
+				var wrap = form.find('#'+id+'_valid_wrap');
+				if(wrap.hasClass('hide')) {
+					wrap.removeClass('hide');
+					break;
+				}
+			default : break;
+		}
 	}
 
 }

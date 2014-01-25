@@ -1,0 +1,186 @@
+#cou_wrapper {
+  line-height: 1;
+}
+
+#cou_wrapper td.row-text {
+	vertical-align: middle;
+}
+#cou_wrapper span.row-text {
+}
+
+
+
+#cou_wrapper ol, #cou_wrapper ul {
+  list-style: none;
+  margin:0;
+}
+
+#cou_wrapper blockquote, #cou_wrapper q {
+  quotes: none;
+}
+
+#cou_wrapper blockquote:before, #cou_wrapper blockquote:after,
+#cou_wrapper q:before, #cou_wrapper q:after {
+  content: '';
+  content: none;
+}
+
+#cou_wrapper table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
+
+.todo-container {
+  margin: 10px auto;
+ /* width: 680px;*/
+}
+.todo-container .todo {
+  
+}
+
+.todo {
+  position: relative;
+  width: 460px;
+  padding: 12px 0;
+  background: white;
+  border: 1px solid;
+  border-color: #dfdcdc #d9d6d6 #ccc;
+  border-radius: 2px;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin: 0 auto;
+}
+
+@media (min-width: 10px) and (max-width: 500px) {
+	.todo {
+		width:300px;
+		margin: 0 -10px;
+	}
+}
+.todo:before, .todo:after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  height: 4px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+}
+.todo:after {
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.todo:before {
+  bottom: -5px;
+  left: 2px;
+  right: 2px;
+  border-color: #c4c4c4;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+.lt-ie9 .todo:before, .lt-ie9 .todo:after {
+  height: 1px;
+  border-top: 0;
+}
+
+.todo-list {
+  border-top: 1px solid #e6ebed;
+}
+.todo-list:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 35px;
+  width: 3px;
+  z-index: 2;
+  border: 1px solid #f2e3df;
+  border-width: 0 1px;
+}
+.todo-list li {
+  position: relative;
+  padding: 7px 15px 0px 50px;
+  line-height: 21px;
+  font-size: 12px;
+  color: #8b8f97;
+  border-bottom: 1px solid #e6ebed;
+}
+
+.todo-list li input {
+  border:0px;
+  background-color:none;
+  box-shadow: none;
+  width: 80%;
+  height: 100%;
+}
+
+.todo-list li.done input {
+  color:#ccc;
+}
+
+.todo-list .toggle {
+  display: block;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 35px;
+  font: 0/0 serif;
+  text-shadow: none;
+  color: transparent;
+}
+.todo-list .toggle:before {
+  content: '';
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 15px;
+  height: 15px;
+  background: #faf9f9;
+  border: 1px solid #6bb3ca;
+  border-radius: 2px;
+  -webkit-transition: box-shadow 0.2s;
+  -moz-transition: box-shadow 0.2s;
+  -o-transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s;
+  -webkit-box-shadow: 0 1px 1px #dfecf4;
+  box-shadow: 0 1px 1px #dfecf4;
+}
+.todo-list .toggle:hover:before {
+  -webkit-box-shadow: 0 0 3px #6bb3ca;
+  box-shadow: 0 0 3px #6bb3ca;
+}
+.todo-list .done .toggle:before, .todo-list .toggle:active:before {
+  border-color: #c0c0c0 #ccc #d8d8d8;
+  background: #fdfcfc url("../img/sprite.png") 2px 2px no-repeat;
+  -webkit-box-shadow: inset 0 1px rgba(0, 0, 0, 0.05), inset 0 5px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px rgba(0, 0, 0, 0.05), inset 0 5px 5px rgba(0, 0, 0, 0.05);
+}
+
+.todo-controls {
+  margin: 0 15px 12px 50px;
+  height: 12px;
+}
+.todo-controls li {
+  float: left;
+}
+.todo-controls li + li {
+  margin-left: 10px;
+}
+.todo-controls .right {
+  float: right;
+}
+.todo-controls a {
+  display: block;
+  margin: 0;
+  opacity: .6;
+}
+.todo-controls a:hover {
+  opacity: 1;
+}
+

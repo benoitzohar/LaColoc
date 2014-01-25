@@ -150,16 +150,7 @@ button:active {
 
 }
 
-#login_form #form_div .div_title {
-	position:absolute;
-	right:10px;
-	top:-30px;
-	font-size:20px;
-	color:#ccc;
-	font-variant: small-caps;
-	letter-spacing:3px;
-	text-shadow: 0px 0px 3px #eee;
-}
+#login_form #form_div 
 
 #login_form #form_div .logo_active {
 	top:auto;

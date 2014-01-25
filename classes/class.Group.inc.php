@@ -37,6 +37,7 @@ class Group extends Entity {
 		}
 	}
 	public function getDevise() { return $this->get_var('devise','€'); }
+	public function getName() { return $this->get_var('name'); }
 	
 	public function getUsers($only_ids = false,$include_deleted = false) {
 		$users = array();
@@ -51,6 +52,26 @@ class Group extends Entity {
 			}
 		}
 		return $users;
+	}
+
+	static public function switchGroup($user,$new_group_id) {
+		if (empty($user) || !$user->getId() || empty($new_group_id)) return false;
+		
+		// make sure the user is in old  group
+		if (!$user->isInGroup($new_group_id)) return false;
+		
+		$current_group_id = $user->getCurrentGroup(true);
+		
+		// make sure the group is not the same as the old one
+		if ($current_group_id == $new_group_id) return false;
+		
+		// remove from old group
+		GDB::db()->Execute("UPDATE ".Group::$link_table." SET current = 0, updated = ".time()." WHERE user_id = ".$user->getId()." AND group_id = ".$current_group_id);
+		
+		// add to new group
+		GDB::db()->Execute("UPDATE ".Group::$link_table." SET current = 1, updated = ".time()." WHERE user_id = ".$user->getId()." AND group_id = ".$new_group_id);
+		
+		return true;
 	}
 
 

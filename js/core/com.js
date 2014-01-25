@@ -23,9 +23,20 @@ var com = {
 	 */
 	dialog : function(action,original_data,res) {
 		switch (action) {
+			case 'sendFeedback' :
+				if (res && res.result_text) ui.message(res.result_text);
+				break;
 			case 'setPreference': 
 				
 				break;
+			case 'updateProfil': 
+				lc.profile.onInputUpdated(res,original_data);
+				break;
+			case 'switchGroup' : 
+				// reload page
+				document.location.reload(true);
+				break;	
+				
 			default : fn.debug("action non gérée :"+action);
 		}
 	},

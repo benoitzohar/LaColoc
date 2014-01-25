@@ -8,8 +8,8 @@ switch ($_REQUEST['action']){
 		if (!request_vars_not_empty('login','password'))
 			ajax_exit();
 		
-		$adding_user = new gestio_user(null,array("login" => $_REQUEST['login'],
-		"passwd" => Gestio::encodePassword($_REQUEST['password'])));
+		$adding_user = new User(null,array("login" => $_REQUEST['login'],
+		"passwd" => LC::encodePassword($_REQUEST['password'])));
 		
 		echo lang('user_added');
 		
@@ -18,9 +18,9 @@ switch ($_REQUEST['action']){
 	case 'update':
 		if (!request_vars_not_empty('id','login','password')) ajax_exit();
 		
-		$user = new gestio_user($_REQUEST['id']);
+		$user = new User($_REQUEST['id']);
 		$user->set_var('login',$_REQUEST['login']);
-		$user->set_var('passwd',Gestio::encodePassword($_REQUEST['password']));
+		$user->set_var('passwd',LC::encodePassword($_REQUEST['password']));
 		
 		echo lang('user_updated');
 		
@@ -28,7 +28,7 @@ switch ($_REQUEST['action']){
 	
 	case 'delete':
 		if (!request_vars_not_empty('id')) ajax_exit();
-		$user_to_delete = new gestio_user($_REQUEST['id']);
+		$user_to_delete = new User($_REQUEST['id']);
 		$user_to_delete->delete();
 		echo lang('user_deleted');
 	break;

@@ -46,7 +46,7 @@ $lc_module[$app_name]['version'] = '1.0';
  *		[Please use a DD-MM-YYYY date format !]
  *
  **/
-$lc_module[$app_name]['last_edit'] = '03-04-2012';
+$lc_module[$app_name]['last_edit'] = '05-10-2012';
 
 
 /*
@@ -69,7 +69,7 @@ $lc_module[$app_name]['logo'] = 'icon-list';
  *	[your_app]/setup/tables-*.*.sql
  **/
 
-$lc_module[$app_name]['tables'] = array('lc_depenses');
+$lc_module[$app_name]['tables'] = array('lc_depenses','lc_depenses_archive');
 
 
 /**
