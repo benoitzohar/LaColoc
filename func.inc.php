@@ -3,7 +3,7 @@
 function lang(){	
 	$params = func_get_args();
 	$key = array_shift($params);
-	$current_lang = '';
+	$current_lang = LC::$default_lang;//@TODO
 	
 	$lang = get_lang_array($current_lang);
 	
@@ -28,7 +28,6 @@ function get_lang_array($clang) {
 	if (!is_file(LC::$path.'lang/'.$clang)){
 		$clang = LC::$default_lang;
 	}
-
 	include(LC::$path.'lang/'.$clang);
 	return $lang;
 }
@@ -64,7 +63,9 @@ function get_insert_query_values($fields,$values){
 
 function clean_array($origin_array,$keys_to_preserve = array()) {
 	$res = array();
-	foreach($keys_to_preserve as $k) $res[$k] = $origin_array[$k];
+	foreach($keys_to_preserve as $k) {
+		if (array_key_exists($k,$origin_array)) $res[$k] = $origin_array[$k];
+	}
 	return $res;
 }
 

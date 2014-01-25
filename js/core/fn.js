@@ -56,7 +56,7 @@ var fn = {
             return date_iso
         }
 
-        return cdate;
+        return fn.parseInt(date_object.getTime()/1000);
     },
 
     /**
@@ -71,8 +71,7 @@ var fn = {
         // If date is already an object
         if (typeof(date) === 'object') return date;
         // if date is a string
-        else if (date && isNaN(date) && date != '')
-        {
+        else if (date && isNaN(date) && date != '') {
             var rx;
             var dateformat = lc.getPreference('dateformat','dd/mm/yyyy');
             var delimiter = dateformat.match(/\w(.)\w(.)\w/);
@@ -84,15 +83,15 @@ var fn = {
 
             if (rx == null) return null;
 
-            if (dateformat == 'd' + delimiter + 'm' + delimiter + 'Y')
+            if (dateformat == 'dd' + delimiter + 'mm' + delimiter + 'yyyy')
             {
                 d = new Date(rx[3], rx[2] - 1, rx[1], rx[4] || 0);
             }
-            else if (dateformat == 'm' + delimiter + 'd' + delimiter + 'Y')
+            else if (dateformat == 'mm' + delimiter + 'dd' + delimiter + 'yyyy')
             {
                 d = new Date(rx[3], rx[1] - 1, rx[2], rx[4] || 0);
             }
-            else if (dateformat == 'Y' + delimiter + 'm' + delimiter + 'd')
+            else if (dateformat == 'yyyy' + delimiter + 'mm' + delimiter + 'dd')
             {
                 d = new Date(rx[1], rx[2] - 1, rx[3], rx[4] || 0);
             }
@@ -104,6 +103,11 @@ var fn = {
         }
 
         return d;
+    },
+    
+    parseInt : function(val,base) {
+	    if (!base) base = 10;
+	    return parseInt(val,base);
     }
 
 

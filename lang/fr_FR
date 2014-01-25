@@ -49,5 +49,9 @@ $lang["Cancel"] = "Annuler";
 $lang["Add_an_expense"] = "Ajouter une dépense"; 
 $lang["Delete"] = "Supprimer";
 $lang["Title"] = "Titre";
+$lang["Date"] = "Date";
+$lang["Value"] = "Valeur";
 $lang["do_you_really_want_to_delete?"] = "Etes-vous sûr de vouloir le supprimer ?";
-$lang["unable_to_delete_depense"] = "Impossible de supprimer la dépense."; ?>
+$lang["unable_to_delete_depense"] = "Impossible de supprimer la dépense."; 
+$lang["you_cannot_add_an_empty_cost"] = "Vous ne pouvez pas ajouter une dépense sans coût ..."; 
+?>

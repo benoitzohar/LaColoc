@@ -30,6 +30,8 @@ class LC {
 		'libs/jquery-1.7.2.min',
 		'libs/bootstrap.min',
 		'libs/bootstrap-datepicker',
+		'libs/jquery.base64.min',
+		
 		// Core
 		'core/lc',
 		'core/com',
@@ -71,8 +73,7 @@ class LC {
 		else								$prefix = '';
 			
 		// Include config
-		if(@include_once($prefix.'config/config.inc.php')) {
-			
+		if(include_once($prefix.'config/config.inc.php')) {
 			self::$title = $gestio_config['title'];
 			self::$path = $gestio_config['path'];
 			self::$url = $gestio_config['url'];
@@ -92,7 +93,7 @@ class LC {
 		} else self::$is_installed = false;
 
 		// Include Smarty templates
-		if ($options['no_template'] !== true) {
+		if (!array_key_exists('no_template',$options) || $options['no_template'] !== true) {
 			if(@include_once($prefix.'libs/smarty/Smarty.class.php')) {
 				if (self::$is_installed !== false)
 						$this->tpl = new Smarty();		
@@ -196,12 +197,11 @@ class LC {
 	public function display($app,$template) {
 	
 		$this->init_template();
-		$this->initInfos($app);
 		
 		// Set some vars
 		$this->tpl->assign('title',self::$title);
 		$this->tpl->assign('GESTIO_URL',self::$url);
-		$this->tpl->assign('GESTIO_CURRENT_APP',$this->app);
+		$this->tpl->assign('GESTIO_CURRENT_APP',(!empty($this->app)? $this->app->getName() : 'main'));
 		$this->tpl->assign('GESTIO_INITIAL_DATA',$this->getInitialData());
 		$this->tpl->assign('GESTIO_LANG',self::getLang(true));
 		$this->tpl->assign('GESTIO_LANG_LONG',self::getLang());
@@ -236,15 +236,14 @@ class LC {
 		
 	}
 	
-	public function initInfos($app = 'main') {
+	public function initInfos($app = '') {
 	
 		// init app
 		if (!empty($app)) $this->app = $app;
-		if (empty($this->app)) $this->app = 'main';
+		//if (empty($this->app)) $this->app = 'main';
 	
-		// self::$user should be initialized by the LCSession checklogin()
 		if ($this->user) {
-			$this->group = new Group($this->user->get_var('group_id'));
+			$this->group = $this->user->getCurrentGroup();
 			$this->users = $this->group->getUsers();
 		}
 		
@@ -283,7 +282,8 @@ class LC {
 	
 	public function addInitialData($data,$app = false){
 		if (empty($app)) $app = 'main';
-		if (is_array($this->initial_data[$app]))	$this->initial_data[$app] = array_merge_recursive($this->initial_data[$app],$data);
+		if (array_key_exists($app,$this->initial_data) && is_array($this->initial_data[$app]))	
+			$this->initial_data[$app] = array_merge_recursive($this->initial_data[$app],$data);
 		else $this->initial_data[$app] = $data;
 	}
 	
@@ -385,7 +385,7 @@ class LC {
 	}
 	
 	static function getInstance($uuid = 'default',$params = array()) {
-		if (!self::$instances[$uuid]) self::$instances[$uuid] = new LC($params);
+		if (!in_array($uuid,array_keys(self::$instances)) || !self::$instances[$uuid]) self::$instances[$uuid] = new LC($params);
 		return self::$instances[$uuid];
 	}
 	static function M($uuid = 'default') {
@@ -393,6 +393,7 @@ class LC {
 	}	
 }
 
+if (!isset($gestio_global_options)) $gestio_global_options = array();
 LC::getInstance('default',$gestio_global_options);
 
 ?>

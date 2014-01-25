@@ -18,6 +18,7 @@ var lc = {
 	init : function(url,app,initial_data) {
 		if (com) 	com.init(url);
 		if (ui) 	ui.init();
+		if (initial_data) initial_data = $.parseJSON($.base64.decode(initial_data)); // decode data from server
 		if (initial_data && initial_data['main']) this.loadData(initial_data['main']);
 		if (app && app != 'main') {
 			var d = false;

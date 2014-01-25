@@ -22,33 +22,27 @@ abstract class Entity {
 			}
 			else {
 				$res = GDB::db()->Execute('SELECT * FROM '.$this->_table.' WHERE id = '.$id.' LIMIT 1;');
-				if(!$res->EOF){
+				if(is_object($res) && !$res->EOF && is_array($res->fields)){
 					foreach ($this->_fields as $field){
-						$this->{$field} = $res->fields[$field];
+						if (array_key_exists($field, $res->fields)) {
+							$this->{$field} = $res->fields[$field];
+						}
 					}
 				}
 			}
 		}	
 	}
 	
-	public function get_insert_query_values($values){
-		$not_first = false;
-		$res_fields = '(';
-		$res_vals .= 'VALUES(';
+	public function get_insert_query_values($values) {
+		$res_fields = $res_vals = '';
 		foreach($this->_fields as $field){
-			if (isset($values[$field])){
-				if ($not_first){
-					$res_vals.= ", ";
-					$res_fields .= ", ";
-				}
-				$res_fields.= $field;
-				$res_vals.= "'".mysql_real_escape_string($values[$field])."'";
-				$not_first = true;
+			if (array_key_exists($field,$values)) {
+				$res_fields.= ", `".$field."`";
+				$res_vals.= ", '".mysql_real_escape_string($values[$field])."'";
 			}
 		}
-		$res_fields .= ') ';
-		$res_vals .= ') ';
-		return $res_fields.$res_vals;
+		if (empty($res_fields) || empty($res_vals)) return '';
+		return '('.substr($res_fields,1).') VALUES('.substr($res_vals,1).') ' ;
 	}
 	
 	public function get_last_insert_id(){

@@ -47,9 +47,11 @@ if (!LCSession::checkLogin()) {
 	json_exit(false,false,lang("user_not_connected"));
 }
 
-$app 	= $_REQUEST['app'];
-$action = $_REQUEST['action'];
-$params = $_REQUEST['params'];
+$app = $action = $params = '';
+
+if (isset($_REQUEST['app']))	$app 	= $_REQUEST['app'];
+if (isset($_REQUEST['action'])) $action = $_REQUEST['action'];
+if (isset($_REQUEST['params'])) $params = $_REQUEST['params'];
 
 // default app is main
 if (empty($app)) $app = 'main';

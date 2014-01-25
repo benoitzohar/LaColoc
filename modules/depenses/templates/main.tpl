@@ -16,9 +16,22 @@
 		<form class="form-horizontal">
 			<div class="control-group">
 				<label class="control-label">{$lang.Title}</label>
-				<div class="controls"><input class=".span3" type="text" id="add_form_cost" /></div>
+				<div class="controls"><input class="span3" type="text" id="add_form_title" /></div>
 			</div>
-			
+			<div class="control-group">
+				<label class="control-label">{$lang.Date}</label>
+				<div class="controls"><input class="span2" type="text" id="add_form_date" style="text-align:center;" value="{$current_day}"/></div>
+			</div>
+			<div class="control-group">
+				<label class="control-label">{$lang.Value}</label>
+				
+				<div class="controls">
+					<div class="input-append">
+						<input class="span2" type="text" id="add_form_cost" style="text-align:right;" value=""/>
+						<span class="add-on">{$devise}</span>
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>
 	<div class="modal-footer">

@@ -6,6 +6,8 @@ class Group extends Entity {
 	public static $fields = array('id','name','devise','created','updated','deleted');
 	public static $table = 'lc_groups';
 	
+	public static $link_table = 'lc_user_group';
+	
 	protected $_classname;
 	protected $_fields;
 	protected $_table;
@@ -38,19 +40,18 @@ class Group extends Entity {
 	
 	public function getUsers($only_ids = false,$include_deleted = false) {
 		$users = array();
-		$db_res = GDB::db()->GetAll("SELECT * FROM ".User::$table." WHERE group_id = ?",array($this->id));
+		$sql = "SELECT * FROM ".self::$link_table." l, ".User::$table." u WHERE u.id = l.user_id";
+		if (!$include_deleted) $sql .= " AND l.deleted = 0";
+		$sql .= " AND group_id = ?";
+		$db_res = GDB::db()->GetAll($sql,array($this->id));
 		if (is_array($db_res)) {
 			foreach($db_res as $row) {
-				if ($only_ids) array_push($users,$row['id']);
-				else array_push($users,new User($row['id'],$row));
+				if ($only_ids) array_push($users,$row['user_id']);
+				else array_push($users,new User($row['user_id'],$row));
 			}
 		}
 		return $users;
 	}
-	
-	// Static Methods
-	static function getDepensesForUser($user_id,$order = false,$as_array = false,$include_deleted = false) {
-		
-	}
+
 
 }

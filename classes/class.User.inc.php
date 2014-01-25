@@ -25,6 +25,8 @@ class User extends Entity {
 	protected $created;
 	protected $updated;
 	protected $deleted;
+	
+	private $current_group = false;
 
 	public function __construct($id,$infos = false){
 		$this->_classname = self::$classname;
@@ -34,9 +36,14 @@ class User extends Entity {
 		parent::__construct($id,$infos);
 	}
 	
-	public function getGroup($only_id = false) {
-		if ($only_id) return $this->get_var('group_id');
-		return new Group($this->get_var('group_id'));
+	public function getCurrentGroup($only_id = false) {
+		if ($this->current_group) return $this->current_group;
+		$db_res = GDB::db()->GetAll("SELECT group_id FROM ".Group::$link_table." WHERE user_id = ? AND current = 1",array($this->id));
+		if (is_array($db_res) && count($db_res) == 1 && isset($db_res[0]['group_id'])) {
+			$this->current_group = new Group($db_res[0]['group_id']);
+			return $this->current_group;
+		}
+		return false;
 	}
 	
     public static function get_user($login,$passwd = false){
