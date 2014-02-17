@@ -1,0 +1,32 @@
+script(src='http://code.jquery.com/jquery-1.10.2.min.js')
+script(src='//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js')
+script(src='/javascripts/libs/angular.js')
+script(src='/javascripts/libs/socket.io.min.js')
+script(src='/javascripts/app.js')
+- if (shopping)
+  script(src='/javascripts/controllers/shoppingCtrl.js')
+- if (expense)
+  script(src='/javascripts/controllers/expenseCtrl.js')
+script(src='/javascripts/services/lcSocket.js')   
+script(src='/javascripts/directives/lcFocus.js')
+script(src='/javascripts/directives/lcEscape.js')
+
+- if(req.isAuthenticated())
+    - var js_cb_parts = ''
+    - if (shopping) js_cb_parts += "app.initShopping('"+shopping.id+"');";
+    - if (expense) js_cb_parts += "app.initExpense('"+expense.id+"');";
+    script.
+        app.init('','#{req.user._id}',function(){ #{js_cb_parts} });
+
+script.
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-33326287-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+block foot

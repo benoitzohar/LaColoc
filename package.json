@@ -1,0 +1,29 @@
+{
+  "name": "lacoloc",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "3.4.6",
+    "jade": "*",
+    "connect" : "latest",
+    "connect-mongo": "latest",
+    "connect-flash": "latest",
+    "view-helpers": "latest",
+    "socket.io": "latest",
+    "passport.socketio": "latest",
+    "mongoose": "latest",
+    "passport": "latest",
+    "passport-local": "latest",
+    "passport-twitter": "latest",
+    "passport-facebook": "latest",
+    "passport-google-oauth": "latest",
+    "winston": "latest",
+    "async": "latest",
+    "i18n": "latest",
+    "notifier": "latest",
+    "nodemailer": "latest"
+  }
+}

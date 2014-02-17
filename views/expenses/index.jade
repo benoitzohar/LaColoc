@@ -1,0 +1,56 @@
+extends ../layouts/default
+block content
+    .row(ng-controller='ExpenseCtrl')
+        .col-md-3
+            .panel  
+                a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
+                    i.glyphicon.glyphicon-plus
+                    | &nbsp;#{__("New list")}
+                h5 &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
+                - if (archives && archives.length)
+                  h5 &nbsp;#{__("Archives")}:
+                  .list-group
+                    ul
+                      - each archive in archives
+                        li.archive.list-group-item= formatDate(archive.archivedAt)
+        .col-md-9
+            section#expenseapp
+                header#header
+                    h2 #{__('Expense list')}
+                    .row
+                      form#expense-form.form-inline(ng-submit='addExpense()')
+                        .form-group.col-lg-3
+                          input#new-expense-title.form-control(placeholder='#{__("Title")}', ng-model='newExpenseTitle', autofocus='autofocus')
+                        .form-group.col-lg-3
+                          input#new-expense-date.form-control(type="date",placeholder='#{__("Date")}', ng-model='newExpenseDate')
+                        .form-group.col-lg-3
+                          .input-group
+                            input#new-expense-value.form-control(placeholder='#{__("Value")}', ng-model='newExpenseValue')
+                            span.input-group-addon €
+                        .form-group.col-lg-3
+                          button.btn.btn-primary(type="submit") #{__('Add')}
+                  section#dep_wrapper(ng-show='expenses.length', ng-cloak='ng-cloak')
+                    #expense-list
+                      .user-list(ng-repeat='expense in expenses')
+                        .view
+                          label 
+                        table.table
+                          thead
+                            tr
+                              th(colspan="5")
+                                | {{expense.user.name}}
+                                span#balance1.pull-right
+                                  | {{expense.total}} #{req.group.devise}
+                                  span(style='margin-left: 40px; color: green;',ng-show="expense.diff > 0") {{expense.diff}} #{req.group.devise}
+                                  span(style='margin-left: 40px; color: red;',ng-show="expense.diff < 0") {{expense.diff}} #{req.group.devise}
+                          tbody
+                            tr(ng-repeat='item in expense.items')
+                              td(width="200")
+                                span {{item.title}}
+                              td(width="200")
+                                span {{item.date | date:'dd/MM/yyyy'}}
+                              td(width="200")
+                                span {{item.value}} #{req.group.devise}
+                              td
+                                .pull-right(ng-show='expense.is_current_user')
+                                    a(ng-click='removeExpense(expense)') #{__('Delete')}

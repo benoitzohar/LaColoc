@@ -1,0 +1,35 @@
+extends ../layouts/default
+block content
+    #{req.shopping}
+    .row
+        .col-md-3
+            .panel  
+                a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
+                    i.glyphicon.glyphicon-plus
+                    | &nbsp;#{__("New list")}
+                - if (archives.length)
+                h5 &nbsp;#{__("Archives")}:
+                .list-group
+                  ul
+                    - each archive in archives
+                      li.archive.list-group-item= formatDate(archive.archivedAt)
+                        span.badge= archive.items.length
+        .col-md-9
+            section#shoppingapp(ng-controller='ShoppingCtrl')
+                header#header
+                    h2 #{__('Shopping list')}
+                    form#shopping-form(ng-submit='addShopping()')
+                      input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus')
+                  section#main(ng-show='shoppings.length', ng-cloak='ng-cloak')
+                    ul#shopping-list
+                      li(ng-repeat='shopping in shoppings | filter:statusFilter track by $index', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')
+                        .view
+                          input.toggle(type='checkbox', ng-model='shopping.completed', ng-change='shoppingCompleted(shopping)')
+                          label(ng-click='editShopping(shopping)') {{shopping.title}}
+                        form(ng-submit='doneEditing(shopping)')
+                          input.edit(ng-trim='false', ng-model='shopping.title', ng-blur='doneEditing(shopping)', shopping-escape='revertEditing(shopping)', shopping-focus='shopping == editedShopping')
+
+
+
+  
+
