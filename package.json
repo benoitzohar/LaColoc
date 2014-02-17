@@ -24,6 +24,7 @@
     "async": "latest",
     "i18n": "latest",
     "notifier": "latest",
-    "nodemailer": "latest"
+    "nodemailer": "latest",
+    "re-captcha": "latest"
   }
 }

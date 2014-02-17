@@ -36,6 +36,10 @@ module.exports = {
       clientID: "789905100921.apps.googleusercontent.com",
       clientSecret: "fbiYLp4ejZnwOoVAqb8izsJX",
       callbackURL: "http://localhost:3000/auth/google/callback"
+    },
+    captcha: {
+      pub: "6Ldzw-4SAAAAAAans1Cy_y87_fnSEOTvpFmKvPAQ",
+      priv: "6Ldzw-4SAAAAAMZr7Ufwj5L1PmXhbzVMxRa3X34A"
     }
   },
   test: {},
@@ -62,6 +66,10 @@ module.exports = {
         clientID: "789905100921.apps.googleusercontent.com",
         clientSecret: "fbiYLp4ejZnwOoVAqb8izsJX",
         callbackURL: "http://dev.lacoloc.fr/auth/google/callback"
+      },
+      captcha: {
+        pub: "6Ldww-4SAAAAAB-0qBTIdY0KWAJsZCYFyejuuQiL",
+        priv: "6Ldww-4SAAAAAJtUrWZP6Vd_Pex3gu9_PjWljdHY"
       }
 
   }

@@ -38,5 +38,7 @@ block container
                 input(type='hidden', name='_csrf', value="#{csrf_token}")
                 input#signup_name.input-small.form-control(type='text', name='name', placeholder='#{__("Full name")}', value=user.name)
                 input#signup_email.input-xlarge.form-control(type='text', name='email', placeholder='#{__("Email address")}', value=user.email)
-                input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}')
+                input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}',onkeyup="$('#recaptcha').removeClass('hidden')")
+                .raw#recaptcha.hidden
+                  |!{recaptcha_form}
                 button.btn.btn-primary.pull-right(type='submit', style='margin-right: 0;') #{__("Sign up")}

@@ -24,11 +24,11 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
 // providers do not allow you to create servers that listen on a port different than 80 or their
 // default port)
 io.set('transports', [
-    'websocket'
+    'jsonp-polling'
+  , 'websocket'
   , 'flashsocket'
   , 'htmlfile'
   , 'xhr-polling'
-  , 'jsonp-polling'
 ]);
 
   function onAuthorizeSuccess(data, accept){

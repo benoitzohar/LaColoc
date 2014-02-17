@@ -3,7 +3,13 @@
  */
 
 var async = require('async'),
-    mongoose = require('mongoose')
+    mongoose = require('mongoose'),
+    Recaptcha = require('re-captcha'),
+    User = mongoose.model('User')
+
+// Load configurations
+var env = process.env.NODE_ENV || 'development'
+  , config = require('./config')[env]
 
 /**
  * Controllers
@@ -24,6 +30,9 @@ var isReady = [auth.requiresLogin, auth.hasGroup];
 
 var groupAuth = [auth.requiresLogin, auth.group.hasAuthorization]
 //var commentAuth = [auth.requiresLogin, auth.comment.hasAuthorization]
+
+
+var recaptcha = new Recaptcha(config.captcha.pub,config.captcha.priv);
 
 /**
  * Expose routes
@@ -47,10 +56,31 @@ module.exports = function (app, passport) {
   })
 
   // user routes
-  app.get('/login', users.login)
-  app.get('/signup', users.signup)
+  app.get('/login', function(req, res) {
+    res.locals.recaptcha_form = recaptcha.toHTML()
+    return users.login(req, res)
+  })
   app.get('/logout', users.logout)
-  app.post('/users', users.create)
+  app.post('/users', function(req, res) {
+    var data = {
+      remoteip:  req.connection.remoteAddress,
+      challenge: req.body.recaptcha_challenge_field,
+      response:  req.body.recaptcha_response_field
+    };
+
+    recaptcha.verify(data, function(err) {
+      if (err) {
+        res.render('users/login', {
+          message: req.flash('error'),
+          user: new User(),
+          recaptcha_form: recaptcha.toHTML(err)
+        })
+      } 
+      else {
+        return users.create(req, res)
+      }
+    });
+  })
   app.post('/users/session',
     passport.authenticate('local', {
       failureRedirect: '/login',
