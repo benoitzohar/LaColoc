@@ -27,6 +27,7 @@ lcangular.controller('ShoppingCtrl', function ShoppingCtrl($scope, $location, lc
 		//console.log("got shopping:list in ctrl",data);
 		$scope.shoppings = data;
 		shoppings = data;
+		$('.angular-hider').removeClass('hidden')
 	})
 
 

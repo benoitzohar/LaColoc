@@ -6,7 +6,7 @@ block content
                 a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
                     i.glyphicon.glyphicon-plus
                     | &nbsp;#{__("New list")}
-                h5 &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
+                h5.angular-hider.hidden &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
                 - if (archives && archives.length)
                   h5 &nbsp;#{__("Archives")}:
                   .list-group
@@ -29,7 +29,7 @@ block content
                             span.input-group-addon €
                         .form-group.col-lg-3
                           button.btn.btn-primary(type="submit") #{__('Add')}
-                  section#dep_wrapper(ng-show='expenses.length', ng-cloak='ng-cloak')
+                  section#dep_wrapper.angular-hider.hidden(ng-show='expenses.length', ng-cloak='ng-cloak')
                     #expense-list
                       .user-list(ng-repeat='expense in expenses')
                         .view

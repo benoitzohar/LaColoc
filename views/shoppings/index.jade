@@ -20,7 +20,7 @@ block content
                     h2 #{__('Shopping list')}
                     form#shopping-form(ng-submit='addShopping()')
                       input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus')
-                  section#main(ng-show='shoppings.length', ng-cloak='ng-cloak')
+                  section#main.angular-hider.hidden(ng-show='shoppings.length', ng-cloak='ng-cloak')
                     ul#shopping-list
                       li(ng-repeat='shopping in shoppings | filter:statusFilter track by $index', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')
                         .view
