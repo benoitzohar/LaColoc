@@ -70,11 +70,9 @@ module.exports = function (app, passport) {
 
     recaptcha.verify(data, function(err) {
       if (err) {
-        res.render('users/login', {
-          message: req.flash('error'),
-          user: new User(),
-          recaptcha_form: recaptcha.toHTML(err)
-        })
+
+        req.flash('error',res.__(err.message))
+        res.redirect('/login')
       } 
       else {
         return users.create(req, res)

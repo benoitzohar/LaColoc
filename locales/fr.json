@@ -42,5 +42,6 @@
 	"Date": "Date",
 	"Value": "Valeur",
 	"Title": "Titre",
-	"Delete": "Supprimer"
+	"Delete": "Supprimer",
+	"incorrect-captcha-sol": "Le captcha n'est pas correct"
 }
