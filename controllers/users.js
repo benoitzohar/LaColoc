@@ -33,16 +33,6 @@ exports.login = function (req, res) {
 }
 
 /**
- * Show sign up form
- */
-
-exports.signup = function (req, res) {
-  res.render('users/login', {
-    user: new User()
-  })
-}
-
-/**
  * Logout
  */
 
@@ -69,8 +59,8 @@ exports.create = function (req, res) {
   user.provider = 'local'
   user.save(function (err) {
     if (err) { console.log('err',err);
-      return res.render('users/login', {
-        error: utils.errors(err.errors),
+      return res.render('user/login', {
+        message: utils.errors(err.errors),
         user: user
       })
     }

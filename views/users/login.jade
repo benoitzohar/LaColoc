@@ -8,7 +8,8 @@ block container
           div(style='margin-top: 20px;')
             span
               | #{__("catchline_full")}
-            .div_title.tipTip(style='font-variant: normal; top: auto; font-size: 28px; cursor: pointer;', title='α : lacoloc.fr est en cours de développement (Alpha). Vous pouvez néanmoins vous faire inviter pour tester l\'application via Twitter: @LaColoc_fr') α
+            .div_title.tipTip(style='font-variant: normal; top: auto; font-size: 28px; cursor: pointer;')
+                a(href='https://twitter.com/lacoloc_fr',style="font-size:small;text-decoration:none;") @LaColoc_fr
         .col-sm-5.col-md-5
           .div_title #{__("lacoloc")}
           .well(style='opacity: 1; position: relative;')
