@@ -61,7 +61,17 @@
                   | &nbsp;#{__('New coloc')}
           li.dropdown
             a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
-              .pp.pp-small(style='background-image: url(/images/favicon.png);margin-left:1px;')
+              if req.user.provider == 'local'
+                .pp.pp-small(style='background-image: url(/images/favicon.png);margin-left:1px;')
+              else
+                if req.user.provider == 'twitter'
+                  .pp.pp-small(style='background-image: url(#{req.user.twitter.profile_image_url});margin-left:1px;')
+                else
+                  if req.user.provider == 'facebook'
+                    .pp.pp-small(style='background-image: url(/images/facebook.png);margin-left:1px;') 
+                  else
+                    if req.user.provider == 'google'
+                      .pp.pp-small(style='background-image: url(/images/google.png);margin-left:1px;') 
               | &nbsp;#{req.user.name} 
               b.caret
             ul.dropdown-menu

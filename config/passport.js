@@ -100,7 +100,9 @@ module.exports = function (passport, config) {
   passport.use(new GoogleStrategy({
       clientID: config.google.clientID,
       clientSecret: config.google.clientSecret,
-      callbackURL: config.google.callbackURL
+      callbackURL: config.google.callbackURL,
+      returnURL: config.google.callbackURL,
+      realm: config.url
     },
     function(accessToken, refreshToken, profile, done) {
       User.findOne({ 'google.id': profile.id }, function (err, user) {

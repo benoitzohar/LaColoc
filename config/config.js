@@ -33,8 +33,8 @@ module.exports = {
       callbackURL: "http://localhost:3000/auth/twitter/callback"
     },
     google: {
-      clientID: "789905100921.apps.googleusercontent.com",
-      clientSecret: "fbiYLp4ejZnwOoVAqb8izsJX",
+      clientID: "737425887214.apps.googleusercontent.com",
+      clientSecret: "p1lX_ahRnqYGEB76wopJv-cq",
       callbackURL: "http://localhost:3000/auth/google/callback"
     },
     captcha: {
@@ -63,8 +63,8 @@ module.exports = {
         callbackURL: "http://dev.lacoloc.fr/auth/twitter/callback"
       },
       google: {
-        clientID: "789905100921.apps.googleusercontent.com",
-        clientSecret: "fbiYLp4ejZnwOoVAqb8izsJX",
+        clientID: "737425887214.apps.googleusercontent.com",
+        clientSecret: "p1lX_ahRnqYGEB76wopJv-cq",
         callbackURL: "http://dev.lacoloc.fr/auth/google/callback"
       },
       captcha: {
