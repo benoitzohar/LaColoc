@@ -43,5 +43,6 @@
 	"Value": "Valeur",
 	"Title": "Titre",
 	"Delete": "Supprimer",
-	"incorrect-captcha-sol": "Le captcha n'est pas correct"
+	"incorrect-captcha-sol": "Le captcha n'est pas correct",
+	"It's you !": "C'est vous !"
 }

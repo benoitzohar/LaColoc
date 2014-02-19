@@ -13,6 +13,17 @@
 }
 .well:hover { opacity: 1; }
 .span4 { position: relative; }
+
+.main-row {
+    margin-top:40px;
+}
+
+@media (max-width: 991px) {
+    .main-row {
+        margin-top:-60px;
+    }
+}
+
 form { margin-bottom: -8px; }
 .well-divider {
     text-align: center;

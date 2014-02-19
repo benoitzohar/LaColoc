@@ -11,47 +11,11 @@
       //
          User menu 
       .btn-group.pull-right(style='margin-left: 15px;')
-        a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
-          .pp.pp-small(style='background-image: url(/images/favicon.png);')
-            i
-          | &nbsp;#{req.user.name} 
-          span.caret
-        ul.dropdown-menu
-          //li
-          //  a(href="/users/"+req.user.id, title="#{__('Profile')}") #{__('Profile')}
-          //li.divider
-          li
-            a(href="/logout", title="logout") Logout
+       
       //
          group menu 
       .btn-group.pull-right
-        a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
-          i.icon-home
-          | #{req.user.current_group.name} 
-          span.caret
-        ul.dropdown-menu
-          li
-            a(href='/groups/'+req.user.current_group.id,title="#{__('Profile')}")
-              | #{__('Profile')}
-          li.divider
-          li
-            b &nbsp; #{__('Choose a coloc')} :
-
-          each group in req.user.groups
-            li
-              if (group.group.id == req.user.current_group.id)
-                a(href='#')
-                  i.glyphicon.glyphicon-ok 
-                  | &nbsp; #{group.group.name}
-              else
-                a(href='/groups/'+group.group.id+'/select')
-                  i 
-                  | &nbsp; #{group.group.name}
-          li.divider
-          li
-            a(href='/groups/new')
-              i.glyphicon.glyphicon-plus
-              | &nbsp;#{__('New coloc')}
+        
 
       //
          app menu 
@@ -65,4 +29,46 @@
             a(href='/shopping')
               i.glyphicon.glyphicon-th-list
               | &nbsp;#{__('Shopping')}
+        ul.nav.navbar-nav.navbar-right
+          li.dropdown
+            a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
+              i.icon-home
+              | #{req.user.current_group.name} 
+              b.caret
+            ul.dropdown-menu
+              li
+                a(href='/groups/'+req.user.current_group.id,title="#{__('Profile')}")
+                  | #{__('Profile')}
+              if (req.user.groups && req.user.groups.length > 1)
+                li.divider
+                li
+                  b &nbsp; #{__('Choose a coloc')} :
+
+                each group in req.user.groups
+                  li
+                    if (group.group.id == req.user.current_group.id)
+                      a(href='#')
+                        i.glyphicon.glyphicon-ok 
+                        | &nbsp; #{group.group.name}
+                    else
+                      a(href='/groups/'+group.group.id+'/select')
+                        i 
+                        | &nbsp; #{group.group.name}
+              li.divider
+              li
+                a(href='/groups/new')
+                  i.glyphicon.glyphicon-plus
+                  | &nbsp;#{__('New coloc')}
+          li.dropdown
+            a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
+              .pp.pp-small(style='background-image: url(/images/favicon.png);margin-left:1px;')
+              | &nbsp;#{req.user.name} 
+              b.caret
+            ul.dropdown-menu
+              //li
+              //  a(href="/users/"+req.user.id, title="#{__('Profile')}") #{__('Profile')}
+              //li.divider
+              li
+                a(href="/logout", title="logout") Logout
+
 

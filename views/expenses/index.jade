@@ -1,7 +1,7 @@
 extends ../layouts/default
 block content
     .row(ng-controller='ExpenseCtrl')
-        .col-md-3
+        .col-sm-3
             .panel  
                 a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
                     i.glyphicon.glyphicon-plus
@@ -13,22 +13,23 @@ block content
                     ul
                       - each archive in archives
                         li.archive.list-group-item= formatDate(archive.archivedAt)
-        .col-md-9
+        .col-sm-9
             section#expenseapp
                 header#header
                     h2 #{__('Expense list')}
                     .row
                       form#expense-form.form-inline(ng-submit='addExpense()')
-                        .form-group.col-lg-3
+                        .form-group.col-xs-6.col-sm-3
                           input#new-expense-title.form-control(placeholder='#{__("Title")}', ng-model='newExpenseTitle', autofocus='autofocus')
-                        .form-group.col-lg-3
+                        .form-group.col-xs-6.col-sm-3
                           input#new-expense-date.form-control(type="date",placeholder='#{__("Date")}', ng-model='newExpenseDate')
-                        .form-group.col-lg-3
+                        .form-group.col-xs-6.col-sm-3
                           .input-group
                             input#new-expense-value.form-control(placeholder='#{__("Value")}', ng-model='newExpenseValue')
                             span.input-group-addon €
-                        .form-group.col-lg-3
+                        .form-group.col-xs-6.col-sm-3
                           button.btn.btn-primary(type="submit") #{__('Add')}
+                        img(ng-hide="expenses.length",src="/images/loader.gif",style="position:absolute;top:35px;right:15px;")
                   section#dep_wrapper.angular-hider.hidden(ng-show='expenses.length', ng-cloak='ng-cloak')
                     #expense-list
                       .user-list(ng-repeat='expense in expenses')

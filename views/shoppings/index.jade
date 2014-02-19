@@ -2,7 +2,7 @@ extends ../layouts/default
 block content
     #{req.shopping}
     .row
-        .col-md-3
+        .col-sm-3
             .panel  
                 a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
                     i.glyphicon.glyphicon-plus
@@ -14,12 +14,13 @@ block content
                     - each archive in archives
                       li.archive.list-group-item= formatDate(archive.archivedAt)
                         span.badge= archive.items.length
-        .col-md-9
+        .col-sm-9
             section#shoppingapp(ng-controller='ShoppingCtrl')
                 header#header
                     h2 #{__('Shopping list')}
                     form#shopping-form(ng-submit='addShopping()')
                       input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus')
+                      img(ng-hide="shoppings.length",src="/images/loader.gif",style="position:absolute;top:35px;right:15px;")
                   section#main.angular-hider.hidden(ng-show='shoppings.length', ng-cloak='ng-cloak')
                     ul#shopping-list
                       li(ng-repeat='shopping in shoppings | filter:statusFilter track by $index', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')

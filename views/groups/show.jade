@@ -12,20 +12,27 @@ block content
 
   .row
     h2 #{__('Users of the group')}
-      button.btn.btn-mini(data-toggle="modal",data-target="#inviteModal") 
-        i.glyphicon.glyphicon-plus
-        | #{__('Add')}
+    
   .row
     each cuser in group.users
       .col-sm-6.col-md-4
         .thumbnail
-          img(src='https://www.gravatar.com/avatar/'+email_hashes[cuser._id]+'?d=identicon', alt='')
+          img.pp(src='https://www.gravatar.com/avatar/'+email_hashes[cuser._id]+'?d=identicon&s=150', alt='', style="margin-top:4px;")
           .caption
-            h3 #{cuser.name}
-            p #{cuser.email}
-            p
-              - if (cuser._id != current_user_id+'')
-                a.btn.btn-danger(href='/groups/'+group._id+'/removeUser?user_to_remove='+cuser._id, role='button') #{__('Remove from group')}
+            center
+              h3 #{cuser.name}
+              p #{cuser.email}
+              p
+                - if (cuser._id != current_user_id+'')
+                  a.btn.btn-danger(href='/groups/'+group._id+'/removeUser?user_to_remove='+cuser._id, role='button') #{__('Remove from group')}
+                - else
+                  button.btn #{__("It's you !")}
+    .col-sm-6.col-md-4
+        .thumbnail(data-toggle="modal",data-target="#inviteModal",id="group-add-user") 
+          center
+            i.glyphicon.glyphicon-plus(style="font-size:60px;")
+            .caption
+                h3 #{__("Add")}
 
   #inviteModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='inviteModalLabel', aria-hidden='true')
     .modal-dialog
