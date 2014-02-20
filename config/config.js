@@ -15,7 +15,8 @@ var path = require('path')
 module.exports = {
   development: {
     url: 'http://localhost:3000',
-    db: 'mongodb://localhost/lacoloc',
+    //db: 'mongodb://localhost/lacoloc',
+    db: 'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc',
     root: rootPath,
     email: 'noreply@localhost',
     notifier: notifier,
@@ -45,7 +46,8 @@ module.exports = {
   test: {},
   production: {
      url: 'http://dev.lacoloc.fr',
-      db: 'mongodb://localhost/lacoloc',
+      //db: 'mongodb://localhost/lacoloc',
+      db: 'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc',
       root: rootPath,
       email: 'noreply@lacoloc.fr',
       notifier: notifier,
