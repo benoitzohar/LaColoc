@@ -15,7 +15,7 @@ block container
           .well(style='opacity: 1; position: relative;')
             form#login_form.form-horizontal(action="/users/session", method="post", role="form")
                 input(type='hidden', name='_csrf', value="#{csrf_token}")
-                input#input_login.input-xlarge.form-control(type='text', name='email', placeholder='#{__("Email address")}')
+                input#input_login.input-xlarge.form-control(type='email', name='email', placeholder='#{__("Email address")}')
                 input#input_password.input-large.form-control(type='password', name='password', placeholder='#{__("Password")}', onkeyup="if(event.keyCode==13) $(this).parents('form').submit();")
                 .semi-inline-form-part
                   button.btn.btn-default(type='submit', style='') #{__('Log in')}
