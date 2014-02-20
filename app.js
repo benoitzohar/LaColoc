@@ -12,7 +12,7 @@ var express = require('express'),
     mongoStore = require('connect-mongo')(express),
     http = require('http')
     
-
+console.log('process.env:',process.env);
 // Load configurations
 var env = process.env.NODE_ENV || 'development'
   , config = require('./config/config')[env]
