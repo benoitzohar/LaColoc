@@ -6,8 +6,7 @@ var mongoose = require('mongoose')
   , Invite = mongoose.model('Invite')
   , Group = mongoose.model('Group')
   , utils = require('../lib/utils')
-  , env = process.env.NODE_ENV || 'development'
-  , config = require('../config/config')[env]
+  , config = require('../config/config')
   , crypto = require('crypto')
 
 /**

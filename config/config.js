@@ -19,8 +19,7 @@ var confg = {
     name: 'laColoc'
   },
   url: 'http://localhost:3000',
-  //db: 'mongodb://localhost/lacoloc',
-  db:    'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc',
+  db: 'mongodb://localhost/lacoloc',
   root:  rootPath,
   email: 'noreply@localhost',
   notifier: notifier,
@@ -49,11 +48,20 @@ var confg = {
 switch(env) {
   case 'HEROKULC':
     confg.url = 'https://lacoloc.herokuapp.com';
+    confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
     confg.email = 'contact@lacoloc.fr';
     facebook.callbackURL = "https://lacoloc.herokuapp.com/auth/facebook/callback";
     twitter.callbackURL = "https://lacoloc.herokuapp.com/auth/twitter/callback";
     google.callbackURL = "https://lacoloc.herokuapp.com/auth/google/callback";
-  break;
+    break;
+  case 'HEROKUFB':
+    confg.url = 'https://flat-buddy.herokuapp.com';
+    confg.db =  'mongodb://flatbuddy:vaL6vQJc@ds031329.mongolab.com:31329/flatbuddy';
+    confg.email = 'contact@flatbuddy.eu';
+    facebook.callbackURL = "https://flat-buddy.herokuapp.com/auth/facebook/callback";
+    twitter.callbackURL = "https://flat-buddy.herokuapp.com/auth/twitter/callback";
+    google.callbackURL = "https://flat-buddy.herokuapp.com/auth/google/callback";
+    break;
 }
 
 module.exports = confg;

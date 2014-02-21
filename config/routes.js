@@ -5,11 +5,8 @@
 var async = require('async'),
     mongoose = require('mongoose'),
     Recaptcha = require('re-captcha'),
-    User = mongoose.model('User')
-
-// Load configurations
-var env = process.env.NODE_ENV || 'development'
-  , config = require('./config')[env]
+    User = mongoose.model('User'),
+    config = require('./config')
 
 /**
  * Controllers

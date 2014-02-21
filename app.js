@@ -11,15 +11,8 @@ var express = require('express'),
     mongoose = require('mongoose'),
     mongoStore = require('connect-mongo')(express),
     http = require('http'),
-    os = require("os")
-
-    
-console.log('process.env:',process.env);
-console.log('process.env.NODE_ENV',process.env.NODE_ENV);
-console.log('os.hostname();',os.hostname());
-// Load configurations
-var env = process.env.NODE_ENV || 'development'
-  , config = require('./config/config')[env]
+    os = require("os"),
+    config = require('./config/config')
   
  // Connect to mongodb
 var connect = function () {
