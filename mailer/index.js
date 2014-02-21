@@ -5,8 +5,6 @@
 
 var mongoose = require('mongoose')
   , Notifier = require('notifier')
-  , env = process.env.NODE_ENV || 'development'
-  , config = require('../config/config')[env]
 
 /**
  * Notification methods
