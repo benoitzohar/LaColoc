@@ -18,7 +18,7 @@
     "passport": "latest",
     "passport-local": "latest",
     "passport-twitter": "latest",
-    "passport-facebook": "latest",
+    "passport-facebook-canvas": "latest",
     "passport-google-oauth": "latest",
     "winston": "latest",
     "async": "latest",

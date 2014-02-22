@@ -105,6 +105,13 @@ module.exports = function (app, config, passport, sessionstore) {
 
     //set env in locals and make sure the locale is OK
     app.use(function(req, res, next){
+
+   // express helper for natively supported engines
+      res.locals.__ = res.__ = function() {
+        console.log('inited __')
+          return i18n.__.apply(req, arguments);
+      };
+
       res.locals.env = env;
       res.locals.locale = config.locale;
       res.locals.fb = config.facebook;

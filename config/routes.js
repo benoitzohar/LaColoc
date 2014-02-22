@@ -83,14 +83,28 @@ module.exports = function (app, passport) {
     }), users.session)
   app.get('/users/:userId', users.show)
   app.get('/auth/facebook',
-    passport.authenticate('facebook', {
+    passport.authenticate('facebook-canvas', {
       scope: [ 'email', 'user_about_me'],
       failureRedirect: '/login'
     }), users.signin)
   app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', {
+    passport.authenticate('facebook-canvas', {
       failureRedirect: '/login'
     }), users.authCallback)
+  app.post('/auth/facebook/canvas', 
+    passport.authenticate('facebook-canvas', { 
+      successRedirect: '/',
+      failureRedirect: '/auth/facebook/canvas/autologin' 
+  }));
+  app.get('/auth/facebook/canvas/autologin', function( req, res ){
+    res.send( '<!DOCTYPE html>' +
+              '<body>' +
+                '<script type="text/javascript">' +
+                  'top.location.href = "/auth/facebook";' +
+                '</script>' +
+              '</body>' +
+            '</html>' );
+  });
   app.get('/auth/twitter',
     passport.authenticate('twitter', {
       failureRedirect: '/login'
