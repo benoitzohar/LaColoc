@@ -98,7 +98,6 @@ module.exports = function (app, config, passport, sessionstore) {
     if (env !== 'test') {
       app.use(function (req, res, next) {
         if (!isFromFacebook(req)) {
-          console.log('is NOT from fb:',req);
           csrf(req, res, next);
         } else {
           next();
@@ -122,7 +121,6 @@ module.exports = function (app, config, passport, sessionstore) {
 
    // express helper for natively supported engines
       res.locals.__ = res.__ = function() {
-        console.log('inited __')
           return i18n.__.apply(req, arguments);
       };
 
