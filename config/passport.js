@@ -71,6 +71,7 @@ module.exports = function (passport, config) {
   var fbSignIn = function(accessToken, refreshToken, profile, done) {
       User.findOne({ 'facebook.id': profile.id }, function (err, user) {
         if (err) { return done(err) }
+        console.log('profile',profile);
         if (!user) {
           user = new User({
             name: profile.displayName,
