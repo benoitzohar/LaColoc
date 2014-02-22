@@ -58,17 +58,17 @@ switch(env) {
     break;
   case 'HEROKUFB':
     confg.locale = 'en';
-    confg.url = 'https://flat-buddy.herokuapp.com';
+    confg.url = 'http://www.flatbuddy.eu';
     confg.db =  'mongodb://flatbuddy:vaL6vQJc@ds031329.mongolab.com:31329/flatbuddy';
     confg.email = 'contact@flatbuddy.eu';
     confg.facebook =  {
       clientID: '614809568598903',
       clientSecret: 'c6e171b47cce427b8ccd56a1c1e1f1e0',
-      callbackURL: "https://flat-buddy.herokuapp.com/auth/facebook/callback",
-      
+      callbackURL: "https://www.flatbuddy.eu/auth/facebook/callback",
+
     }
-    confg.twitter.callbackURL = "https://flat-buddy.herokuapp.com/auth/twitter/callback";
-    confg.google.callbackURL = "https://flat-buddy.herokuapp.com/auth/google/callback";
+    confg.twitter.callbackURL = "http://www.flatbuddy.eu/auth/twitter/callback";
+    confg.google.callbackURL = "http://www.flatbuddy.eu/auth/google/callback";
     break;
   case 'deven':
     confg.locale = 'en';
