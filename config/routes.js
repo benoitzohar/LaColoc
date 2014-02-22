@@ -145,5 +145,6 @@ module.exports = function (app, passport) {
 
 
   app.get('/', isReady, users.redirectToDefaultTab)
+  app.post('/', isReady, users.redirectToDefaultTab)
 
 }
