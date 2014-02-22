@@ -93,8 +93,9 @@ module.exports = function (app, passport) {
     }), users.authCallback)
   app.post('/auth/facebook/canvas/', 
     passport.authenticate('facebook-canvas', { 
+      successRedrect: '/',
       failureRedirect: '/auth/facebook/canvas/autologin' 
-  }), users.authCallback);
+  }));
   app.get('/auth/facebook/canvas/autologin', function( req, res ){
     res.send( '<!DOCTYPE html>' +
               '<body>' +
@@ -156,8 +157,6 @@ module.exports = function (app, passport) {
   app.get('/invite/valid',auth.requiresLogin, invites.valid)
   app.post('/invite/valid',auth.requiresLogin, invites.valid)
 
-
   app.get('/', isReady, users.redirectToDefaultTab)
-  app.post('/', isReady, users.redirectToDefaultTab)
 
 }

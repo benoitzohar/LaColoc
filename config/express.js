@@ -89,13 +89,26 @@ module.exports = function (app, config, passport, sessionstore) {
     // should be declared after session and flash
     app.use(helpers(pkg.name))
 
+    var isFromFacebook = function(req) {
+      return req.body.signed_request && req.body.fb_locale && req.body.fb;
+    }
+    var csrf = express.csrf();
+
     // adds CSRF support
     if (env !== 'test') {
-      app.use(express.csrf())
+      app.use(function (req, res, next) {
+        if (!isFromFacebook(req)) {
+          csrf(req, res, next);
+        } else {
+          next();
+        }
+      })
 
       // This could be moved to view-helpers :-)
       app.use(function(req, res, next){
-        res.locals.csrf_token = req.csrfToken()
+        if (!isFromFacebook(req)) {
+          res.locals.csrf_token = req.csrfToken()
+        }
         next()
       })
     }
