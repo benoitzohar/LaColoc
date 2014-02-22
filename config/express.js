@@ -90,7 +90,7 @@ module.exports = function (app, config, passport, sessionstore) {
     app.use(helpers(pkg.name))
 
     var isFromFacebook = function(req) {
-      return req.body.signed_request && req.body.fb_locale && req.body.fb;
+      return req.body.signed_request && req.body.fb_locale && req.query.fb;
     }
     var csrf = express.csrf();
 
@@ -98,6 +98,7 @@ module.exports = function (app, config, passport, sessionstore) {
     if (env !== 'test') {
       app.use(function (req, res, next) {
         if (!isFromFacebook(req)) {
+          console.log('is NOT from fb:',req);
           csrf(req, res, next);
         } else {
           next();

@@ -91,7 +91,7 @@ module.exports = function (app, passport) {
     passport.authenticate('facebook-canvas', {
       failureRedirect: '/login'
     }), users.authCallback)
-  app.post('/auth/facebook/canvas/', 
+  app.post('/auth/facebook/canvas', 
     passport.authenticate('facebook-canvas', { 
       successRedrect: '/',
       failureRedirect: '/auth/facebook/canvas/autologin' 
