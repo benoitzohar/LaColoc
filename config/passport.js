@@ -1,7 +1,8 @@
 var mongoose = require('mongoose')
   , LocalStrategy = require('passport-local').Strategy
   , TwitterStrategy = require('passport-twitter').Strategy
-  , FacebookStrategy = require('passport-facebook-canvas').Strategy
+  , FacebookStrategy = require('passport-facebook').Strategy
+  , FacebookCanvasStrategy = require('passport-facebook-canvas').Strategy
   , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
   , User = mongoose.model('User')
 
@@ -67,13 +68,7 @@ module.exports = function (passport, config) {
     }
   ))
 
-  // use facebook strategy
-  passport.use(new FacebookStrategy({
-      clientID: config.facebook.clientID,
-      clientSecret: config.facebook.clientSecret,
-      callbackURL: config.facebook.callbackURL
-    },
-    function(accessToken, refreshToken, profile, done) {
+  var fbSignIn = function(accessToken, refreshToken, profile, done) {
       User.findOne({ 'facebook.id': profile.id }, function (err, user) {
         if (err) { return done(err) }
         if (!user) {
@@ -94,6 +89,21 @@ module.exports = function (passport, config) {
         }
       })
     }
+
+  // use facebook strategy
+  passport.use(new FacebookStrategy({
+      clientID: config.facebook.clientID,
+      clientSecret: config.facebook.clientSecret,
+      callbackURL: config.facebook.callbackURL
+    },fbSignIn
+  ))
+
+  // use facebook-canvas strategy
+  passport.use(new FacebookCanvasStrategy({
+      clientID: config.facebook.clientID,
+      clientSecret: config.facebook.clientSecret,
+      callbackURL: config.facebook.canvasCallbackURL
+    },fbSignIn
   ))
 
   // use google strategy
