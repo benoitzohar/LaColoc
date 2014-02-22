@@ -13,7 +13,9 @@ var login = function (req, res) {
   res.redirect(redirectTo)
 }
 
-exports.signin = function (req, res) {}
+exports.signin = function (req, res) {
+  res.redirect('/')
+}
 
 /**
  * Auth callback

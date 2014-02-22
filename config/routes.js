@@ -94,6 +94,7 @@ module.exports = function (app, passport) {
   app.post('/auth/facebook/canvas', 
     passport.authenticate('facebook-canvas', {
       scope: [ 'email', 'user_about_me'],
+      successRedirect: '/',
       failureRedirect: '/auth/facebook/canvas/autologin'
     }), users.signin);
   app.get('/auth/facebook/canvas',
