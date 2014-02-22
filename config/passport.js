@@ -108,8 +108,9 @@ module.exports = function (passport, config) {
           user = new User({
             name: profile.name,
             email: profile.email,
-            username: profile.id,
-            provider: 'facebook-canvas'
+            username: 'fb'+profile.id,
+            provider: 'facebook',
+            facebook: profile
           })
           user.save(function (err) {
             if (err) console.log(err)
