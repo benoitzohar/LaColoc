@@ -68,10 +68,14 @@ module.exports = function (passport, config) {
     }
   ))
 
-  var fbSignIn = function(accessToken, refreshToken, profile, done) {
+  // use facebook strategy
+  passport.use(new FacebookStrategy({
+      clientID: config.facebook.clientID,
+      clientSecret: config.facebook.clientSecret,
+      callbackURL: config.facebook.callbackURL
+    },function(accessToken, refreshToken, profile, done) {
       User.findOne({ 'facebook.id': profile.id }, function (err, user) {
         if (err) { return done(err) }
-        console.log('profile',profile);
         if (!user) {
           user = new User({
             name: profile.displayName,
@@ -90,13 +94,6 @@ module.exports = function (passport, config) {
         }
       })
     }
-
-  // use facebook strategy
-  passport.use(new FacebookStrategy({
-      clientID: config.facebook.clientID,
-      clientSecret: config.facebook.clientSecret,
-      callbackURL: config.facebook.callbackURL
-    },fbSignIn
   ))
 
   // use facebook-canvas strategy
@@ -104,7 +101,26 @@ module.exports = function (passport, config) {
       clientID: config.facebook.clientID,
       clientSecret: config.facebook.clientSecret,
       callbackURL: config.facebook.canvasCallbackURL
-    },fbSignIn
+    },function(accessToken, refreshToken, profile, done) {
+      User.findOne({ 'facebook.id': profile.id }, function (err, user) {
+        if (err) { return done(err) }
+        if (!user) {
+          user = new User({
+            name: profile.name,
+            email: profile.email,
+            username: profile.id,
+            provider: 'facebook-canvas'
+          })
+          user.save(function (err) {
+            if (err) console.log(err)
+            return done(err, user)
+          })
+        }
+        else {
+          return done(err, user)
+        }
+      })
+    }
   ))
 
   // use google strategy
