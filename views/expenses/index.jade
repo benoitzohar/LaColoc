@@ -29,7 +29,7 @@ block content
                             span.input-group-addon €
                         .form-group.col-xs-6.col-sm-3
                           button.btn.btn-primary(type="submit") #{__('Add')}
-                        img(ng-hide="expenses.length",src="/images/loader.gif",style="position:absolute;top:35px;right:15px;")
+                        img.angular-shower(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;")
                   section#dep_wrapper.angular-hider.hidden(ng-show='expenses.length', ng-cloak='ng-cloak')
                     #expense-list
                       .user-list(ng-repeat='expense in expenses')

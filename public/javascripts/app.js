@@ -3,6 +3,17 @@
 /*jshint unused:false */
 'use strict';
 
+var log = function(a,b,c,d,e,f) {
+    if (console && console.log) {
+        if (f) console.log(a,b,c,d,e,f)
+        else if (e) console.log(a,b,c,d,e)
+        else if (d) console.log(a,b,c,d)
+        else if (c) console.log(a,b,c)
+        else if (b) console.log(a,b)
+        else if (a) console.log(a)
+    }
+}
+
 var socket = null;
 var current_user = null;
 
@@ -20,7 +31,13 @@ var app = {
     current_expense_id : null,
 
     init: function(url,user,cb) {
-        console.log("app.init(",url,'user',user,');');
+        log("app.init(",url,'user',user,');');
+
+        //hide loggin button in facebook frame
+        if (window!=window.top) {
+            $('.menu-user-infos').remove();
+        }
+
         current_user = user;
         this.initSocket(url);
         if (cb) cb();

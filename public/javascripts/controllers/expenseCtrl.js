@@ -58,6 +58,7 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
 
         $scope.grandTotal = data.total;
         $('.angular-hider').removeClass('hidden')
+        $('.angular-shower').addClass('hidden')
     })
 
 

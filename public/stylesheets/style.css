@@ -104,11 +104,6 @@ input[type="checkbox"] {
     margin-left:15px;
 }
 
-iframe .dropdown.menu-user-infos {
-    display: none;
-}
-
-
 input.numbered {
     text-align: right;
 }

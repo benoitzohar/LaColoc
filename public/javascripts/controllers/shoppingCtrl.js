@@ -28,6 +28,7 @@ lcangular.controller('ShoppingCtrl', function ShoppingCtrl($scope, $location, lc
 		$scope.shoppings = data;
 		shoppings = data;
 		$('.angular-hider').removeClass('hidden')
+		$('.angular-shower').addClass('hidden')
 	})
 
 
