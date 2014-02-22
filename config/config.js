@@ -65,10 +65,10 @@ switch(env) {
       clientID: '614809568598903',
       clientSecret: 'c6e171b47cce427b8ccd56a1c1e1f1e0',
       callbackURL: "https://www.flatbuddy.eu/auth/facebook/callback",
-
+      canvasCallbackURL: "https://apps.facebook.com/flatbuddy_eu",
     }
     confg.twitter.callbackURL = "http://www.flatbuddy.eu/auth/twitter/callback";
-    confg.google.callbackURL = "http://www.flatbuddy.eu/auth/google/callback";
+    confg.google.callbackURL = "https://www.flatbuddy.eu/auth/google/callback";
     break;
   case 'deven':
     confg.locale = 'en';

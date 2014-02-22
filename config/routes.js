@@ -100,7 +100,7 @@ module.exports = function (app, passport) {
     res.send( '<!DOCTYPE html>' +
               '<body>' +
                 '<script type="text/javascript">' +
-                  'top.location.href = "/auth/facebook";' +
+                  'location.href = "/auth/facebook";' +
                 '</script>' +
               '</body>' +
             '</html>' );
