@@ -18,6 +18,7 @@ var confg = {
   app: {
     name: 'laColoc'
   },
+  locale: 'fr',
   url: 'http://localhost:3000',
   db: 'mongodb://localhost/lacoloc',
   root:  rootPath,
@@ -47,6 +48,7 @@ var confg = {
 //configs depending on environnement
 switch(env) {
   case 'HEROKULC':
+    confg.locale = 'fr';
     confg.url = 'https://lacoloc.herokuapp.com';
     confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
     confg.email = 'contact@lacoloc.fr';
@@ -55,12 +57,25 @@ switch(env) {
     confg.google.callbackURL = "https://lacoloc.herokuapp.com/auth/google/callback";
     break;
   case 'HEROKUFB':
+    confg.locale = 'en';
     confg.url = 'https://flat-buddy.herokuapp.com';
     confg.db =  'mongodb://flatbuddy:vaL6vQJc@ds031329.mongolab.com:31329/flatbuddy';
     confg.email = 'contact@flatbuddy.eu';
-    confg.facebook.callbackURL = "https://flat-buddy.herokuapp.com/auth/facebook/callback";
+    confg.facebook =  {
+      clientID: '614809568598903',
+      clientSecret: 'c6e171b47cce427b8ccd56a1c1e1f1e0',
+      callbackURL: "https://flat-buddy.herokuapp.com/auth/facebook/callback",
+      
+    }
     confg.twitter.callbackURL = "https://flat-buddy.herokuapp.com/auth/twitter/callback";
     confg.google.callbackURL = "https://flat-buddy.herokuapp.com/auth/google/callback";
+    break;
+  case 'deven':
+    confg.locale = 'en';
+    confg.localized_url = {
+      en: "http://google.com/",
+      fr: "http://facebook.com/"
+    }
     break;
 }
 

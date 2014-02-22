@@ -39,5 +39,8 @@
 	"email": "email",
 	"An email will be sent to the user with an invitation": "An email will be sent to the user with an invitation",
 	"Cancel": "Cancel",
-	"Send invitation": "Send invitation"
+	"Send invitation": "Send invitation",
+	"Welcome to lacoloc": "Welcome to FlatBuddy !",
+	"site_keywords": "flat, manage, expenses, shopping",
+	"site_description": "Manage your flat, your couple or a week-end with your friends. With Flatbuddy you can save expenses, manage your shopping list, and more."
 }

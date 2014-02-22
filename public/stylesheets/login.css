@@ -3,7 +3,7 @@
     -moz-transition: 0.4s;
     transition: 0.4s;
 }
-.main_logo { opacity:0.5;       }
+.main_logo { opacity:0.7;       }
 .main_logo:hover { opacity : 1; }
 .well { padding : 13px; 
         opacity: 0.8; 

@@ -4,12 +4,15 @@ block container
       .row.main-row
         .col-md-5
           center
-            img.main_logo.smooth(src='/images/logo_lacoloc_160.png')
+            img.main_logo.smooth(src='/images/logo_'+locale+'_160.png')
           div(style='margin-top: 20px;')
             span
               | #{__("catchline_full")}
             .div_title.tipTip(style='font-variant: normal; top: auto; font-size: 28px; cursor: pointer;')
-                a(href='https://twitter.com/lacoloc_fr',style="font-size:small;text-decoration:none;") @LaColoc_fr
+                - if (locale == 'fr')
+                  a(href='https://twitter.com/lacoloc_fr',style="font-size:small;text-decoration:none;") @LaColoc_fr
+                - else
+                  a(href='https://twitter.com/flatbuddy_eu',style="font-size:small;text-decoration:none;") @FlatBuddy_eu
         .col-md-5
           .div_title #{__("lacoloc")}
           .well(style='opacity: 1; position: relative;')

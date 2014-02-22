@@ -8,15 +8,17 @@ var express = require('express')
   , winston = require('winston')
   , helpers = require('view-helpers')
   , pkg = require('../package.json')
+  , config = require('./config')
   , i18n = require("i18n")
 
 var env = process.env.NODE_ENV || 'development'
 
 //configure i18n
 i18n.configure({
-    locales:['en', 'fr'],
+    locales:[config.locale],
     directory: __dirname + '/../locales',
-    updateFiles: true
+    updateFiles: env=='development',
+    defaultLocale: 'en',
 })
 
 module.exports = function (app, config, passport, sessionstore) {
@@ -88,7 +90,7 @@ module.exports = function (app, config, passport, sessionstore) {
     app.use(helpers(pkg.name))
 
     // adds CSRF support
-    if (process.env.NODE_ENV !== 'test') {
+    if (env !== 'test') {
       app.use(express.csrf())
 
       // This could be moved to view-helpers :-)
@@ -100,6 +102,24 @@ module.exports = function (app, config, passport, sessionstore) {
 
     // default: using 'accept-language' header to guess language settings
     app.use(i18n.init);
+
+    //set env in locals and make sure the locale is OK
+    app.use(function(req, res, next){
+      res.locals.env = env;
+      res.locals.locale = config.locale;
+      res.locals.fb = config.facebook;
+      if (env !== 'development') {
+        if (config.locale && i18n.getLocale(req) !== config.locale) {
+          if (config.localized_url && config.localized_url[i18n.getLocale(req)]) {
+            // redirect to proper address if locale is not OK
+            //res.redirect(config.localized_url[i18n.getLocale(req)]);
+            //show alert to user
+            res.locals.localized_url = config.localized_url[i18n.getLocale(req)];
+          }
+        }
+      }
+      next()
+    })
 
     // routes should be at the last
     app.use(app.router)
@@ -132,7 +152,7 @@ module.exports = function (app, config, passport, sessionstore) {
       })
     })
 
-  
+
 
   })
 
