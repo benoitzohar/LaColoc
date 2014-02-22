@@ -59,7 +59,7 @@
                 a(href='/groups/new')
                   i.glyphicon.glyphicon-plus
                   | &nbsp;#{__('New coloc')}
-          li.dropdown
+          li.dropdown.menu-user-infos
             a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
               if req.user.provider == 'local'
                 .pp.pp-small(style='background-image: url(/images/favicon_'+locale+'.png);margin-left:1px;')
