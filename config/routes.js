@@ -91,11 +91,10 @@ module.exports = function (app, passport) {
     passport.authenticate('facebook-canvas', {
       failureRedirect: '/login'
     }), users.authCallback)
-  app.post('/auth/facebook/canvas', 
+  app.post('/auth/facebook/canvas/', 
     passport.authenticate('facebook-canvas', { 
-      successRedirect: '/',
       failureRedirect: '/auth/facebook/canvas/autologin' 
-  }));
+  }), users.authCallback);
   app.get('/auth/facebook/canvas/autologin', function( req, res ){
     res.send( '<!DOCTYPE html>' +
               '<body>' +

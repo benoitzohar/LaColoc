@@ -14,14 +14,15 @@ head
   link(rel='apple-touch-icon-precomposed', sizes='114x114', href='/images/apple-touch-icon-114-precomposed.png')
   link(rel='apple-touch-icon-precomposed', sizes='72x72', href='/images/apple-touch-icon-72-precomposed.png')
   link(rel='apple-touch-icon-precomposed', href='/images/apple-touch-icon-57-precomposed.png')
-   
-  meta(property="fb:app_id", content=fb.clientID)
-  meta(property="og:title", content=title)
-  meta(property="og:description", content=__('site_description'))
-  meta(property="og:url", content=url)
-  meta(property="og:image", content=url+'/images/logo_'+locale+'_1024.png')
-  meta(property="og:site_name", content=title)
-  //meta(property="fb:admins", content="??")
+  
+  - if (fb)
+    meta(property="fb:app_id", content=fb.clientID)
+    meta(property="og:title", content=title)
+    meta(property="og:description", content=__('site_description'))
+    meta(property="og:url", content=url)
+    meta(property="og:image", content=url+'/images/logo_'+locale+'_1024.png')
+    meta(property="og:site_name", content=title)
+    //meta(property="fb:admins", content="??")
 
   //
      Styles
