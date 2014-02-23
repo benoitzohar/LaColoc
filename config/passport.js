@@ -83,6 +83,7 @@ module.exports = function (passport, config) {
             email: profile.emails[0].value,
             username: profile.username,
             provider: 'facebook',
+            picture: 'http://graph.facebook.com/'+profile.username+'/picture',
             facebook: profile._json
           })
           user.save(function (err) {
@@ -111,6 +112,7 @@ module.exports = function (passport, config) {
             email: profile.email,
             username: 'fb'+profile.id,
             provider: 'facebook',
+            picture: 'http://graph.facebook.com/'+profile.id+'/picture',
             facebook: profile
           })
           user.save(function (err) {
