@@ -84,7 +84,7 @@ module.exports = function (app, passport) {
   app.get('/users/:userId', users.show)
   app.get('/auth/facebook',
     passport.authenticate('facebook', {
-      scope: [ 'email', 'user_about_me'],
+      scope: [ 'email', 'user_about_me', 'photos'],
       failureRedirect: '/login'
     }), users.signin)
   app.get('/auth/facebook/callback',
@@ -93,13 +93,13 @@ module.exports = function (app, passport) {
     }), users.authCallback)
   app.post('/auth/facebook/canvas', 
     passport.authenticate('facebook-canvas', {
-      scope: [ 'email', 'user_about_me'],
+      scope: [ 'email', 'user_about_me', 'photos'],
       successRedirect: '/',
       failureRedirect: '/auth/facebook/canvas/autologin'
     }), users.signin);
   app.get('/auth/facebook/canvas',
     passport.authenticate('facebook-canvas', {
-      scope: [ 'email', 'user_about_me'],
+      scope: [ 'email', 'user_about_me', 'photos'],
       failureRedirect: '/auth/facebook/canvas/autologin'
     }), users.signin)
   app.get('/auth/facebook/canvas/autologin', function( req, res ){
