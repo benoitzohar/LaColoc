@@ -6,6 +6,7 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , utils = require('../lib/utils')
+  , config = require('../config/config')
 
 var login = function (req, res) {
   var redirectTo = req.session.returnTo ? req.session.returnTo : '/'
@@ -58,7 +59,12 @@ exports.create = function (req, res) {
    //store email as default username for local strategy
   user_infos.username = user_infos.email;
   var user = new User(user_infos)
-  user.provider = 'local'
+  user.provider = 'local';
+
+  var crypto = require('crypto')
+    , user_hash = crypto.createHash('md5').update(user_infos.email+'').digest('hex')
+
+  user.picture = 'https://www.gravatar.com/avatar/'+user_hash+'?d='+config.url+'/images/default_user_link150.jpg&s=150';
   user.save(function (err) {
     if (err) { console.log('err',err);
       return res.render('user/login', {

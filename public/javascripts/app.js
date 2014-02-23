@@ -27,16 +27,24 @@ var lcangular = angular.module('lcangular', []);
 
 var app = {
 
+    config : {},
     current_shopping_id : null,
     current_expense_id : null,
 
-    init: function(url,user,cb) {
+    init: function(url,user,config,cb) {
         log("app.init(",url,'user',user,');');
-
+        this.config = config;
         //hide loggin button in facebook frame
         if (window!=window.top) {
             $('.menu-user-infos').remove();
         }
+
+        $('.datepicker').datepicker({
+            format : config.date_format || 'mm/dd/yyyy',
+            weekStart : 1,
+            language: config.locale || 'en'
+        });
+        $('.datepicker.current_date').datepicker("setDate",new Date());
 
         current_user = user;
         this.initSocket(url);
@@ -45,11 +53,7 @@ var app = {
 
     initSocket : function(url) {
         socket = io.connect(url,{
-            'reconnection delay' : 1000
-        });
-        //this.initShoppingEvents();
-        socket.on('shopping:list',function(data) {
-            console.log('shopping:list data',data);
+            'reconnection delay' : 200
         });
     },
 

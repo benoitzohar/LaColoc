@@ -39,6 +39,10 @@ input[type="checkbox"] {
   outline: none !important;
 }
 
+.pointer {
+    cursor: pointer !important;
+}
+
 
 /* Profil picture */
 .pp {
@@ -114,6 +118,10 @@ button:focus {
     outline: none;
 }
 
+input.ng-dirty.ng-invalid {
+  border: 1px solid red;
+}
+
 .lc-popup-alert {
     position:absolute;
     top:50px;
@@ -138,6 +146,28 @@ div.app-container{
 
 div.app-container.app-with-left-menu {
     padding-left:250px;
+}
+
+h2.app_title {
+    position: absolute;
+    top: -80px;
+    width: 100%;
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    color: #b3b3b3;
+    color: rgba(255, 255, 255, 0.3);
+    text-shadow: -1px -1px rgba(0, 0, 0, 0.2);
+    -webkit-text-rendering: optimizeLegibility;
+    -moz-text-rendering: optimizeLegibility;
+    -ms-text-rendering: optimizeLegibility;
+    -o-text-rendering: optimizeLegibility;
+    text-rendering: optimizeLegibility;
+}
+
+#expenseapp {
+    margin-top: 80px;
+    position: relative;
 }
 
 

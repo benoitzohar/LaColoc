@@ -4,6 +4,7 @@ var   mongoose = require('mongoose')
     , Group = mongoose.model('Group')
     , Shopping = mongoose.model('Shopping')
     , Expense = mongoose.model('Expense')
+    , config = require('./config')
 /**
  * Expose socket config
  */
@@ -23,13 +24,7 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
   // enable all transports (optional if you want flashsocket support, please note that some hosting
 // providers do not allow you to create servers that listen on a port different than 80 or their
 // default port)
-io.set('transports', [
-    'jsonp-polling'
-  , 'websocket'
-  , 'flashsocket'
-  , 'htmlfile'
-  , 'xhr-polling'
-]);
+io.set('transports', config.socket_transports);
 
   function onAuthorizeSuccess(data, accept){
     console.log('successful connection to socket.io');
@@ -93,8 +88,8 @@ io.set('transports', [
       }
     });
 
-    socket.on('shopping:update',function(data) {
-      console.log("shopping.update request received from=",cuser.email,data);
+    socket.on('shopping:sync',function(data) {
+      console.log("shopping.sync request received from=",cuser.email,data);
       if (data && data.shopping_id) {
         Shopping.load(data.shopping_id,function(err,shopping) {
           //sync list of items
@@ -134,6 +129,66 @@ io.set('transports', [
       }
     })
 
+    socket.on('shopping:update',function(data) {
+      console.log("shopping.update request received from=",cuser.email,data);
+      if (data && data.shopping_id) {
+        Shopping.load(data.shopping_id,function(err,shopping) {
+          //sync list of items
+          if (shopping && shopping.items && data.items){
+            for(var k in data.items) {
+              var index = -1;
+              //if shopping exists: go thru them
+              if (data.items[k]._id && shopping.items.length) {
+                  index = utils.indexof(shopping.items, { _id: data.items[k]._id })
+              }
+              //if item exist: update it
+              if (~index) {
+                  shopping.items[index].title = data.items[k].title;
+                  shopping.items[index].completed = data.items[k].completed;
+              }
+              //otherwise add it to the list
+              else {
+                shopping.items.push(data.items[k]);
+              }
+            }
+            
+            shopping.save(function(err,saved) {
+              broadcastToGroup(cuser,'shopping:list',saved.items);
+            })
+            
+          }
+        })
+      }
+    })
+
+  socket.on('shopping:remove',function(data) {
+      console.log("shopping.remove request received from=",cuser.email,data);
+      if (data && data.shopping_id) {
+        Shopping.load(data.shopping_id,function(err,shopping) {
+          //sync list of items
+          if (shopping && shopping.items && data.items){
+            for(var k in data.items) {
+              var index = -1;
+              //if shopping exists: go thru them
+              if (data.items[k] && shopping.items.length) {
+                  index = utils.indexof(shopping.items, { _id: data.items[k] })
+              }
+              //if item exist: update it
+              if (~index) {
+                  //remove item from list
+                  shopping.items.splice(index,1);
+              }
+            }
+            
+            shopping.save(function(err,saved) {
+              broadcastToGroup(cuser,'shopping:list',saved.items);
+            })
+            
+          }
+        })
+      }
+    })
+
   //Expense
     socket.on('expense:get',function(data) {
       console.log("expense:get request received from=",cuser.email);
@@ -145,60 +200,60 @@ io.set('transports', [
         })
       }
     });
+    socket.on('expense:add',function(data) {
+      console.log("expense.add request received from=",cuser.email,data);
+      if (data && data.expense_id) {
+        Expense.load(data.expense_id,function(err,expense) {
+          //add items to list
+          if (expense && expense.users && data.items) {
+            console.log('data.items',data.items);
+            for(var k in data.items) {
+              expense.addItem(cuser,data.items[k]);
+            }
+            expense.save(function(err,saved) {
+              broadcastToGroup(cuser,'expense:list',saved);
+            }) 
+          }
+        })
+      }
+    })
 
     socket.on('expense:update',function(data) {
       console.log("expense.update request received from=",cuser.email,data);
       if (data && data.expense_id) {
         Expense.load(data.expense_id,function(err,expense) {
-          //sync list of items
+          //add items to list
           if (expense && expense.users && data.items) {
             console.log('data.items',data.items);
-            var indexUser = expense.getUserIndex(cuser._id);
-            //if user exists : try to sync list
-            console.log("indexUser=",indexUser)
-            if (~indexUser) {
-              var useritems = expense.users[indexUser].items;
-              if (useritems.length) {
-                for(var i=0;i<useritems.length;i++) {
-                  var item = useritems[i];
-                  if (!item._id) continue;
-                  var index = utils.indexof(data.items, { _id: item._id+'' })
-                  //if item exists in incoming list
-                  if (~index) {
-                    //try to update
-                    expense.updateItem(cuser,data.items[index])
-                    //clean incoming list
-                    delete data.items[index];
-                  }
-                  else {
-                    //remove item from list
-                    expense.removeItem(cuser,item._id)
-                  }
-                }
+            for(var k in data.items) {
+              if (data.items[k] && data.items[k]._id) {
+                expense.updateItem(cuser,data.items[k])
               }
-              
-              //get the added items
-              for(var k in data.items) {
-                expense.addItem(cuser,data.items[k]);
-              }
-              
-              expense.save(function(err,saved) {
-                broadcastToGroup(cuser,'expense:list',saved);
-              })
             }
-            //else :add all items
-            else {
-                for(var i=0;i<data.items.length;i++) {
-                  console.log("Adding data.items[i]:",data.items[i])
-                  expense.addItem(cuser,data.items[i]);
-                }
-
-                 expense.save(function(err,saved) {
-                  broadcastToGroup(cuser,'expense:list',saved);
-                })
-            }
+            expense.save(function(err,saved) {
+              broadcastToGroup(cuser,'expense:list',saved);
+            }) 
           }
+        })
+      }
+    })
 
+    socket.on('expense:remove',function(data) {
+      console.log("expense.remove request received from=",cuser.email,data);
+      if (data && data.expense_id) {
+        Expense.load(data.expense_id,function(err,expense) {
+          //add items to list
+          if (expense && expense.users && data.items) {
+            console.log('data.items',data.items);
+            for(var k in data.items) {
+              if (data.items[k]) {
+                expense.removeItem(cuser,data.items[k])
+              }
+            }
+            expense.save(function(err,saved) {
+              broadcastToGroup(cuser,'expense:list',saved);
+            }) 
+          }
         })
       }
     })

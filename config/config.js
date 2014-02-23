@@ -42,7 +42,9 @@ var confg = {
   captcha: {
     pub: "6Ldzw-4SAAAAAAans1Cy_y87_fnSEOTvpFmKvPAQ",
     priv: "6Ldzw-4SAAAAAMZr7Ufwj5L1PmXhbzVMxRa3X34A"
-  }
+  },
+  socket_transports : ['websocket','jsonp-polling', 'flashsocket', 'htmlfile', 'xhr-polling'],
+  date_format : 'dd/mm/yyyy'
 }
 
 //configs depending on environnement
@@ -69,6 +71,8 @@ switch(env) {
     }
     confg.twitter.callbackURL = "http://www.flatbuddy.eu/auth/twitter/callback";
     confg.google.callbackURL = "https://www.flatbuddy.eu/auth/google/callback";
+    confg.socket_transports = ['websocket','jsonp-polling', 'flashsocket', 'htmlfile', 'xhr-polling'];
+    confg.date_format = 'mm/dd/yyyy';
     break;
   case 'deven':
     confg.locale = 'en';
@@ -76,6 +80,7 @@ switch(env) {
       en: "http://google.com/",
       fr: "http://facebook.com/"
     }
+    confg.date_format = 'mm/dd/yyyy';
     break;
 }
 

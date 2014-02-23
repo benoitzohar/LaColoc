@@ -6,14 +6,15 @@
  * - retrieves and persists the model via the expenseStorage service
  * - exposes the model to the template and provides event handlers
  */
-lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSocket, filterFilter) {
+lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSocket, $filter) {
     var expenses = $scope.expenses = [];
 
     $scope.newExpenseTitle = '';
-    $scope.newExpenseDate = '';
+    $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
     $scope.newExpenseValue = '';
     $scope.grandTotal = 0;
     $scope.editedExpense = null;
+    $scope.newExpenseDateObject = new Date().getTime();
 
     if ($location.path() === '') {
         $location.path('/');
@@ -35,6 +36,7 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
 
             for(var i=0;i<users.length;i++) {
                 if (!users[i].user || !users[i].user._id) continue;
+                users[i].total = Math.round(users[i].total*100)/100
                 if (current_user == users[i].user._id){
                     users[i].is_current_user = 1
                     exp.unshift(users[i])
@@ -56,19 +58,26 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
             expenses = exp;
         }
 
-        $scope.grandTotal = data.total;
-        $('.angular-hider').removeClass('hidden')
-        $('.angular-shower').addClass('hidden')
+        $scope.grandTotal = Math.round(data.total*100)/100;
+        $('.angular-hider').removeClass('hidden');
+        $('.angular-shower').addClass('hidden');
     })
 
 
     $scope.addExpense = function () {
-        var newExpenseTitle = $scope.newExpenseTitle.trim()
-          , newExpenseDate = $scope.newExpenseDate.trim()
-          , newExpenseValue = $scope.newExpenseValue.trim();
+
+        if (!$scope.addexpenseform.$valid) return;
+
+        var newExpenseTitle = $scope.newExpenseTitle ? $scope.newExpenseTitle.trim() : ''
+          , newExpenseDate = $scope.newExpenseDateObject
+          , newExpenseValue = $scope.newExpenseValue ? $scope.newExpenseValue.trim().replace(',','.') : '';
+
+        if (isNaN(newExpenseValue)) {
+            return;
+        }
+        
         if (newExpenseTitle.length === 0 
-            || newExpenseDate.length === 0
-            || newExpenseValue.length === 0) {
+            || newExpenseDate.length === 0) {
             return;
         }
         var expense = {
@@ -79,11 +88,14 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
 
         if (!expenses[0].items) expenses[0].items = [];
         expenses[0].items.push(expense);
-        lcSocket.emit('expense:update',expenses[0].items);
+        lcSocket.emit('expense:add',[expense]);
 
         $scope.newExpenseTitle = '';
-        $scope.newExpenseDate = '';
+        $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
         $scope.newExpenseValue = '';
+        $scope.newExpenseDateObject = new Date().getTime();
+
+        $scope.addexpenseform.$setPristine();
     };
 
     $scope.editExpense = function (expense) {
@@ -99,7 +111,7 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
         if (!expense.title) {
             $scope.removeExpense(expense);
         }
-        else lcSocket.emit('expense:update',expenses);
+        else lcSocket.emit('expense:update',[expense]);
     };
 
     $scope.revertEditing = function (expense) {
@@ -108,8 +120,11 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
     };
 
     $scope.removeExpense = function (expense) {
+        var id = expense._id;
         expenses[0].items.splice(expenses[0].items.indexOf(expense), 1);
-        lcSocket.emit('expense:update',expenses[0].items);
+        if (id) {
+            lcSocket.emit('expense:remove',[id]);
+        }
     };
 
 });

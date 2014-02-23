@@ -17,7 +17,7 @@ block content
     each cuser in group.users
       .col-sm-6.col-md-4
         .thumbnail
-          img.pp(src='https://www.gravatar.com/avatar/'+email_hashes[cuser._id]+'?d=#{url}/images/default_user_link150.jpg&s=150', alt='', style="margin-top:4px;")
+          img.pp(src=cuser.picture || url+'/images/default_user_link150.jpg', alt='', style="margin-top:4px;")
           .caption
             center
               h3 #{cuser.name}

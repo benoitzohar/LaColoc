@@ -127,6 +127,16 @@ module.exports = function (app, config, passport, sessionstore) {
       res.locals.env = env;
       res.locals.locale = config.locale;
       res.locals.fb = config.facebook;
+
+      res.locals.date_format = config.date_format;
+      res.locals.angular_date_format = config.date_format.replace('mm','MM');
+
+      res.locals.client_params = JSON.stringify({
+        locale: config.locale,
+        date_format: config.date_format,
+        angular_date_format: res.locals.angular_date_format
+      });
+
       if (env !== 'development') {
         if (config.locale && i18n.getLocale(req) !== config.locale) {
           if (config.localized_url && config.localized_url[i18n.getLocale(req)]) {

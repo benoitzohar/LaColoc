@@ -59,7 +59,7 @@ ExpenseSchema.pre('save', function (next) {
     this.users[i].diff = parseInt((this.users[i].total - (grand_total / this.users.length)) * 100,10)/ 100;
   }
 
-  this.total = grand_total;
+  this.total = Math.round(grand_total*100)/100;
 
   next()
 })

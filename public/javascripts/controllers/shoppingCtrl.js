@@ -42,7 +42,7 @@ lcangular.controller('ShoppingCtrl', function ShoppingCtrl($scope, $location, lc
 			completed: false
 		};
 		shoppings.push(shopping);
-		lcSocket.emit('shopping:update',shoppings);
+		lcSocket.emit('shopping:update',[shopping]);
 
 		$scope.newShopping = '';
 		$scope.remainingCount++;
@@ -61,7 +61,7 @@ lcangular.controller('ShoppingCtrl', function ShoppingCtrl($scope, $location, lc
 		if (!shopping.title) {
 			$scope.removeShopping(shopping);
 		}
-		else lcSocket.emit('shopping:update',shoppings);
+		else lcSocket.emit('shopping:update',[shopping]);
 	};
 
 	$scope.revertEditing = function (shopping) {
@@ -72,11 +72,13 @@ lcangular.controller('ShoppingCtrl', function ShoppingCtrl($scope, $location, lc
 	$scope.removeShopping = function (shopping) {
 		$scope.remainingCount -= shopping.completed ? 0 : 1;
 		shoppings.splice(shoppings.indexOf(shopping), 1);
-		lcSocket.emit('shopping:update',shoppings);
+		if (shopping && shopping._id) {
+			lcSocket.emit('shopping:remove',[shopping._id]);
+		}
 	};
 
 	$scope.shoppingCompleted = function (shopping) {
 		$scope.remainingCount += shopping.completed ? -1 : 1;
-		lcSocket.emit('shopping:update',shoppings);
+		lcSocket.emit('shopping:update',[shopping]);
 	};
 });

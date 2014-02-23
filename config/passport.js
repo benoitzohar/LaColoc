@@ -54,6 +54,7 @@ module.exports = function (passport, config) {
             name: profile.displayName,
             username: profile.username,
             provider: 'twitter',
+            picture: profile.profile_image_url,
             twitter: profile._json
           })
           user.save(function (err) {

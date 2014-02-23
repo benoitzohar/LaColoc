@@ -145,17 +145,9 @@ exports.update = function(req, res){
 
 exports.show = function(req, res){
 
-  var hashes = {}
-    , crypto = require('crypto')
-
-  for(var i=0;i<req.group.users.length;i++) {
-    hashes[req.group.users[i]._id] = crypto.createHash('md5').update(req.group.users[i].email+'').digest('hex')
-  }
-
   res.render('groups/show', {
     title: req.group.name,
     group: req.group,
-    email_hashes: hashes,
     current_user_id: req.user._id
   })
 }
