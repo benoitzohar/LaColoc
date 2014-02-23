@@ -1,19 +1,7 @@
 extends ../layouts/default
 block content
     .row(ng-controller='ExpenseCtrl')
-        .col-sm-3
-            .panel.left-menu  
-                a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
-                    i.glyphicon.glyphicon-plus
-                    | &nbsp;#{__("New list")}
-                h5.angular-hider.hidden &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
-                - if (archives && archives.length)
-                  h5 &nbsp;#{__("Archives")}:
-                  .list-group
-                    ul
-                      - each archive in archives
-                        li.archive.list-group-item= formatDate(archive.archivedAt)
-        .col-sm-9
+        .col-md-9.col-md-push-3
             section#expenseapp
                 header#header
                     h2.app_title #{__('Expense list')}
@@ -55,3 +43,16 @@ block content
                               td
                                 .pull-right(ng-show='expense.is_current_user')
                                     a.pointer(ng-click='removeExpense(item)') #{__('Delete')}
+
+          .col-md-3.col-md-pull-9
+                  .panel.left-menu  
+                      a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
+                          i.glyphicon.glyphicon-plus
+                          | &nbsp;#{__("New list")}
+                      h5.angular-hider.hidden &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
+                      - if (archives && archives.length)
+                        h5 &nbsp;#{__("Archives")}:
+                        .list-group
+                          ul
+                            - each archive in archives
+                              li.archive.list-group-item= formatDate(archive.archivedAt)

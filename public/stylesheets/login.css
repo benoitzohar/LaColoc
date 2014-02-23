@@ -35,6 +35,13 @@ a.zocial {
     margin:5px;
     opacity: 0.8;
 }
+ @media (max-width: 768px) {
+    a.zocial {
+        margin-left: -8px;
+        margin-right: -8px;
+    }
+}
+
 a.zocial:hover {
     opacity: 1;
 }

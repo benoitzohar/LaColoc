@@ -2,19 +2,7 @@ extends ../layouts/default
 block content
     #{req.shopping}
     .row
-        .col-sm-3
-            .panel.left-menu
-                a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
-                    i.glyphicon.glyphicon-plus
-                    | &nbsp;#{__("New list")}
-                - if (archives.length)
-                h5 &nbsp;#{__("Archives")}:
-                .list-group
-                  ul
-                    - each archive in archives
-                      li.archive.list-group-item= formatDate(archive.archivedAt)
-                        span.badge= archive.items.length
-        .col-sm-9
+        .col-md-9.col-md-push-3
             section#shoppingapp(ng-controller='ShoppingCtrl')
                 header#header
                     h2.app_title #{__('Shopping list')}
@@ -32,6 +20,19 @@ block content
                         form(ng-submit='doneEditing(shopping)')
                           input.edit(ng-trim='false', ng-model='shopping.title', ng-blur='doneEditing(shopping)', shopping-escape='revertEditing(shopping)', shopping-focus='shopping == editedShopping')
 
+        .col-md-3.col-md-pull-9
+            .panel.left-menu
+                a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
+                    i.glyphicon.glyphicon-plus
+                    | &nbsp;#{__("New list")}
+                - if (archives.length)
+                h5 &nbsp;#{__("Archives")}:
+                .list-group
+                  ul
+                    - each archive in archives
+                      li.archive.list-group-item= formatDate(archive.archivedAt)
+                        span.badge= archive.items.length
+        
 
 
   

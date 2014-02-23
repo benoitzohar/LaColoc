@@ -2,7 +2,7 @@ extends ../layouts/default
 
 block container
       .row.main-row
-        .col-md-5
+        .col-xs-12.col-md-5
           center
             img.main_logo.smooth(src='/images/logo_'+locale+'_160.png')
           div(style='margin-top: 20px;')
@@ -13,7 +13,7 @@ block container
                   a(href='https://twitter.com/lacoloc_fr',style="font-size:small;text-decoration:none;") @LaColoc_fr
                 - else
                   a(href='https://twitter.com/flatbuddy_eu',style="font-size:small;text-decoration:none;") @FlatBuddy_eu
-        .col-md-5
+        .col-xs-12.col-md-5
           .div_title #{__("lacoloc")}
           .well(style='opacity: 1; position: relative;')
             form#login_form.form-horizontal(action="/users/session", method="post", role="form")
