@@ -74,6 +74,22 @@ switch(env) {
     confg.socket_transports = ['xhr-polling','jsonp-polling','websocket'];
     confg.date_format = 'mm/dd/yyyy';
     break;
+  case 'KIMSLC':
+    confg.locale = 'fr';
+    confg.url = 'http://www.lacoloc.fr';
+    confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
+    confg.email = 'contact@lacoloc.fr';
+    confg.facebook.callbackURL = "https://www.lacoloc.fr/auth/facebook/callback";
+    confg.facebook.canvasCallbackURL = "https://apps.facebook.com/lacoloc";
+    confg.twitter.callbackURL = "http://www.lacoloc.fr/auth/twitter/callback";
+    confg.google.callbackURL = "http://www.lacoloc.fr/auth/google/callback";
+    confg.socket_transports = ['websocket','xhr-polling','jsonp-polling'];
+    confg.date_format = 'dd/mm/yyyy';
+    break;
+  case 'KIMSLCDEV':
+
+    break;
+
   case 'deven':
     confg.locale = 'en';
     confg.localized_url = {
