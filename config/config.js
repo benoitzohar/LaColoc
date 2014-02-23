@@ -43,7 +43,7 @@ var confg = {
     pub: "6Ldzw-4SAAAAAAans1Cy_y87_fnSEOTvpFmKvPAQ",
     priv: "6Ldzw-4SAAAAAMZr7Ufwj5L1PmXhbzVMxRa3X34A"
   },
-  socket_transports : ['websocket','jsonp-polling', 'flashsocket', 'htmlfile', 'xhr-polling'],
+  socket_transports : ['websocket','jsonp-polling', 'xhr-polling'],
   date_format : 'dd/mm/yyyy'
 }
 
@@ -71,7 +71,7 @@ switch(env) {
     }
     confg.twitter.callbackURL = "http://www.flatbuddy.eu/auth/twitter/callback";
     confg.google.callbackURL = "https://www.flatbuddy.eu/auth/google/callback";
-    confg.socket_transports = ['websocket','jsonp-polling', 'flashsocket', 'htmlfile', 'xhr-polling'];
+    confg.socket_transports = ['xhr-polling','jsonp-polling','websocket'];
     confg.date_format = 'mm/dd/yyyy';
     break;
   case 'deven':
