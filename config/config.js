@@ -85,6 +85,7 @@ switch(env) {
     confg.google.callbackURL = "http://www.lacoloc.fr/auth/google/callback";
     confg.socket_transports = ['websocket','xhr-polling','jsonp-polling'];
     confg.date_format = 'dd/mm/yyyy';
+    confg.socket_transports = ['xhr-polling','jsonp-polling','websocket'];
     confg.captcha = {
       pub: "6Ldww-4SAAAAAB-0qBTIdY0KWAJsZCYFyejuuQiL",
       priv: "6Ldww-4SAAAAAJtUrWZP6Vd_Pex3gu9_PjWljdHY"
