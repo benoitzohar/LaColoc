@@ -25,8 +25,8 @@ var confg = {
   email: 'noreply@localhost',
   notifier: notifier,
   facebook: {
-    clientID: '132361146926151',
-    clientSecret: 'e5c177219973b5400aad4598b518de4f',
+    clientID: '1388170744786873',
+    clientSecret: 'cbb7a584f9b2a9b17dd1cc039e8238bd',
     callbackURL: "https://localhost:3000/auth/facebook/callback"
   },
   twitter: {
