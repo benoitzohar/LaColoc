@@ -91,7 +91,7 @@ switch(env) {
     confg.url = 'http://www.lacoloc.fr';
     confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
     confg.email = 'contact@lacoloc.fr';
-    confg.facebook.callbackURL = "https://www.lacoloc.fr/auth/facebook/callback";
+    confg.facebook.callbackURL = "http://www.lacoloc.fr/auth/facebook/callback";
     confg.facebook.canvasCallbackURL = "https://apps.facebook.com/lacoloc";
     confg.twitter.callbackURL = "http://www.lacoloc.fr/auth/twitter/callback";
     confg.google.callbackURL = "http://www.lacoloc.fr/auth/google/callback";
