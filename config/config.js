@@ -81,6 +81,10 @@ switch(env) {
       track_id : "UA-33326287-2",
       track_url: "flatbuddy.eu"
     }
+    confg.captcha = {
+      pub: "6Ldyw-4SAAAAAAJyfPoI7YUIQgBwzKiqP-5wkPdC",
+      priv: "6Ldyw-4SAAAAANocIiBdKqxN3epvALkJuae5FOZO"
+    }
     break;
   case 'KIMSLC':
     confg.locale = 'fr';
