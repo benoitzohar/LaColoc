@@ -131,6 +131,8 @@ module.exports = function (app, config, passport, sessionstore) {
       res.locals.date_format = config.date_format;
       res.locals.angular_date_format = config.date_format.replace('mm','MM');
 
+      res.locals.analytics = config.analytics;
+
       res.locals.client_params = JSON.stringify({
         locale: config.locale,
         date_format: config.date_format,

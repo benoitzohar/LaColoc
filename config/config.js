@@ -44,7 +44,11 @@ var confg = {
     priv: "6Ldzw-4SAAAAAMZr7Ufwj5L1PmXhbzVMxRa3X34A"
   },
   socket_transports : ['websocket','jsonp-polling', 'xhr-polling'],
-  date_format : 'dd/mm/yyyy'
+  date_format : 'dd/mm/yyyy',
+  analytics: {
+    track_id : "UA-33326287-1",
+    track_url: "lacoloc.fr"
+  }
 }
 
 //configs depending on environnement
@@ -73,6 +77,10 @@ switch(env) {
     confg.google.callbackURL = "https://www.flatbuddy.eu/auth/google/callback";
     confg.socket_transports = ['xhr-polling','jsonp-polling','websocket'];
     confg.date_format = 'mm/dd/yyyy';
+    confg.analytics = {
+      track_id : "UA-33326287-2",
+      track_url: "flatbuddy.eu"
+    }
     break;
   case 'KIMSLC':
     confg.locale = 'fr';
