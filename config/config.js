@@ -58,7 +58,7 @@ switch(env) {
     confg.url = 'https://lacoloc.herokuapp.com';
     confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
     confg.email = 'contact@lacoloc.fr';
-    confg.facebook.callbackURL = "https://lacoloc.herokuapp.com/auth/facebook/callback";
+    confg.facebook.callbackURL = "http://lacoloc.herokuapp.com/auth/facebook/callback";
     confg.twitter.callbackURL = "https://lacoloc.herokuapp.com/auth/twitter/callback";
     confg.google.callbackURL = "https://lacoloc.herokuapp.com/auth/google/callback";
     break;
@@ -70,7 +70,7 @@ switch(env) {
     confg.facebook =  {
       clientID: '614809568598903',
       clientSecret: 'c6e171b47cce427b8ccd56a1c1e1f1e0',
-      callbackURL: "https://www.flatbuddy.eu/auth/facebook/callback",
+      callbackURL: "http://www.flatbuddy.eu/auth/facebook/callback",
       canvasCallbackURL: "https://apps.facebook.com/flatbuddy_eu",
     }
     confg.twitter.callbackURL = "http://www.flatbuddy.eu/auth/twitter/callback";
