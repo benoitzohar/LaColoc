@@ -110,7 +110,9 @@ exports.user = function (req, res, next, id) {
 
 exports.redirectToDefaultTab = function (req, res) {
   var user = req.profile
-  res.redirect('/expenses')
+  res.render('layouts/default',{
+    user: user
+  })
   //if (user.last_page)  res.redirect(user.last_page)
   //else res.redirect('/expenses')
 }

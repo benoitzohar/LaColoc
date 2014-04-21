@@ -6,8 +6,10 @@
  * - retrieves and persists the model via the expenseStorage service
  * - exposes the model to the template and provides event handlers
  */
-lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSocket, $filter) {
+function ExpenseCtrl($scope, $location, lcSocket, $filter) {
     var expenses = $scope.expenses = [];
+    var owes = $scope.owes = [];
+    var entity_id = $scope.entity_id = null;
 
     $scope.newExpenseTitle = '';
     $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
@@ -26,43 +28,57 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
         $scope.allChecked = val;
     });
 
+    //change menu highlights
+    $('.nav li').removeClass('active');
+    $('.nav li.expenses-link').addClass('active');
+
+    //remove existing listeners from socket
+    lcSocket.removeAllListeners('expense:list');
     lcSocket.on('expense:list',function(data) {
-        //console.log("got expense:list in ctrl",data);
-        //set the current user at the beggining of the data
-        if (data.users) {
-            var users = data.users
-              , exp = []
-              , current_user_found = false
+        log(data);
+        if (data.entity_id) entity_id = $scope.entity_id = data.entity_id;
+        var expense = data.expense;
+        if (expense) {
+            //console.log("got expense:list in ctrl",data);
+            //set the current user at the beggining of the data
+            if (expense.users) {
+                var users = expense.users
+                  , exp = []
+                  , current_user_found = false
 
-            for(var i=0;i<users.length;i++) {
-                if (!users[i].user || !users[i].user._id) continue;
-                users[i].total = Math.round(users[i].total*100)/100
-                if (current_user == users[i].user._id){
-                    users[i].is_current_user = 1
-                    exp.unshift(users[i])
-                    current_user_found = true;
+                for(var i=0;i<users.length;i++) {
+                    if (!users[i].user || !users[i].user._id) continue;
+
+                    users[i].total = Math.round(users[i].total*100)/100
+                    if (current_user == users[i].user._id){
+                        users[i].is_current_user = 1
+                        exp.unshift(users[i])
+                        current_user_found = true;
+                    }
+                    else   
+                        exp.push(users[i])
                 }
-                else   
-                    exp.push(users[i])
+
+                //make sure the current user can get things done
+                if (!current_user_found) {
+                    exp.unshift({
+                        user: current_user,
+                        items : []
+                    })
+                }
+
+                $scope.expenses = exp;
+                expenses = exp;
             }
 
-            //make sure the current user can get things done
-            if (!current_user_found) {
-                exp.unshift({
-                    user: current_user,
-                    items : []
-                })
+            if (expense.owes) {
+                $scope.owes = expense.owes;
+                owes = expense.owes;
             }
 
-            $scope.expenses = exp;
-            expenses = exp;
+            $scope.grandTotal = Math.round(expense.total*100)/100;
         }
-
-        $scope.grandTotal = Math.round(data.total*100)/100;
-        $('.angular-hider').removeClass('hidden');
-        $('.angular-shower').addClass('hidden');
     })
-
 
     $scope.addExpense = function () {
 
@@ -88,7 +104,8 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
 
         if (!expenses[0].items) expenses[0].items = [];
         expenses[0].items.push(expense);
-        lcSocket.emit('expense:add',[expense]);
+
+        lcSocket.emit('expense:add', [expense], entity_id);
 
         $scope.newExpenseTitle = '';
         $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
@@ -111,7 +128,7 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
         if (!expense.title) {
             $scope.removeExpense(expense);
         }
-        else lcSocket.emit('expense:update',[expense]);
+        else lcSocket.emit('expense:update',[expense], entity_id);
     };
 
     $scope.revertEditing = function (expense) {
@@ -123,8 +140,15 @@ lcangular.controller('ExpenseCtrl', function ExpenseCtrl($scope, $location, lcSo
         var id = expense._id;
         expenses[0].items.splice(expenses[0].items.indexOf(expense), 1);
         if (id) {
-            lcSocket.emit('expense:remove',[id]);
+            lcSocket.emit('expense:remove',[id], entity_id);
         }
     };
 
-});
+    $scope.toggleDest = function(dest) {
+        console.log('dest',dest);
+    }
+
+    //init view
+    lcSocket.emit('expense:get');  
+
+};

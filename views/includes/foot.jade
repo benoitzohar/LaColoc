@@ -1,27 +1,25 @@
 script(src='//code.jquery.com/jquery-1.10.2.min.js')
-script(src='//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js')
-script(src='/javascripts/libs/angular.js')
-script(src='/javascripts/libs/socket.io.min.js')
-script(src='/javascripts/libs/bootstrap-datepicker.js')
-- if (locale == 'fr')
-  script(src='/javascripts/libs/bootstrap-datepicker.fr.js')
-script(src='/javascripts/app.js')
-- if (shopping)
-  script(src='/javascripts/controllers/shoppingCtrl.js')
-- if (expense)
-  script(src='/javascripts/controllers/expenseCtrl.js')
-script(src='/javascripts/services/lcSocket.js')   
-script(src='/javascripts/directives/lcFocus.js')
-script(src='/javascripts/directives/lcEscape.js')
-script(src='/javascripts/directives/datetimez.js')
-script(src='/javascripts/directives/shoppingFocusInput.js')
 
 - if(req.isAuthenticated())
-    - var js_cb_parts = ''
-    - if (shopping) js_cb_parts += "app.initShopping('"+shopping.id+"');";
-    - if (expense) js_cb_parts += "app.initExpense('"+expense.id+"');";
-    script.
-        app.init('','#{req.user._id}',!{client_params},function(){ #{js_cb_parts} });
+  script(src='/javascripts/libs/angular.js')
+  script(src='/javascripts/libs/angular-route.min.js')
+  script(src='/javascripts/libs/ui-bootstrap-tpls-0.10.0.min.js')
+    
+  script(src='/javascripts/libs/socket.io.min.js')
+  script(src='/javascripts/libs/bootstrap-datepicker.js')
+  - if (locale == 'fr')
+    script(src='/javascripts/libs/bootstrap-datepicker.fr.js')
+  script(src='/javascripts/app.js')
+  script(src='/javascripts/controllers/shoppingCtrl.js')
+  script(src='/javascripts/controllers/expenseCtrl.js')
+  script(src='/javascripts/services/lcSocket.js')   
+  script(src='/javascripts/directives/lcFocus.js')
+  script(src='/javascripts/directives/lcEscape.js')
+  script(src='/javascripts/directives/datetimez.js')
+  script(src='/javascripts/directives/shoppingFocusInput.js')
+  - var js_cb_parts = ''
+  script.
+      app.init('','#{req.user._id}',!{client_params},function(){ #{js_cb_parts} });
 
 script.
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

@@ -35,10 +35,10 @@ head
   link(rel="stylesheet", href="/stylesheets/zocial.css")
   link(rel="stylesheet", href="/stylesheets/style.css")
   link(rel="stylesheet", href="/stylesheets/datepicker.css")
-- if (!req.isAuthenticated())
-  link(rel="stylesheet", href="/stylesheets/login.css")
-- if (isActive('/shopping'))
-  link(rel="stylesheet", href="/stylesheets/shopping.css")  
+  link(rel="stylesheet", href="/stylesheets/shopping.css")
+  - if (!req.isAuthenticated())
+    link(rel="stylesheet", href="/stylesheets/login.css")
+    
 
   //
      HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries

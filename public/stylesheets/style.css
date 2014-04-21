@@ -178,7 +178,7 @@ h2.app_title {
 .left-menu {
     float:left;
     top:100px;
-    width:200px;
+    width:100%;
     padding: 8px 0;
 }
 

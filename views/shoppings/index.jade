@@ -1,39 +1,32 @@
-extends ../layouts/default
-block content
-    #{req.shopping}
-    .row
-        .col-md-9.col-md-push-3
-            section#shoppingapp(ng-controller='ShoppingCtrl')
-                header#header
-                    h2.app_title #{__('Shopping list')}
-                    form#shopping-form(ng-submit='addShopping()')
-                      input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus')
-                      button.btn.btn-primary.angular-hider.hidden(type="submit",ng-show='newShopping.length')
-                        i.glyphicon.glyphicon-plus
-                      img.angular-shower(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;")
-                  section#main.angular-hider.hidden(ng-show='shoppings.length', ng-cloak='ng-cloak')
-                    ul#shopping-list
-                      li(ng-repeat='shopping in shoppings | filter:statusFilter track by $index', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')
-                        .view
-                          input.toggle(type='checkbox', ng-model='shopping.completed', ng-change='shoppingCompleted(shopping)')
-                          label(ng-click='editShopping(shopping)',shoppingfocusinput='') {{shopping.title}}
-                        form(ng-submit='doneEditing(shopping)')
-                          input.edit(ng-trim='false', ng-model='shopping.title', ng-blur='doneEditing(shopping)', shopping-escape='revertEditing(shopping)', shopping-focus='shopping == editedShopping')
-
-        .col-md-3.col-md-pull-9
-            .panel.left-menu
-                a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
+.row
+    .col-md-9.col-md-push-3
+        section#shoppingapp
+            header#header
+                h2.app_title #{__('Shopping list')}
+                form#shopping-form(ng-submit='addShopping()')
+                  input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus')
+                  button.btn.btn-primary(type="submit",ng-show='newShopping.length',ng-cloak='ng-cloak')
                     i.glyphicon.glyphicon-plus
-                    | &nbsp;#{__("New list")}
-                - if (archives.length)
-                h5 &nbsp;#{__("Archives")}:
-                .list-group
-                  ul
-                    - each archive in archives
-                      li.archive.list-group-item= formatDate(archive.archivedAt)
-                        span.badge= archive.items.length
-        
+                  img(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;",ng-hide='entity_id')
+              section#main(ng-show='shoppings.length', ng-cloak='ng-cloak')
+                ul#shopping-list
+                  li(ng-repeat='shopping in shoppings | filter:statusFilter track by $index', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')
+                    .view
+                      input.toggle(type='checkbox', ng-model='shopping.completed', ng-change='shoppingCompleted(shopping)')
+                      label(ng-click='editShopping(shopping)',shoppingfocusinput='') {{shopping.title}}
+                    form(ng-submit='doneEditing(shopping)')
+                      input.edit(ng-trim='false', ng-model='shopping.title', ng-blur='doneEditing(shopping)', shopping-escape='revertEditing(shopping)', shopping-focus='shopping == editedShopping')
 
-
-  
-
+    .col-md-3.col-md-pull-9
+        .panel.left-menu
+            a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
+                i.glyphicon.glyphicon-plus
+                | &nbsp;#{__("New list")}
+            - if (archives.length)
+            h5 &nbsp;#{__("Archives")}:
+            .list-group
+              ul
+                - each archive in archives
+                  li.archive.list-group-item= formatDate(archive.archivedAt)
+                    span.badge= archive.items.length
+    

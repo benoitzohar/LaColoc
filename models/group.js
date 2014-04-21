@@ -115,6 +115,10 @@ GroupSchema.methods = {
     return -1;
   },
 
+  hasUser: function(userId) {
+    return this.getUserIndex(userId) !== -1;
+  }
+
 },
 
 /**

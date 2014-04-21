@@ -1,34 +1,33 @@
-extends ../layouts/default
+- var action = '/groups'
+- action += group.isNew? '' : '/' + group.id
 
-block main
-  if !req.user.group
-    .row
-      .col-md-9.col-md-offset-3
-        h1 #{__("Welcome to lacoloc")}
-  h1= __("New coloc")
-  hr
-
-block content
-  - var action = '/groups'
-  - action += group.isNew? '' : '/' + group.id
-
+if !req.user.group
   .row
-    .col-md-8
-      include edit
-      block groupform
+    .col-md-9.col-md-offset-3
+      h1 #{__("Welcome to lacoloc")}
+h1= __("New coloc")
+hr
 
-  .row
-    .col-md4 
-      p #{__("or")}
-    
-  .row
-    .col-md8
-      form.form-horizontal(method="post", action="/invite/valid", enctype="multipart/form-data", role="form")
-        input(type="hidden", name="_csrf", value="#{csrf_token}")
-        h2 #{__("Join an existing coloc")}
-        .form-group
-          label.col-sm-2.control-label(for='code') #{__("Code")}
-          .col-sm-4
-            input.form-control#title(type='text', name="code", placeholder='#{__("Enter the coupon code")}')
-          .col-sm-2
-            button.btn.btn-primary(type="submit") #{__("Join")}
+
+
+
+.row
+  .col-md-8
+    include edit
+    block groupform
+
+.row
+  .col-md4 
+    p #{__("or")}
+  
+.row
+  .col-md8
+    form.form-horizontal(method="post", action="/invite/valid", enctype="multipart/form-data", role="form")
+      input(type="hidden", name="_csrf", value="#{csrf_token}")
+      h2 #{__("Join an existing coloc")}
+      .form-group
+        label.col-sm-2.control-label(for='code') #{__("Code")}
+        .col-sm-4
+          input.form-control#title(type='text', name="code", placeholder='#{__("Enter the coupon code")}')
+        .col-sm-2
+          button.btn.btn-primary(type="submit") #{__("Join")}

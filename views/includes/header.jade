@@ -21,12 +21,12 @@
          app menu 
       .collapse.navbar-collapse
         ul.nav.navbar-nav
-          li(class=isActive('/expenses') ? 'active' : '')
-            a(href='/expenses')
+          li.expenses-link
+            a(href='/#/expenses')
               i.glyphicon.glyphicon-euro
               | &nbsp;#{__('Expenses')}
-          li(class=isActive('/shopping') ? 'active' : '')
-            a(href='/shopping')
+          li.shopping-link
+            a(href='/#/shopping')
               i.glyphicon.glyphicon-th-list
               | &nbsp;#{__('Shopping')}
         ul.nav.navbar-nav.navbar-right
@@ -37,7 +37,7 @@
               b.caret
             ul.dropdown-menu
               li
-                a(href='/groups/'+req.user.current_group.id,title="#{__('Profile')}")
+                a(href='/#/groups/'+req.user.current_group.id,title="#{__('Profile')}")
                   | #{__('Profile')}
               if (req.user.groups && req.user.groups.length > 1)
                 li.divider
@@ -56,7 +56,7 @@
                         | &nbsp; #{group.group.name}
               li.divider
               li
-                a(href='/groups/new')
+                a(href='/#/groups/new')
                   i.glyphicon.glyphicon-plus
                   | &nbsp;#{__('New coloc')}
           li.dropdown.menu-user-infos

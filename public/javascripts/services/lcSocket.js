@@ -6,7 +6,7 @@
 */
 lcangular.factory('lcSocket', function ($rootScope) {
 	return {
-        on: function (eventName, callback) {
+        on: function (eventName, callback, uniqueName) {
           socket.on(eventName, function () {  
             var args = arguments;
             $rootScope.$apply(function () {
@@ -14,22 +14,12 @@ lcangular.factory('lcSocket', function ($rootScope) {
             });
           });
         },
-        emit: function (eventName, data, callback) {
-        //add shopping id by default
-          if (app && app.current_shopping_id) {
-            data = {
-                shopping_id : app.current_shopping_id,
-                items : data
-            };
-          }
-
-          //add expense id by default
-          if (app && app.current_expense_id) {
-            data = {
-                expense_id : app.current_expense_id,
-                items : data
-            };
-          }
+        emit: function (eventName, data, entity_id, callback) {
+          //format data for socket        
+          data = {
+              entity_id : entity_id,
+              items : data
+          };          
 
           socket.emit(eventName, data, function () {
             var args = arguments;
@@ -39,6 +29,9 @@ lcangular.factory('lcSocket', function ($rootScope) {
               }
             });
           })
+        },
+        removeAllListeners: function(eventName) {
+          socket.removeAllListeners(eventName);
         }
       };
 });

@@ -3,7 +3,7 @@ html(lang='#{locale}', ng-app="lcangular", xmlns='http://www.w3.org/1999/xhtml',
   include ../includes/head
   body
       include ../includes/header
-      .container
+      .container(ng-view)
         include ../includes/messages
         block container
           .main-content

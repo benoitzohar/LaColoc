@@ -79,19 +79,19 @@ io.set('transports', config.socket_transports);
     //Shopping
     socket.on('shopping:get',function(data) {
       console.log("shopping:get request received from=",cuser.email);
-      if (data && data.shopping_id) {
-        
-        Shopping.load(data.shopping_id,function(err,shopping) {
-          if (shopping && shopping.items)
-            socket.emit('shopping:list',shopping.items);
-        })
-      }
+    
+      Shopping.current(cuser.current_group,function(err, shopping) {
+        if(!err && shopping && shopping.items) {
+          socket.emit('shopping:list',{entity_id: shopping._id, items: shopping.items});
+        }
+      });
+
     });
 
     socket.on('shopping:sync',function(data) {
       console.log("shopping.sync request received from=",cuser.email,data);
-      if (data && data.shopping_id) {
-        Shopping.load(data.shopping_id,function(err,shopping) {
+      if (data && data.entity_id) {
+        Shopping.load(data.entity_id,function(err,shopping) {
           //sync list of items
           if (shopping && shopping.items && data.items){
 
@@ -121,7 +121,7 @@ io.set('transports', config.socket_transports);
             }
             
             shopping.save(function(err,saved) {
-              broadcastToGroup(cuser,'shopping:list',saved.items);
+              broadcastToGroup(cuser,'shopping:list',{items: saved.items});
             })
             
           }
@@ -131,8 +131,8 @@ io.set('transports', config.socket_transports);
 
     socket.on('shopping:update',function(data) {
       console.log("shopping.update request received from=",cuser.email,data);
-      if (data && data.shopping_id) {
-        Shopping.load(data.shopping_id,function(err,shopping) {
+      if (data && data.entity_id) {
+        Shopping.load(data.entity_id,function(err,shopping) {
           //sync list of items
           if (shopping && shopping.items && data.items){
             for(var k in data.items) {
@@ -153,7 +153,7 @@ io.set('transports', config.socket_transports);
             }
             
             shopping.save(function(err,saved) {
-              broadcastToGroup(cuser,'shopping:list',saved.items);
+              broadcastToGroup(cuser,'shopping:list',{items: saved.items});
             })
             
           }
@@ -163,8 +163,8 @@ io.set('transports', config.socket_transports);
 
   socket.on('shopping:remove',function(data) {
       console.log("shopping.remove request received from=",cuser.email,data);
-      if (data && data.shopping_id) {
-        Shopping.load(data.shopping_id,function(err,shopping) {
+      if (data && data.entity_id) {
+        Shopping.load(data.entity_id,function(err,shopping) {
           //sync list of items
           if (shopping && shopping.items && data.items){
             for(var k in data.items) {
@@ -181,7 +181,7 @@ io.set('transports', config.socket_transports);
             }
             
             shopping.save(function(err,saved) {
-              broadcastToGroup(cuser,'shopping:list',saved.items);
+              broadcastToGroup(cuser,'shopping:list',{items: saved.items});
             })
             
           }
@@ -192,26 +192,27 @@ io.set('transports', config.socket_transports);
   //Expense
     socket.on('expense:get',function(data) {
       console.log("expense:get request received from=",cuser.email);
-      if (data && data.expense_id) {
-        
-        Expense.load(data.expense_id,function(err,expense) {
-          if (expense)
-            socket.emit('expense:list',expense);
-        })
-      }
+
+      Expense.current(cuser.current_group,function(err, expense) {
+        if(!err && expense) {
+          socket.emit('expense:list',{entity_id: expense._id, expense: expense});
+        }
+      });
+
     });
     socket.on('expense:add',function(data) {
       console.log("expense.add request received from=",cuser.email,data);
-      if (data && data.expense_id) {
-        Expense.load(data.expense_id,function(err,expense) {
+      if (data && data.entity_id) {
+        Expense.load(data.entity_id,function(err,expense) {
           //add items to list
           if (expense && expense.users && data.items) {
-            console.log('data.items',data.items);
             for(var k in data.items) {
               expense.addItem(cuser,data.items[k]);
             }
-            expense.save(function(err,saved) {
-              broadcastToGroup(cuser,'expense:list',saved);
+            expense.save(function(err) {
+              Expense.load(data.entity_id,function(err,saved) {
+                broadcastToGroup(cuser,'expense:list',saved);
+              })
             }) 
           }
         })
@@ -220,8 +221,8 @@ io.set('transports', config.socket_transports);
 
     socket.on('expense:update',function(data) {
       console.log("expense.update request received from=",cuser.email,data);
-      if (data && data.expense_id) {
-        Expense.load(data.expense_id,function(err,expense) {
+      if (data && data.entity_id) {
+        Expense.load(data.entity_id,function(err,expense) {
           //add items to list
           if (expense && expense.users && data.items) {
             console.log('data.items',data.items);
@@ -230,8 +231,10 @@ io.set('transports', config.socket_transports);
                 expense.updateItem(cuser,data.items[k])
               }
             }
-            expense.save(function(err,saved) {
-              broadcastToGroup(cuser,'expense:list',saved);
+            expense.save(function(err) {
+              Expense.load(data.entity_id,function(err,saved) {
+                broadcastToGroup(cuser,'expense:list',saved);
+              })
             }) 
           }
         })
@@ -240,8 +243,8 @@ io.set('transports', config.socket_transports);
 
     socket.on('expense:remove',function(data) {
       console.log("expense.remove request received from=",cuser.email,data);
-      if (data && data.expense_id) {
-        Expense.load(data.expense_id,function(err,expense) {
+      if (data && data.entity_id) {
+        Expense.load(data.entity_id,function(err,expense) {
           //add items to list
           if (expense && expense.users && data.items) {
             console.log('data.items',data.items);
@@ -250,8 +253,10 @@ io.set('transports', config.socket_transports);
                 expense.removeItem(cuser,data.items[k])
               }
             }
-            expense.save(function(err,saved) {
-              broadcastToGroup(cuser,'expense:list',saved);
+            expense.save(function(err) {
+              Expense.load(data.entity_id,function(err,saved) {
+                broadcastToGroup(cuser,'expense:list',saved);
+              })
             }) 
           }
         })

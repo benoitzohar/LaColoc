@@ -22,14 +22,19 @@ var current_user = null;
  *
  * @type {angular.Module}
  */
-var lcangular = angular.module('lcangular', []);
-
+var lcangular = angular.module('lcangular', ['ngRoute','ui.bootstrap'])
+    .config(['$routeProvider', function($routeProvider,$routeParams) {
+            $routeProvider.
+              when('/expenses', { templateUrl: '/expenses', controller: ExpenseCtrl }).
+              when('/shopping', { templateUrl: '/shopping', controller: ShoppingCtrl }).
+              when('/groups/new', { templateUrl: '/groups/new' }).
+              when('/groups/:groupid', { templateUrl: function(args) { return '/groups/'+args.groupid }}).
+              otherwise({ redirectTo: '/expenses' });
+          }]);
 
 var app = {
 
     config : {},
-    current_shopping_id : null,
-    current_expense_id : null,
 
     init: function(url,user,config,cb) {
         log("app.init(",url,'user',user,');');
@@ -38,17 +43,21 @@ var app = {
         if (window!=window.top) {
             $('.menu-user-infos').remove();
         }
-
-        $('.datepicker').datepicker({
-            format : config.date_format || 'mm/dd/yyyy',
-            weekStart : 1,
-            language: config.locale || 'en'
-        });
-        $('.datepicker.current_date').datepicker("setDate",new Date());
-
         current_user = user;
         this.initSocket(url);
+        this.initPage();
+
         if (cb) cb();
+    },
+
+    initPage: function() {
+/*        $('.datepicker').datepicker({
+            format : app.config.date_format || 'mm/dd/yyyy',
+            weekStart : 1,
+            language: app.config.locale || 'en'
+        });
+        $('.datepicker.current_date').datepicker("setDate",new Date());
+        */
     },
 
     initSocket : function(url) {
@@ -56,29 +65,6 @@ var app = {
             'reconnection delay' : 200
         });
     },
-
-    initShopping: function(id) {
-        if (!id) return false;
-        this.current_shopping_id = id;
-        socket.emit('shopping:get', {shopping_id: id});  
-    },
-
-    initExpense: function(id) {
-        if (!id) return false;
-        this.current_expense_id = id;
-        socket.emit('expense:get', {expense_id: id});  
-    },
-
-    /*initShoppingEvents: function() {
-        socket.on('shopping:get',function(data) {
-            console.log('shopping:get=',data);
-        }); 
-
-         socket.on('shopping:',function(data) {
-            console.log('shopping.items.response=',data);
-        });
-
-    }*/
 
     sendInvitation: function() {
         $('#inviteemail').parents('form').submit();

@@ -1,58 +1,73 @@
-extends ../layouts/default
-block content
-    .row(ng-controller='ExpenseCtrl')
-        .col-md-9.col-md-push-3
-            section#expenseapp
-                header#header
-                    h2.app_title #{__('Expense list')}
-                    .row
-                      form#expense-form.form-inline(ng-submit='addExpense()',name="addexpenseform")
-                        .form-group.col-xs-6.col-sm-3
-                          input#new-expense-title.form-control(placeholder='#{__("Title")}', ng-model='newExpenseTitle', autofocus='autofocus',required='required')
-                        .form-group.col-xs-6.col-sm-3
-                          input#new-expense-date.form-control.datepicker.current_date(type="text",placeholder='#{__("Date")}', ng-model='newExpenseDate',datetimez='',required='required')
-                        .form-group.col-xs-6.col-sm-3
-                          .input-group
-                            input#new-expense-value.form-control(placeholder='#{__("Value")}', ng-model='newExpenseValue',required='required',ng-pattern="/^([1-9][0-9]*|0)((\.|,)[0-9]+)?$/")
-                            span.input-group-addon €
-                        .form-group.col-xs-6.col-sm-3
-                          button.btn.btn-primary(type="submit") #{__('Add')}
-                        img.angular-shower(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;")
-                  section#dep_wrapper.angular-hider.hidden(ng-show='expenses.length', ng-cloak='ng-cloak')
-                    #expense-list
-                      .user-list(ng-repeat='expense in expenses')
-                        .view
-                          label 
-                        table.table
-                          thead
-                            tr
-                              th(colspan="5")
-                                | {{expense.user.name}}
-                                span#balance1.pull-right
-                                  | {{expense.total}} #{req.group.devise}
-                                  span(style='margin-left: 40px; color: green;',ng-show="expense.diff > 0") {{expense.diff}} #{req.group.devise}
-                                  span(style='margin-left: 40px; color: red;',ng-show="expense.diff < 0") {{expense.diff}} #{req.group.devise}
-                          tbody
-                            tr(ng-repeat='item in expense.items')
-                              td(width="200")
-                                span {{item.title}}
-                              td(width="200")
-                                span {{item.date | date:'#{angular_date_format}'}}
-                              td(width="200")
-                                span {{item.value}} #{req.group.devise}
-                              td
-                                .pull-right(ng-show='expense.is_current_user')
-                                    a.pointer(ng-click='removeExpense(item)') #{__('Delete')}
 
-          .col-md-3.col-md-pull-9
-                  .panel.left-menu  
-                      a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
-                          i.glyphicon.glyphicon-plus
-                          | &nbsp;#{__("New list")}
-                      h5.angular-hider.hidden &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
-                      - if (archives && archives.length)
-                        h5 &nbsp;#{__("Archives")}:
-                        .list-group
-                          ul
-                            - each archive in archives
-                              li.archive.list-group-item= formatDate(archive.archivedAt)
+.row
+    .col-md-9.col-md-push-3
+        section#expenseapp
+            header#header
+                h2.app_title #{__('Expense list')}
+                .row
+                  form#expense-form.form-inline(ng-submit='addExpense()',name="addexpenseform")
+                    .form-group.col-xs-6.col-sm-3
+                      input#new-expense-title.form-control(placeholder='#{__("Title")}', ng-model='newExpenseTitle', autofocus='autofocus',required='required')
+                    .form-group.col-xs-6.col-sm-3
+                      input#new-expense-date.form-control.datepicker.current_date(type="text",placeholder='#{__("Date")}', ng-model='newExpenseDate',datetimez='',required='required',datepicker-popup="{{format}}")
+                    .form-group.col-xs-6.col-sm-3
+                      .input-group
+                        input#new-expense-value.form-control(placeholder='#{__("Value")}', ng-model='newExpenseValue',required='required',ng-pattern="/^([1-9][0-9]*|0)((\.|,)[0-9]+)?$/")
+                        span.input-group-addon €
+                    .form-group.col-xs-6.col-sm-3
+                      select#new-expense-who.form-control(ng-model='newExpenseDate')
+                    .form-group.col-xs-6.col-sm-3
+                      button.btn.btn-primary(type="submit") #{__('Add')}
+                    img(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;",ng-hide='entity_id')
+              section#dep_wrapper(ng-show='expenses.length', ng-cloak='ng-cloak')
+                #expense-list
+                  .user-list(ng-repeat='expense in expenses')
+                    .view
+                      label 
+                    table.table
+                      thead
+                        tr
+                          th(colspan="5")
+                            | {{expense.user.name}}
+                            span#balance1.pull-right
+                              | {{expense.total}} #{req.group.devise}
+                              span(style='margin-left: 40px; color: green;',ng-show="expense.diff > 0") {{expense.diff}} #{req.group.devise}
+                              span(style='margin-left: 40px; color: red;',ng-show="expense.diff < 0") {{expense.diff}} #{req.group.devise}
+                      tbody
+                        tr(ng-repeat='item in expense.items')
+                          td(width="200")
+                            span {{item.title}}
+                          td(width="200")
+                            span {{item.date | date:'#{angular_date_format}'}}
+                          td(width="200")
+                            span 
+                              {{item.value}} #{req.group.devise}
+                          td
+                            .hidden
+                                ul(id="destspopover{{item._id}}")
+                                  li(ng-repeat='dest in item.dest') 
+                                    input(type="checkbox",checked="checked",ng-click='toggleDest(dest)') 
+                                    {{dest.name}}
+                            button.btn.btn-link(type="button",rel="popover",data-toggle="popover",data-placement="bottom",data-itemid="{{item._id}}")
+                              i.glyphicon.glyphicon-user
+                            span(style="font-size: 10px;margin-left: -15px;") &nbsp;{{item.dest.length}}
+                          td
+                            .pull-right(ng-show='expense.is_current_user')
+                                a.pointer(ng-click='removeExpense(item)') #{__('Delete')}
+
+      .col-md-3.col-md-pull-9
+          .panel.left-menu  
+              a.btn.btn-primary(href='/expenses/new',style="width: 100%;" )
+                  i.glyphicon.glyphicon-plus
+                  | &nbsp;#{__("New list")}
+              h5() &nbsp;#{__("Total")}: {{grandTotal}} #{req.group.devise}
+              section(ng-show='owes.length', ng-cloak='ng-cloak')
+                h5 &nbsp;#{__("To repay")}:
+                p(ng-repeat='owe in owes') {{owe.from.name}} #{__('owes to')} {{owe.to.name}} {{owe.val}} #{req.group.devise}
+              
+              - if (archives && archives.length)
+                h5 &nbsp;#{__("Archives")}:
+                .list-group
+                  ul
+                    - each archive in archives
+                      li.archive.list-group-item= formatDate(archive.archivedAt)

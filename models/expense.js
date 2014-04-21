@@ -23,10 +23,21 @@ var ExpenseSchema = new Schema({
       title: { type : String, default : '' },
       value : {type: Number, default: 0},
       date : { type : Date, default : Date.now },
+      dest : [{type : Schema.ObjectId, ref : 'User' }],
       createdAt: { type : Date, default : Date.now }
     }],
     total: {type: Number, default: 0},
     diff: {type: Number, default: 0}
+  }],
+  owes : [{
+      from:{type : Schema.ObjectId, ref : 'User' },
+      to:{type : Schema.ObjectId, ref : 'User' },
+      val: {type: Number, default: 0},
+  }],
+  paid : [{
+      from:{type : Schema.ObjectId, ref : 'User' },
+      to:{type : Schema.ObjectId, ref : 'User' },
+      val: {type: Number, default: 0},
   }],
   total: Number,
   createdAt  : {type : Date, default : Date.now},
@@ -39,29 +50,171 @@ var ExpenseSchema = new Schema({
 
 ExpenseSchema.pre('save', function (next) {
   
-  //calculate all totals and shit
+  //calculate all totals and shit (and prepare lines for owes)
 
   var grand_total = 0
+    , lines = []
+    , dist = {}
+    , distar = []
+    , error = false
+    , that = this
 
-  for(var i=0;i<this.users.length;i++) {
-    var u = this.users[i]
-      , total = 0
+  if (that.group && that.group.populate) {
+  that.group.populate('users',function(){
 
-    for(var j=0;j<u.items.length;j++) {
-      total += u.items[j].value || 0
+
+    for(var i=0;i<that.users.length;i++) {
+      var u = that.users[i]
+        , total = 0
+
+      for(var j=0;j<u.items.length;j++) {
+        var it = u.items[j];
+        total += it.value || 0
+
+        //make sure everyone is included
+        if (!it.dest || it.dest.length == 0) {
+          for(var k=0;k<that.group.users.length;k++) {
+              if (that.group.users[k]) {
+                //make sure the dest exists
+                if (!it.dest) it.dest = []; 
+                //add to db array
+               it.dest.push(that.group.users[k]);
+              }
+          }
+        }
+        //make sure the users still exists
+        else {
+          for(var k=it.dest.length-1;k>=0;k--) {
+            if (!that.group.hasUser(it.dest[k]._id)) {
+              delete it.dest[k]
+            }
+          }
+        }
+
+        //push to lines (for owes)
+        if (it.dest.length > 0) {
+          lines.push({val: it.value || 0, who: u.user, f:it.dest })
+        }
+      }
+
+      //get total for user
+      that.users[i].total = total;
+      // increment total for all users
+      grand_total += total;
     }
 
-    this.users[i].total = total;
-    grand_total += total;
+    for(var i=0;i<that.users.length;i++) {
+      that.users[i].diff = parseInt((that.users[i].total - (grand_total / that.users.length)) * 100,10)/ 100;
+    }
+
+    that.total = Math.round(grand_total*100)/100;
+
+    /**
+    * calculate owes
+    **/
+
+    //reset owes
+    that.owes = []
+
+    //remove paid (add inverse lines)
+    for(var i=0;i<that.paid.length;i++) {
+        lines.push({
+            val: that.paid[i].val,
+            who: that.paid[i].from,
+            f: [that.paid[i].to]
+        })
+    }
+
+    for(var i=0;i<lines.length;i++) {
+        var l = lines[i]
+        
+        for(var p=0;p<l.f.length;p++) {
+            //add value of user to dist
+            if (!dist[l.f[p]._id]) dist[l.f[p]._id] = 0;
+            dist[l.f[p]._id] += utils.roundFloat(l.val/l.f.length);
+        }
+        //remove value from paying user to dist
+        if (!dist[l.who._id]) dist[l.who._id] = 0;
+        dist[l.who._id] -= l.val;
+    }
+
+    //add dists in array
+    for(var k in dist) {
+        if (utils.roundFloat(dist[k],1))
+            distar.push([k,utils.roundFloat(dist[k])]);
+    }
+
+    //owes
+    while (distar.length > 0) {
+        //sort array
+        distar.sort(function(a,b){
+            return b[1]-a[1];
+        })
+        
+        if (distar.length > 1 && distar[0] && distar[distar.length-1]) {
+            var f = distar[0], l = distar[distar.length-1];
+            
+            //if first is more than last (abs(last))
+            if (utils.roundFloat(f[1] + l[1],10) > 0) {
+                //get diff 
+                var diff = -l[1];
+                //add owe
+                that.owes.push({
+                    from: f[0], 
+                    to: l[0],
+                    val: utils.roundFloat(diff)
+                })
+                //down the first
+                distar[0][1] = f[1]-diff;
+                //remove the last
+                distar.pop();
+            }
+            //else if first is equal to last (abs(last))
+            else if(utils.roundFloat(f[1] + l[1],10) == 0) {
+                //add owe
+                that.owes.push({
+                    from: f[0],
+                    to: l[0],
+                    val: utils.roundFloat(f[1])
+                })
+                //remove the first and the last
+                distar.pop();
+                distar.shift();
+
+            }
+            //else if first is less than last (abs(last))
+            else {
+                //add owe
+                that.owes.push({
+                    from: f[0],
+                    to: l[0],
+                    val: utils.roundFloat(0-l[1]-f[1])
+                })
+                //down the last
+                distar[distar.length-1][1] = l[1]+f[1];
+                //remove the first
+                distar.shift();
+            }
+        }
+        else {
+            errror = true;
+            break;
+        }
+    }
+
+    if (distar.length > 0) {
+      error = true;
+      console.log('calcul error',that);
+    }
+
+
+    next()
+  })
   }
-
-  for(var i=0;i<this.users.length;i++) {
-    this.users[i].diff = parseInt((this.users[i].total - (grand_total / this.users.length)) * 100,10)/ 100;
+  else {
+    that.total = 0;
+    next()
   }
-
-  this.total = Math.round(grand_total*100)/100;
-
-  next()
 })
 
 /**
@@ -146,7 +299,7 @@ ExpenseSchema.methods = {
 ExpenseSchema.statics = {
 
  /**
-   * Find shopping by id
+   * Find expense by id
    *
    * @param {ObjectId} id
    * @param {Function} cb
@@ -157,11 +310,14 @@ ExpenseSchema.statics = {
     this.findOne({ _id : id })
       .populate('group')
       .populate('users.user')
+      .populate('users.items.dest')
+      .populate('owes.from')
+      .populate('owes.to')
       .exec(cb)
   },
 
   /**
-   * Current shopping
+   * Current expense
    *
    * @param {groupId} String
    * @param {Function} cb
@@ -172,6 +328,9 @@ ExpenseSchema.statics = {
     this.findOne({group:group, archivedAt: null})
       .populate('group')
       .populate('users.user')
+      .populate('users.items.dest')
+      .populate('owes.from')
+      .populate('owes.to')
       .exec(cb)
   },
 
