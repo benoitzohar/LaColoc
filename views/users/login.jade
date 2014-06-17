@@ -4,7 +4,7 @@ block container
       .row.main-row
         .col-xs-12.col-md-5
           center
-            img.main_logo.smooth(src='/images/logo_'+locale+'_160.png')
+            img.main_logo.smooth(src='/images/logo_'+locale+'_512.png')
           div(style='margin-top: 20px;')
             span
               | #{__("catchline_full")}
@@ -15,27 +15,26 @@ block container
                   a(href='https://twitter.com/flatbuddy_eu',style="font-size:small;text-decoration:none;") @FlatBuddy_eu
         .col-xs-12.col-md-5
           .div_title #{__("lacoloc")}
-          .well(style='opacity: 1; position: relative;')
+          div
             form#login_form.form-horizontal(action="/users/session", method="post", role="form")
                 input(type='hidden', name='_csrf', value="#{csrf_token}")
                 input#input_login.input-xlarge.form-control(type='email', name='email', placeholder='#{__("Email address")}')
                 input#input_password.input-large.form-control(type='password', name='password', placeholder='#{__("Password")}', onkeyup="if(event.keyCode==13) $(this).parents('form').submit();")
                 .semi-inline-form-part
-                  button.btn.btn-default(type='submit', style='') #{__('Log in')}
+                  button.btn.btn-primary#loginbutton(type='submit') #{__('Log in')}
           .well-divider #{__('or')}
-          .well.smooth
-            center
-              a.zocial.twitter(href='/auth/twitter')
+          div
+              a.zocial.twitter#socialtw(href='/auth/twitter')
                 span #{__('Log in with')}  
                 | Twitter
-              a.zocial.facebook(href='/auth/facebook')
+              a.zocial.facebook#socialfb(href='/auth/facebook')
                 span #{__('Log in with')}   
                 | Facebook
-              a.zocial.googleplus(href='/auth/google')
+              a.zocial.googleplus#socialgp(href='/auth/google')
                 span #{__('Log in with')} 
                 | Google+
           .well-divider #{__('or')}
-          .well.smooth.signup_div
+          .signup_div
             div(style='margin-bottom: 10px;') #{__("New on lacoloc ?")}
             .form-group
             form#login_form.form-horizontal(action="/users", method="post", role="form")
@@ -45,4 +44,4 @@ block container
                 input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}',onkeyup="$('#recaptcha').removeClass('hidden')")
                 .raw#recaptcha.hidden
                   |!{recaptcha_form}
-                button.btn.btn-primary.pull-right(type='submit', style='margin-right: 0;') #{__("Sign up")}
+                button.btn.btn-primary.pull-right#signupbutton(type='submit') #{__("Sign up")}

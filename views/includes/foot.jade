@@ -1,9 +1,9 @@
 script(src='//code.jquery.com/jquery-1.10.2.min.js')
 
 - if(req.isAuthenticated())
-  script(src='/javascripts/libs/angular.js')
+  script(src='/javascripts/libs/angular.min.js')
   script(src='/javascripts/libs/angular-route.min.js')
-  script(src='/javascripts/libs/ui-bootstrap-tpls-0.10.0.min.js')
+  script(src='/javascripts/libs/ui-bootstrap-tpls-0.11.0.min.js')
     
   script(src='/javascripts/libs/socket.io.min.js')
   script(src='/javascripts/libs/bootstrap-datepicker.js')
@@ -12,11 +12,10 @@ script(src='//code.jquery.com/jquery-1.10.2.min.js')
   script(src='/javascripts/app.js')
   script(src='/javascripts/controllers/shoppingCtrl.js')
   script(src='/javascripts/controllers/expenseCtrl.js')
-  script(src='/javascripts/services/lcSocket.js')   
-  script(src='/javascripts/directives/lcFocus.js')
-  script(src='/javascripts/directives/lcEscape.js')
-  script(src='/javascripts/directives/datetimez.js')
-  script(src='/javascripts/directives/shoppingFocusInput.js')
+  script(src='/javascripts/services.js')   
+  script(src='/javascripts/directives.js')
+  
+  
   - var js_cb_parts = ''
   script.
       app.init('','#{req.user._id}',!{client_params},function(){ #{js_cb_parts} });

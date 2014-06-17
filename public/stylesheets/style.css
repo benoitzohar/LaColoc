@@ -1,19 +1,34 @@
 /************
 *
 *   @Author :   Benoit Zohar
-*   @File:      lacoloc.css
-*   @Package:   default gestio template
+*   @File:      style.css
+*   @Package:   default lacoloc template
 *
 ******************/
 
 /****** Bootstrap customization ********/
+/* -> reinsert into bootstrap */
 
+.btn, .panel, .form-control, .input-group-addon, .datepicker, .well, .thumbnail {
+ border-radius: 0px;
+}
+
+.btn-primary {
+    background-color: #A59D8E;
+    border-color: #9C9485;
+    
+}
+
+.btn-primary:hover, .btn-primary:active  {
+    background-color: #8F887B;
+    border-color: #9C9485;
+}
 
 
 
 /****** General *****/
 * {
-    font-family: "HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", georgia, Lucida, Arial, sans-serif;
+    font-family: 'Raleway',"HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", sans-serif;
     /*font-weight: 300;
     font-size:16px;*/
     letter-spacing:1px;
