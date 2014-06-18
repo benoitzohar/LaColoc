@@ -7,7 +7,9 @@
           span.icon-bar
           span.icon-bar
           span.icon-bar
-        a.navbar-brand(href='/') #{__('lacoloc')}
+        a.navbar-brand(href='/')
+          img#brand-logo(src='/images/logo-'+locale+'.svg') 
+          | #{__('lacoloc')}
       //
          User menu 
       .btn-group.pull-right(style='margin-left: 15px;')
@@ -23,11 +25,11 @@
         ul.nav.navbar-nav
           li.expenses-link
             a(href='/#/expenses')
-              i.glyphicon.glyphicon-euro
+              i.icon-bars
               | &nbsp;#{__('Expenses')}
           li.shopping-link
             a(href='/#/shopping')
-              i.glyphicon.glyphicon-th-list
+              i.icon-basket
               | &nbsp;#{__('Shopping')}
         ul.nav.navbar-nav.navbar-right
           li.dropdown

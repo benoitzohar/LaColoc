@@ -62,6 +62,26 @@ a.zocial {
     margin-bottom:15px;
 }
 
+
+#recaptcha {
+    margin-left:auto;
+    margin-right:auto;
+    background-color: white;
+    border-left:1px solid #ccc;
+    border-right:1px solid #ccc;
+}
+
+#recaptcha #recaptcha_table {
+    border:none !important;
+}
+
+#recaptcha #recaptcha_response_field {
+    height: 30px;
+    padding-left: 5px;
+    padding-top: 3px;
+    border-color: #ccc !important;
+}
+
 #signupbutton {
     width:100%;
     margin-bottom:20px;

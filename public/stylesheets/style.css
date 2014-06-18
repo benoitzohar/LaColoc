@@ -10,7 +10,7 @@
 /* -> reinsert into bootstrap */
 
 .btn, .panel, .form-control, .input-group-addon, .datepicker, .well, .thumbnail {
- border-radius: 0px;
+    border-radius: 0px !important;
 }
 
 .btn-primary {
@@ -24,14 +24,69 @@
     border-color: #9C9485;
 }
 
+.well {
+    background-color: #E2DDD3;
+    padding:10px;
+}
+.well .form-group {
+    padding:0;
+}
+
+/******* icomoon *******/
+@font-face {
+    font-family: 'icomoon';
+    src:url('../fonts/icomoon.eot?-c3djey');
+    src:url('../fonts/icomoon.eot?#iefix-c3djey') format('embedded-opentype'),
+        url('../fonts/icomoon.woff?-c3djey') format('woff'),
+        url('../fonts/icomoon.ttf?-c3djey') format('truetype'),
+        url('../fonts/icomoon.svg?-c3djey#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-basket:before {
+    content: "\e0ce";
+}
+.icon-bars:before {
+    content: "\e202";
+}
+.icon-close:before {
+    content: "\e36b";
+}
+.icon-checkmark:before {
+    content: "\e370";
+}
+
 
 
 /****** General *****/
-* {
+*, h1, h2, h3, h4, h5, h6, span {
     font-family: 'Raleway',"HelveticaNeue-Light", "Helvetica Neue Light","Helvetica Neue", sans-serif;
     /*font-weight: 300;
     font-size:16px;*/
     letter-spacing:1px;
+
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    cursor:default;
 }
 
 html {
@@ -56,6 +111,33 @@ input[type="checkbox"] {
 
 .pointer {
     cursor: pointer !important;
+}
+
+.selectable {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    cursor: text;
+}
+
+input {
+    -webkit-touch-callout: text;
+    -webkit-user-select: text;
+    -khtml-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+    cursor: text;
+}
+
+#brand-logo {
+    height:32px;
+    margin-bottom: -10px;
+    margin-top: -10px;
+    margin-right: 10px;
 }
 
 
@@ -122,6 +204,49 @@ input[type="checkbox"] {
 .navbar li.dropdown + li.dropdown {
     margin-left:15px;
 }
+
+/** Custom selects **/
+.select-wrapper{
+    float: left;
+    display: inline-block;
+    border: 1px solid #d8d8d8;            
+    background: url("arrow.png") no-repeat right center;
+    cursor: pointer;
+}
+.select-wrapper, .select-wrapper select{
+    width: 200px;
+    height: 26px;
+    line-height: 26px;
+}
+.select-wrapper:hover{
+    background: url("arrow-hover.png") no-repeat right;
+    border-color: #239fdb;
+}
+.select-wrapper .holder{
+    display: block;
+    margin: 0 35px 0 5px;
+    white-space: nowrap;            
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    z-index: -1;
+}
+.select-wrapper select{
+    margin: 0;
+    position: absolute;
+    z-index: 2;            
+    cursor: pointer;
+    outline: none;
+    opacity: 0;
+    /* CSS hacks for older browsers */
+    _noFocusLine: expression(this.hideFocus=true); 
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+    -khtml-opacity: 0;
+    -moz-opacity: 0;
+}
+
+/** inputs style **/
 
 input.numbered {
     text-align: right;
@@ -205,6 +330,30 @@ h2.app_title {
 .panel.left-menu > a.btn-primary {
     margin-top: -8px;
     margin-bottom: 6px;
+}
+
+.panel.left-menu > div.confirmation-panel {
+    margin-top: -8px;
+    background-color: #E2DDD3;
+}
+
+.panel.left-menu > div.confirmation-panel > span {
+    display: block;
+    padding:10px;
+}
+
+/** Expense add panel **/
+
+#expense-add-panel.well .first-div {
+    padding-right:3px;
+}
+
+#expense-add-panel.well .second-line {
+    margin-top:5px;
+}
+
+#expense-add-panel.well .second-line * {
+    width:100%;
 }
 
 /** edit_user **/

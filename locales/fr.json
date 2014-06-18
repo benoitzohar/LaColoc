@@ -49,5 +49,8 @@
 	"site_keywords": "coloc, la coloc, colocataires, courses, dépenses",
 	"site_description": "Gérez votre coloc', votre couple, vos weekends entre amis. Au menu : partage des dépenses, de listes de courses et plus.",
 	"To repay": "Pour rembourser",
-	"owes to": "doit à"
+	"owes to": "doit à",
+	"Do you really want to archive this list and create a new one ?": "Voulez-vous vraiment archiver cette liste et en créer une nouvelle ?",
+	"Yes": "Oui",
+	"No": "Non"
 }

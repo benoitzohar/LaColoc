@@ -18,7 +18,7 @@ i18n.configure({
     locales:[config.locale],
     directory: __dirname + '/../locales',
     updateFiles: env=='development',
-    defaultLocale: 'en',
+    defaultLocale: config.locale,
 })
 
 module.exports = function (app, config, passport, sessionstore) {

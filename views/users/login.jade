@@ -4,7 +4,7 @@ block container
       .row.main-row
         .col-xs-12.col-md-5
           center
-            img.main_logo.smooth(src='/images/logo_'+locale+'_512.png')
+            img.main_logo.smooth(src='/images/logo-'+locale+'.svg')
           div(style='margin-top: 20px;')
             span
               | #{__("catchline_full")}
@@ -39,9 +39,18 @@ block container
             .form-group
             form#login_form.form-horizontal(action="/users", method="post", role="form")
                 input(type='hidden', name='_csrf', value="#{csrf_token}")
-                input#signup_name.input-small.form-control(type='text', name='name', placeholder='#{__("Full name")}', value=user.name)
-                input#signup_email.input-xlarge.form-control(type='text', name='email', placeholder='#{__("Email address")}', value=user.email)
-                input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}',onkeyup="$('#recaptcha').removeClass('hidden')")
+                input#signup_name.input-small.form-control(type='text', name='name', placeholder='#{__("Full name")}',autocomplete="off", value=user.name)
+                input#signup_email.input-xlarge.form-control(type='text', name='email', placeholder='#{__("Email address")}',autocomplete="off",  value=user.email)
+                input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}',autocomplete="off", onkeyup="$('#recaptcha').removeClass('hidden')")
+                script(type="text/javascript").
+                  var RecaptchaOptions = { theme : 'clean' };
+                  (function(){
+                      setTimeout(function() {
+                          if ($('#signup_password').val() != '') {
+                              $('#recaptcha').removeClass('hidden');
+                            }
+                        },1000);
+                    })();
                 .raw#recaptcha.hidden
                   |!{recaptcha_form}
                 button.btn.btn-primary.pull-right#signupbutton(type='submit') #{__("Sign up")}

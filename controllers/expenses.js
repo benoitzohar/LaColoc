@@ -77,7 +77,7 @@ exports.new = function(req, res){
           })
           expense.save(function(err) {
             if (err) res.render('500');
-            res.redirect('/expenses');
+            res.redirect('/#/expenses');
           })
       })
     })

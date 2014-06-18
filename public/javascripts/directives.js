@@ -70,4 +70,50 @@
     };
   });
 
+  /**
+   *  Directive that creates a custom select element
+   **/
+  lca.directive('customSelect', function () {
+    return function (scope, element, attrs) {
+        element.wrap( "<span class='select-wrapper'></span>" );
+        element.after("<span class='holder'></span>");
+
+        element.bind('change',function(){
+            var selectedOption = element.find(":selected").text();
+            element.next(".holder").text(selectedOption);
+        }).trigger('change');
+
+    };
+  });
+
+  /**
+   *  Directive that help showing a confirmation message before going thru an action
+   **/
+  lca.directive('needConfirmation',function() {
+    return function (scope, element, attrs) {
+        element.bind('click',function(e){
+          e.preventDefault();
+          var id = element.attr('id'),
+              pid = element.parent().attr('id');
+
+          //if the toggled element is already the confirmation (or if his direct parent is)
+          //hide the confirmation and show the initial div
+          if (/-confirmation/.test(id)) {
+            $('#'+id.replace('-confirmation','')).removeClass('hidden');
+            $('#'+id).addClass('hidden');
+          }
+          else if (/-confirmation/.test(pid)) {
+            $('#'+pid.replace('-confirmation','')).removeClass('hidden');
+            $('#'+pid).addClass('hidden'); 
+          } 
+          //otherwise toggle the confirmation
+          else {
+            $('#'+id+"-confirmation").removeClass('hidden');
+            element.addClass('hidden');
+          }
+      });
+    };
+  });
+
+
 })();
