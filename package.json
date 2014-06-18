@@ -16,7 +16,7 @@
     "passport.socketio": "3.0.0",
     "mongoose": "3.8.7",
     "passport": "0.2.0",
-    "passport-local": "latest",
+    "passport-local": "1.0.0",
     "passport-twitter": "latest",
     "passport-facebook": "1.0.2",
     "passport-facebook-canvas": "0.0.3",

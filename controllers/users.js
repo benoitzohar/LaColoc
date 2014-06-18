@@ -6,7 +6,7 @@
 var mongoose = require('mongoose')
   , User = mongoose.model('User')
   , utils = require('../lib/utils')
-  , config = require('../config/config')
+  , config = require('../config/config');
 
 var login = function (req, res) {
   var redirectTo = req.session.returnTo ? req.session.returnTo : '/'
@@ -29,8 +29,14 @@ exports.authCallback = login
  */
 
 exports.login = function (req, res) {
+
+  if ((req.locale == 'fr' || req.locale === undefined) && /^fr/.test(req.headers["accept-language"]) === false) {
+    req.flash('info',"Hello, you don't seem to speak French, maybe you should try our english twin brother at <a href='http://www.flatbuddy.eu/'>http://www.flatbuddy.eu/</a> ");
+  }
+
   res.render('users/login', {
     message: req.flash('error'),
+    info: req.flash('info'),
     user: new User()
   })
 }
