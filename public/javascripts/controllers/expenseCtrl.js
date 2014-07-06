@@ -4,8 +4,9 @@
 'use strict';
 
     lca.controller('ExpenseCtrl', ['$scope', '$location', 'lcSocket', '$filter', function ($scope, $location, lcSocket, $filter) {
-
+        app.showLoader();
         var expenses = $scope.expenses = [];
+        $scope.archives = [];
         var owes = $scope.owes = [];
         var entity_id = $scope.entity_id = null;
 
@@ -35,6 +36,7 @@
         lcSocket.on('expense:list',function(data) {
             log(data);
             if (data.entity_id) entity_id = $scope.entity_id = data.entity_id;
+            $scope.archives = data.archives;
             var expense = data.expense;
             if (expense) {
                 //console.log("got expense:list in ctrl",data);
@@ -76,6 +78,7 @@
 
                 $scope.grandTotal = Math.round(expense.total*100)/100;
             }
+            app.hideLoader();
         });
 
         $scope.addExpense = function () {

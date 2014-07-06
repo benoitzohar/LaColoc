@@ -6,6 +6,7 @@ var mongoose = require('mongoose')
   , Expense = mongoose.model('Expense')
   , utils = require('../lib/utils')
   , extend = require('util')._extend
+  , q = require('promised-io/promise')
 
 /**
  * Load
@@ -26,17 +27,13 @@ exports.load = function(req, res, next, id){
 
 exports.index = function(req, res){
 
-  Expense.current(req.group,function(err, expense) {
-    if (err) return res.render('500')
+  Expense.current(req.group)
+  .then(function(expense) {
 
     var cb = function(err) {
-      Expense.archiveList(req.group,function (err, archives) {
-        if (err) return res.render('500')
-        res.render('expenses/index', {
-          expense: expense,
-          archives: archives
-        })
-      })
+      res.render('expenses', {
+        expense: expense
+      });
     }
 
     if (!expense) {
@@ -50,7 +47,8 @@ exports.index = function(req, res){
       expense.save(cb)
     }
     else cb()
-  })
+  },
+  function(err) { return res.render('500'); });
 
 }
 
@@ -60,17 +58,17 @@ exports.index = function(req, res){
 
 exports.new = function(req, res){
 
-    Expense.current(req.group,function(err, cexpense) {
-      if (err) return res.render('500')
+    Expense.current(req.group)
+    .then(function(cexpense) {
 
       //archive current list
       cexpense.archivedAt = new Date;
       cexpense.save(function(err) {
-        if (err) return res.render('500')
+        if (err) return res.render('500');
           // create new list
           var expense = new Expense({
            group: req.group,
-           users : [ {
+           users: [{
             user: req.user,
             items : []
            }]
@@ -80,7 +78,8 @@ exports.new = function(req, res){
             res.redirect('/#/expenses');
           })
       })
-    })
+    },
+    function(err) { return res.render('500'); });
 }
 
 /**
@@ -89,18 +88,17 @@ exports.new = function(req, res){
 
 exports.show = function(req, res){
   if (req.expense) {
-    Expense.archiveList(req.group,function (err, archives) {
-        if (err) return res.render('500')
-        res.render('expenses/index', {
-          expense: expense,
-          archives: archives
-        })
-      })
+    Expense.archiveList(req.group)
+    .then(function (archives) {
+      res.render('expenses', {
+        expense: expense,
+        archives: archives
+      });
+    }, 
+    function(err) { return res.render('500'); });
   }
   else {
-    res.redirect('/expenses')
+    res.redirect('/expenses');
   }
-
-  
 }
 

@@ -22,11 +22,10 @@
             a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
                 i.glyphicon.glyphicon-plus
                 | &nbsp;#{__("New list")}
-            - if (archives.length)
-            h5 &nbsp;#{__("Archives")}:
+            
+            h5(ng-show='archives.length') &nbsp;#{__("Archives")}:
             .list-group
               ul
-                - each archive in archives
-                  li.archive.list-group-item= formatDate(archive.archivedAt)
-                    span.badge= archive.items.length
+                li.archive.list-group-item(ng-repeat='archive in archives') {{ archive.archivedAt | date:'mediumDate'}}
+                  span.badge {{ archive.items.length }}
     

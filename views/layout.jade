@@ -1,14 +1,14 @@
 doctype html
 html(lang='#{locale}', ng-app="lacoloc", xmlns='http://www.w3.org/1999/xhtml', xmlns:fb='https://www.facebook.com/2008/fbml', itemscope='itemscope', itemtype='http://schema.org/Product')
-  include ../includes/head
+  include includes/head
   body
-      include ../includes/header
+      include includes/header
       .container(ng-view)
-        include ../includes/messages
+        include includes/messages
         block container
           .main-content
             .main-head
               block main
             block content
-    include ../includes/footer
-    include ../includes/foot
+    include includes/footer
+    include includes/foot

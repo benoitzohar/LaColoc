@@ -72,6 +72,14 @@ app = {
 
     sendInvitation: function() {
         $('#inviteemail').parents('form').submit();
+    },
+
+    showLoader: function() {
+        $('#loader').fadeIn(400);
+    },
+
+    hideLoader: function() {
+        $('#loader').fadeOut(400);
     }
  
 };

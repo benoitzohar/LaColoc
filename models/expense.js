@@ -9,6 +9,7 @@ var mongoose = require('mongoose')
   //, imagerConfig = require(config.root + '/config/imager.js')
   , Schema = mongoose.Schema
   , utils = require('../lib/utils')
+  , q = require('promised-io/promise')
 
 
 /**
@@ -290,7 +291,7 @@ ExpenseSchema.methods = {
     return -1;
   }
 
-}
+};
 
 /**
  * Statics
@@ -313,7 +314,7 @@ ExpenseSchema.statics = {
       .populate('users.items.dest')
       .populate('owes.from')
       .populate('owes.to')
-      .exec(cb)
+      .exec(cb);
   },
 
   /**
@@ -325,13 +326,19 @@ ExpenseSchema.statics = {
    */
 
   current: function (group,cb) {
+    var d = new q.Deferred();
     this.findOne({group:group, archivedAt: null})
       .populate('group')
       .populate('users.user')
       .populate('users.items.dest')
       .populate('owes.from')
       .populate('owes.to')
-      .exec(cb)
+      .exec(function(err,val){
+        if (err) return d.reject(err);
+        return d.resolve(val);
+      });
+
+    return d.promise;
   },
 
   /**
@@ -343,13 +350,19 @@ ExpenseSchema.statics = {
    */
 
   archiveList: function (groupId, cb) {
+    var d = new q.Deferred();
     this.find({group:groupId, archivedAt: {'$ne': null }}) 
       .populate('group')
       .populate('users.user')
       .sort({'createdAt': -1}) // sort by date
-      .exec(cb)
+      .exec(function(err,val){
+        if (err) return d.reject(err);
+        return d.resolve(val);
+      });
+
+    return d.promise;
   }
 
-}
+};
 
-mongoose.model('Expense', ExpenseSchema)
+mongoose.model('Expense', ExpenseSchema);

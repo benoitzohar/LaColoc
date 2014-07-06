@@ -6,6 +6,7 @@ var mongoose = require('mongoose')
   , Shopping = mongoose.model('Shopping')
   , utils = require('../lib/utils')
   , extend = require('util')._extend
+  , q = require('promised-io/promise')
 
 /**
  * Load
@@ -27,16 +28,12 @@ exports.load = function(req, res, next, id){
 
 exports.index = function(req, res){
 
-  Shopping.current(req.group,function(err, shopping) {
-    if (err) return res.render('500')
+  Shopping.current(req.group)
+  .then(function(shopping) {
 
     var cb = function(err) {
-      Shopping.archiveList(req.group,function (err, archives) {
-        if (err) return res.render('500')
-        res.render('shoppings/index', {
-          shopping: shopping,
-          archives: archives
-        })
+      res.render('shoppings', {
+          shopping: shopping
       })
     }
 
@@ -47,7 +44,9 @@ exports.index = function(req, res){
       shopping.save(cb)
     }
     else cb()
-  })
+  }, function() {
+    return res.render('500')
+  });
 
 }
 
@@ -57,8 +56,8 @@ exports.index = function(req, res){
 
 exports.new = function(req, res){
 
-    Shopping.current(req.group,function(err, cshopping) {
-      if (err) return res.render('500')
+    Shopping.current(req.group)
+    .then(function(cshopping) {
 
       //archive current list
       cshopping.archivedAt = new Date;
@@ -73,7 +72,7 @@ exports.new = function(req, res){
             res.redirect('/shopping');
           })
       })
-    })
+    }, function(err) { return res.render('500') })
 }
 
 /**
@@ -82,13 +81,13 @@ exports.new = function(req, res){
 
 exports.show = function(req, res){
   if (req.shopping) {
-    Shopping.archiveList(req.group,function (err, archives) {
-        if (err) return res.render('500')
-        res.render('shoppings/index', {
-          shopping: shopping,
-          archives: archives
-        })
+    Shopping.archiveList(req.group)
+    .then(function (archives) {
+      res.render('shoppings', {
+        shopping: shopping,
+        archives: archives
       })
+    })
   }
   else {
     res.redirect('/shopping')

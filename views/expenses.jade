@@ -18,7 +18,6 @@
                       select#new-expense-who.form-control.custom-select(custom-select)
                     .form-group.second-line.col-xs-6.col-sm-4
                       button.btn.btn-primary(type="submit",style="width:100%") #{__('Add')}
-                    img(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;",ng-hide='entity_id')
               section#dep_wrapper(ng-show='expenses.length', ng-cloak='ng-cloak')
                 #expense-list
                   .user-list(ng-repeat='expense in expenses')
@@ -73,9 +72,9 @@
                 h5 &nbsp;#{__("To repay")}:
                 p(ng-repeat='owe in owes') {{owe.from.name}} #{__('owes to')} {{owe.to.name}} {{owe.val}} #{req.group.devise}
               
-              - if (archives && archives.length)
+              section(ng-show='archives.length', ng-cloak='ng-cloak')
                 h5 &nbsp;#{__("Archives")}:
                 .list-group
                   ul
-                    - each archive in archives
-                      li.archive.list-group-item= formatDate(archive.archivedAt)
+                    li.archive.list-group-item(ng-repeat='archive in archives') {{ archive.archivedAt | date:'mediumDate'}}
+

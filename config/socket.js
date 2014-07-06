@@ -5,6 +5,7 @@ var   mongoose = require('mongoose')
     , Shopping = mongoose.model('Shopping')
     , Expense = mongoose.model('Expense')
     , config = require('./config')
+    , q = require('promised-io/promise')
 /**
  * Expose socket config
  */
@@ -80,9 +81,10 @@ io.set('transports', config.socket_transports);
     socket.on('shopping:get',function(data) {
       console.log("shopping:get request received from=",cuser.email);
     
-      Shopping.current(cuser.current_group,function(err, shopping) {
-        if(!err && shopping && shopping.items) {
-          socket.emit('shopping:list',{entity_id: shopping._id, items: shopping.items});
+      q.all(Shopping.current(cuser.current_group),Shopping.archiveList(cuser.current_group))
+      .then(function(res) {
+        if(res[0] && res[0].items) {
+          socket.emit('shopping:list',{entity_id: res[0]._id, items: res[0].items, archives: res[1] });
         }
       });
 
@@ -193,9 +195,10 @@ io.set('transports', config.socket_transports);
     socket.on('expense:get',function(data) {
       console.log("expense:get request received from=",cuser.email);
 
-      Expense.current(cuser.current_group,function(err, expense) {
-        if(!err && expense) {
-          socket.emit('expense:list',{entity_id: expense._id, expense: expense});
+      q.all(Expense.current(cuser.current_group),Expense.archiveList(cuser.current_group))
+      .then(function(res) {
+        if (res[0] && res[1]) {
+          socket.emit('expense:list',{entity_id: res[0]._id, expense: res[0],  archives : res[1]});
         }
       });
 

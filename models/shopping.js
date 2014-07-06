@@ -8,6 +8,7 @@ var mongoose = require('mongoose')
   , config = require('../config/config')
   , Schema = mongoose.Schema
   , utils = require('../lib/utils')
+  , q = require('promised-io/promise')
 
 
 /**
@@ -121,29 +122,38 @@ ShoppingSchema.statics = {
    * Current shopping
    *
    * @param {groupId} String
-   * @param {Function} cb
    * @api private
    */
 
-  current: function (group,cb) {
+  current: function (group) {
+    var d = new q.Deferred();
     this.findOne({group:group, archivedAt: null})
       .populate('group')
-      .exec(cb)
+      .exec(function(err,val){
+        if (err) return d.reject(err);
+        return d.resolve(val);
+      })
+
+    return d.promise;
   },
 
   /**
    * List shopping archives
    *
    * @param {groupId} String
-   * @param {Function} cb
    * @api private
    */
 
-  archiveList: function (groupId, cb) {
+  archiveList: function (groupId) {
+    var d = new q.Deferred();
     this.find({group:groupId, archivedAt: {'$ne': null }}) 
       .populate('group')
       .sort({'createdAt': -1}) // sort by date
-      .exec(cb)
+      .exec(function(err,val){
+        if (err) return d.reject(err);
+        return d.resolve(val);
+      });
+    return d.promise;
   }
 
 }

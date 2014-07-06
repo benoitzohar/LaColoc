@@ -1,9 +1,10 @@
-/*global angular,lca,socket,$,log */
+/*global angular,lca,socket,$,log,app */
 /*jshint unused:false */
 (function () {
 'use strict';
 
 	 lca.controller('ShoppingCtrl', ['$scope', '$location', 'lcSocket', 'filterFilter', function ($scope, $location, lcSocket, filterFilter) {
+		app.showLoader();
 		var shoppings = $scope.shoppings = [];
 		var entity_id = $scope.entity_id = null;
 
@@ -28,9 +29,11 @@
 	    lcSocket.removeAllListeners('shopping:list');
 		lcSocket.on('shopping:list',function(data) {
 			log(data);
-			if (data.entity_id) entity_id = $scope.entity_id = data.entity_id;
+			entity_id = $scope.entity_id = data.entity_id;
+			$scope.archives = data.archives;
 			//console.log("got shopping:list in ctrl",data);
 			$scope.shoppings = shoppings = data.items;
+			app.hideLoader();
 		});
 
 
