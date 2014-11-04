@@ -20,7 +20,7 @@ var confg = {
   },
   locale: 'fr',
   url: 'http://localhost:3000',
-  db: 'mongodb://localhost/lacoloc',
+  db: 'mongodb://localhost/lacoloc-dev',
   root:  rootPath,
   email: 'noreply@localhost',
   notifier: notifier,
@@ -89,7 +89,7 @@ switch(env) {
   case 'KIMSLC':
     confg.locale = 'fr';
     confg.url = 'http://www.lacoloc.fr';
-    confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
+    confg.db =  'mongodb://localhost/lacoloc';
     confg.email = 'contact@lacoloc.fr';
     confg.facebook.callbackURL = "http://www.lacoloc.fr/auth/facebook/callback";
     confg.facebook.canvasCallbackURL = "https://apps.facebook.com/lacoloc";

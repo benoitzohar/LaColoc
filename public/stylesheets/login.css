@@ -137,3 +137,20 @@ form { margin-bottom: -8px; }
 .signup_div {
     padding-bottom:53px;
 }
+
+#loader {
+    opacity: 0;
+}
+
+.alert {
+    border-radius:0;
+    position: fixed;
+    top:5px;
+    left: 30%;
+    right: 30%;
+}
+.alert ul {
+    list-style: none;
+    padding-left: 0px;
+    text-align: center;
+}

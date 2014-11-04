@@ -52,5 +52,8 @@
 	"owes to": "doit à",
 	"Do you really want to archive this list and create a new one ?": "Voulez-vous vraiment archiver cette liste et en créer une nouvelle ?",
 	"Yes": "Oui",
-	"No": "Non"
+	"No": "Non",
+	"Invite": "Inviter",
+	"Logout": "Déconnexion",
+	"Invalid email or password, please try again.": "Email ou mot de passe incorrect, merci de réessayer."
 }

@@ -40,7 +40,6 @@ exports.user = {
 // Group authorization routing middleware
 exports.group = {
   hasAuthorization: function (req, res, next) {
-    console.log("req.group",req.group);
     if (!req.user.isInGroup(req.group._id)) {
       req.flash('info', 'You are not authorized')
       return res.redirect('/groups/' + req.group.id)

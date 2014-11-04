@@ -1,56 +1,61 @@
 extends ../layout
 
 block container
-      .row.main-row
-        .col-xs-12.col-md-5
-          center
-            img.main_logo.smooth(src='/images/logo-'+locale+'.svg')
-          div(style='margin-top: 20px;')
-            span
-              | #{__("catchline_full")}
-            .div_title.tipTip(style='font-variant: normal; top: auto; font-size: 28px; cursor: pointer;')
-                - if (locale == 'fr')
-                  a(href='https://twitter.com/lacoloc_fr',style="font-size:small;text-decoration:none;") @LaColoc_fr
-                - else
-                  a(href='https://twitter.com/flatbuddy_eu',style="font-size:small;text-decoration:none;") @FlatBuddy_eu
-        .col-xs-12.col-md-5
-          .div_title #{__("lacoloc")}
-          div
-            form#login_form.form-horizontal(action="/users/session", method="post", role="form")
-                input(type='hidden', name='_csrf', value="#{csrf_token}")
-                input#input_login.input-xlarge.form-control(type='email', name='email', placeholder='#{__("Email address")}')
-                input#input_password.input-large.form-control(type='password', name='password', placeholder='#{__("Password")}', onkeyup="if(event.keyCode==13) $(this).parents('form').submit();")
-                .semi-inline-form-part
-                  button.btn.btn-primary#loginbutton(type='submit') #{__('Log in')}
-          .well-divider #{__('or')}
-          div
-              a.zocial.twitter#socialtw(href='/auth/twitter')
-                span #{__('Log in with')}  
-                | Twitter
-              a.zocial.facebook#socialfb(href='/auth/facebook')
-                span #{__('Log in with')}   
-                | Facebook
-              a.zocial.googleplus#socialgp(href='/auth/google')
-                span #{__('Log in with')} 
-                | Google+
-          .well-divider #{__('or')}
-          .signup_div
-            div(style='margin-bottom: 10px;') #{__("New on lacoloc ?")}
-            .form-group
-            form#login_form.form-horizontal(action="/users", method="post", role="form")
-                input(type='hidden', name='_csrf', value="#{csrf_token}")
-                input#signup_name.input-small.form-control(type='text', name='name', placeholder='#{__("Full name")}',autocomplete="off", value=user.name)
-                input#signup_email.input-xlarge.form-control(type='text', name='email', placeholder='#{__("Email address")}',autocomplete="off",  value=user.email)
-                input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}',autocomplete="off", onkeyup="$('#recaptcha').removeClass('hidden')")
-                script(type="text/javascript").
-                  var RecaptchaOptions = { theme : 'clean' };
-                  (function(){
-                      setTimeout(function() {
-                          if ($('#signup_password').val() != '') {
-                              $('#recaptcha').removeClass('hidden');
-                            }
-                        },1000);
-                    })();
-                .raw#recaptcha.hidden
-                  |!{recaptcha_form}
-                button.btn.btn-primary.pull-right#signupbutton(type='submit') #{__("Sign up")}
+  .row.main-row
+    .col-xs-12.col-md-5
+      center
+        img.main_logo.smooth(src='/images/logo-'+locale+'.svg')
+      div(style='margin-top: 20px;')
+        span
+          | #{__("catchline_full")}
+        .div_title.tipTip(style='font-variant: normal; top: auto; font-size: 28px; cursor: pointer;')
+            - if (locale == 'fr')
+              a(href='https://twitter.com/lacoloc_fr',style="font-size:small;text-decoration:none;") @LaColoc_fr
+            - else
+              a(href='https://twitter.com/flatbuddy_eu',style="font-size:small;text-decoration:none;") @FlatBuddy_eu
+    .col-xs-12.col-md-5
+      .div_title #{__("lacoloc")}
+      div
+        form#login_form.form-horizontal(action="/users/session", method="post", role="form")
+            input(type='hidden', name='_csrf', value="#{csrf_token}")
+            input#input_login.input-xlarge.form-control(type='email', name='email', placeholder='#{__("Email address")}')
+            input#input_password.input-large.form-control(type='password', name='password', placeholder='#{__("Password")}', onkeyup="if(event.keyCode==13) $(this).parents('form').submit();")
+            .semi-inline-form-part
+              button.btn.btn-primary#loginbutton(type='submit') #{__('Log in')}
+      .well-divider #{__('or')}
+      div
+          a.zocial.twitter#socialtw(href='/auth/twitter')
+            span #{__('Log in with')}  
+            | Twitter
+          a.zocial.facebook#socialfb(href='/auth/facebook')
+            span #{__('Log in with')}   
+            | Facebook
+          a.zocial.googleplus#socialgp(href='/auth/google')
+            span #{__('Log in with')} 
+            | Google+
+      .well-divider #{__('or')}
+      .signup_div
+        div(style='margin-bottom: 10px;') #{__("New on lacoloc ?")}
+        .form-group
+        form#login_form.form-horizontal(action="/users", method="post", role="form", autocomplete="off")
+            input(type='hidden', name='_csrf', value="#{csrf_token}")
+            input#signup_name.input-small.form-control(type='text', name='name', placeholder='#{__("Full name")}', autocomplete="off", value=user.name disabled)
+            input#signup_email.input-xlarge.form-control(type='text', name='email', placeholder='#{__("Email address")}', autocomplete="off",  value=user.email disabled)
+            input#signup_password.input-xlarge.form-control(type='password', name='password', placeholder='#{__("Password")}', autocomplete="off", disabled, onkeyup="$('#recaptcha').removeClass('hidden')")
+            script(type="text/javascript").
+              var RecaptchaOptions = { theme : 'clean' };
+              (function(){
+                  setTimeout(function() {
+                      if ($('#signup_password').val() != '') {
+                          $('#recaptcha').removeClass('hidden');
+                        }
+                    },1000);
+                })();
+            .raw#recaptcha.hidden
+              |!{recaptcha_form}
+            button.btn.btn-primary.pull-right#signupbutton(type='submit') #{__("Sign up")}
+  script.
+    setTimeout(function() {
+      console.log($('input[disabled]'));
+      $('input[disabled]').prop("disabled",false);
+    },1000);

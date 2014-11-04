@@ -6,7 +6,8 @@ var async = require('async'),
     mongoose = require('mongoose'),
     Recaptcha = require('re-captcha'),
     User = mongoose.model('User'),
-    config = require('./config')
+    config = require('./config'),
+    i18n = require("i18n");
 
 /**
  * Controllers
@@ -17,7 +18,8 @@ var users = require('../controllers/users')
   , shoppings = require('../controllers/shoppings')
   , expenses = require('../controllers/expenses')
   , invites = require('../controllers/invites')
-  , auth = require('./authorization')
+  , auth = require('./authorization');
+  
 
 /**
  * Route middlewares
@@ -79,7 +81,7 @@ module.exports = function (app, passport) {
   app.post('/users/session',
     passport.authenticate('local', {
       failureRedirect: '/login',
-      failureFlash: 'Invalid email or password.'
+      failureFlash: i18n.__('Invalid email or password, please try again.')
     }), users.session)
   app.get('/users/:userId', users.show)
   app.get('/auth/facebook',
