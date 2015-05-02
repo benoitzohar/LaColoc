@@ -15,7 +15,7 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
   // set authorization for socket.io
   io.set('authorization', passportSocketIo.authorize({
     cookieParser: express.cookieParser,
-    key:         'express.sid',       // the name of the cookie where express/connect stores its session_id
+    key:         'lacoloc.sid',       // the name of the cookie where express/connect stores its session_id
     secret:      'itsnosecrethaha',    // the session_secret to parse the cookie
     store:       sessionstore,        // we NEED to use a sessionstore. no memorystore please
     success:     onAuthorizeSuccess,  // *optional* callback on success - read more below

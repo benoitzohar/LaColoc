@@ -1,8 +1,8 @@
-var path = require('path')
-  , rootPath = path.normalize(__dirname + '/..')
-  , templatePath = path.normalize(__dirname + '/../mailer/templates')
-  , env = process.env.NODE_ENV || 'development'
-  , notifier = {
+var path = require('path'),
+    rootPath = path.normalize(__dirname + '/..'),
+    templatePath = path.normalize(__dirname + '/../mailer/templates'),
+    env = process.env.NODE_ENV || 'development',
+    notifier = {
       service: 'postmark',
       APN: false,
       email: true, // true
@@ -11,7 +11,7 @@ var path = require('path')
       key: 'POSTMARK_KEY',
       //parseAppId: 'PARSE_APP_ID',
       //parseApiKey: 'PARSE_MASTER_KEY'
-    }
+    };
 
 //default configs
 var confg = {
@@ -21,6 +21,7 @@ var confg = {
   locale: 'fr',
   url: 'http://localhost:3000',
   db: 'mongodb://localhost/lacoloc-dev',
+  isdev: true,
   root:  rootPath,
   email: 'noreply@localhost',
   notifier: notifier,
@@ -49,11 +50,12 @@ var confg = {
     track_id : "UA-33326287-1",
     track_url: "lacoloc.fr"
   }
-}
+};
 
 //configs depending on environnement
 switch(env) {
   case 'HEROKULC':
+    confg.isdev = false;
     confg.locale = 'fr';
     confg.url = 'https://lacoloc.herokuapp.com';
     confg.db =  'mongodb://lacoloc:vaL6vQJc@ds033079.mongolab.com:33079/lacoloc';
@@ -63,6 +65,7 @@ switch(env) {
     confg.google.callbackURL = "https://lacoloc.herokuapp.com/auth/google/callback";
     break;
   case 'HEROKUFB':
+    confg.isdev = false;
     confg.locale = 'en';
     confg.url = 'http://www.flatbuddy.eu';
     confg.db =  'mongodb://flatbuddy:vaL6vQJc@ds031329.mongolab.com:31329/flatbuddy';
@@ -72,7 +75,7 @@ switch(env) {
       clientSecret: 'c6e171b47cce427b8ccd56a1c1e1f1e0',
       callbackURL: "http://www.flatbuddy.eu/auth/facebook/callback",
       canvasCallbackURL: "https://apps.facebook.com/flatbuddy_eu",
-    }
+    };
     confg.twitter.callbackURL = "http://www.flatbuddy.eu/auth/twitter/callback";
     confg.google.callbackURL = "https://www.flatbuddy.eu/auth/google/callback";
     confg.socket_transports = ['xhr-polling','jsonp-polling','websocket'];
@@ -80,13 +83,14 @@ switch(env) {
     confg.analytics = {
       track_id : "UA-33326287-2",
       track_url: "flatbuddy.eu"
-    }
+    };
     confg.captcha = {
       pub: "6Ldyw-4SAAAAAAJyfPoI7YUIQgBwzKiqP-5wkPdC",
       priv: "6Ldyw-4SAAAAANocIiBdKqxN3epvALkJuae5FOZO"
-    }
+    };
     break;
   case 'KIMSLC':
+    confg.isdev = false;
     confg.locale = 'fr';
     confg.url = 'http://www.lacoloc.fr';
     confg.db =  'mongodb://localhost/lacoloc';
@@ -101,7 +105,7 @@ switch(env) {
     confg.captcha = {
       pub: "6Ldww-4SAAAAAB-0qBTIdY0KWAJsZCYFyejuuQiL",
       priv: "6Ldww-4SAAAAAJtUrWZP6Vd_Pex3gu9_PjWljdHY"
-    }
+    };
 
     break;
   case 'KIMSLCDEV':
@@ -113,7 +117,7 @@ switch(env) {
     confg.localized_url = {
       en: "http://google.com/",
       fr: "http://facebook.com/"
-    }
+    };
     confg.date_format = 'mm/dd/yyyy';
     break;
 }

@@ -3,18 +3,21 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  //, Imager = require('imager')
-  , config = require('../config/config')
-  //, imagerConfig = require(config.root + '/config/imager.js')
-  , Schema = mongoose.Schema
-  , utils = require('../lib/utils')
-  , q = require('promised-io/promise')
+var mongoose = require('mongoose'),
+    config = require('../config/config'),
+  // imagerConfig = require(config.root + '/config/imager.js'),
+  // Imager = require('imager'),
+    Schema = mongoose.Schema,
+    utils = require('../lib/utils'),
+    q = require('promised-io/promise')
+    //nyo = require('nyo')
 
 
 /**
  * Expense Schema
  */
+
+//var gloubiboulga = nyo.entity.createSchema('haha');
 
 var ExpenseSchema = new Schema({
   group: { type : Schema.ObjectId, ref : 'Group' },
