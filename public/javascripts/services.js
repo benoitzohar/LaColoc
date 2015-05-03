@@ -3,7 +3,7 @@
 'use strict';
 
   /**
-   * Services that persists and retrieves data from localStorage
+   * Service that handle the socket
   */
   lca.factory('lcSocket', function ($rootScope) {
   	return {

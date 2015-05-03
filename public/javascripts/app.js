@@ -65,7 +65,7 @@ app = {
     },
 
     initSocket : function(url) {
-        socket = io.connect(url,{
+        socket = io(url,{
             'reconnection delay' : 200
         });
     },

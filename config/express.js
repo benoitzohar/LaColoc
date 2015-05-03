@@ -11,6 +11,7 @@ var express = require('express'),
     expressLogger = require('express-logger'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
+    csrf = require('csurf'),
     flash = require('connect-flash'),
     winston = require('winston'),
     helpers = require('view-helpers'),
@@ -59,12 +60,15 @@ module.exports = function (app, config, passport, sessionstore) {
   } else {
     log = 'dev';
   }
+
   // Don't log during tests
   //if (env !== 'test') app.use(expressLogger(log));
 
   // set views path, template engine and default layout
   app.set('views', config.root + '/views');
   app.set('view engine', 'jade');
+
+
 
   // expose package.json to views
   app.use(function (req, res, next) {
@@ -77,14 +81,18 @@ module.exports = function (app, config, passport, sessionstore) {
   app.use(cookieParser());
 
   // bodyParser should be above methodOverride
-  app.use(bodyParser());
+  app.use(bodyParser.urlencoded({ extended: true }));
+  app.use(bodyParser.json());
   app.use(methodOverride());
+  app.use(csrf({ cookie: true }));
 
   // express/mongo session storage
   app.use(expressSession({
     secret: 'itsnosecrethaha',
     store: sessionstore,
-    key:  'lacoloc.sid'
+    key:  'lacoloc.sid',
+    resave: true,
+    saveUninitialized: true
   }));
 
   // use passport session
@@ -99,30 +107,33 @@ module.exports = function (app, config, passport, sessionstore) {
 
   var isFromFacebook = function(req) {
     return req.body.signed_request && req.body.fb_locale && req.query.fb;
-  }
-  var csrf = express.csrf();
+  };
 
   // adds CSRF support
   if (env !== 'test') {
-    app.use(function (req, res, next) {
+    app.use(function (err, req, res, next) {
       if (!isFromFacebook(req)) {
-        csrf(req, res, next);
+        if (err.code !== 'EBADCSRFTOKEN') return next(err);
+          // handle CSRF token errors here
+          res.status(403);
+          res.send('Wrong CSRF...');
       } else {
         next();
       }
-    })
+    });
 
     // This could be moved to view-helpers :-)
     app.use(function(req, res, next){
       if (!isFromFacebook(req)) {
-        res.locals.csrf_token = req.csrfToken()
+        res.locals.csrf_token = req.csrfToken();
       }
-      next()
-    })
+      next();
+    });
   }
 
   // default: using 'accept-language' header to guess language settings
   app.use(i18n.init);
+
 
   //set env in locals and make sure the locale is OK
   app.use(function(req, res, next){
@@ -157,11 +168,12 @@ module.exports = function (app, config, passport, sessionstore) {
         }
       }
     }
-    next()
-  })
+    next();
+  });
 
-  // routes should be at the last
-  app.use(app.router)
+
+  // Bootstrap routes
+  require('./routes')(app, passport);
 
   // assume "not found" in the error msgs
   // is a 404. this is somewhat silly, but
@@ -169,15 +181,15 @@ module.exports = function (app, config, passport, sessionstore) {
   // properties, use instanceof etc.
   app.use(function(err, req, res, next){
     // treat as 404
-    if (err.message
-      && (~err.message.indexOf('not found')
-      || (~err.message.indexOf('Cast to ObjectId failed')))) {
-      return next()
+    if (err.message && 
+       (~err.message.indexOf('not found') ||
+       (~err.message.indexOf('Cast to ObjectId failed')))) {
+      return next();
     }
 
     // log it
     // send emails if you want
-    console.error(err.stack)
+    console.error(err.stack);
 
     //get translation
     res.locals.__ = res.__ = function() {
@@ -185,20 +197,20 @@ module.exports = function (app, config, passport, sessionstore) {
     };
     var error = (~env.indexOf('dev')?err.stack:'');
     // error page
-    res.status(500).render('500', { error: error })
-  })
+    res.status(500).render('500', { error: error });
+  });
 
   // assume 404 since no middleware responded
-  app.use(function(req, res, next){
+  app.use(function(req, res, next){ console.log('There is a 404');
     res.status(404).render('404', {
       url: req.originalUrl,
       error: 'Not found'
-    })
-  })
+    });
+  });
 
 
- /* // development env config
-  app.configure('development', function () {
-    app.locals.pretty = true
-  })*/
-}
+  // development env config
+  if (env == 'development') {
+    app.locals.pretty = true;
+  }
+};

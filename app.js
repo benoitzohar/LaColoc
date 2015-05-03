@@ -11,7 +11,6 @@ var express = require('express'),
     mongoose = require('mongoose'),
     expressSession = require('express-session'),
     mongoStore = require('connect-mongo')(expressSession),
-    http = require('http'),
     os = require("os"),
     config = require('./config/config');
   
@@ -42,7 +41,6 @@ fs.readdirSync(models_path).forEach(function (file) {
 require('./config/passport')(passport, config);
 
 var app = express();
-var server = http.createServer(app);
 
 var sessionstore = new mongoStore({
     url: config.db,
@@ -52,14 +50,14 @@ var sessionstore = new mongoStore({
 // express settings
 require('./config/express')(app, config, passport, sessionstore);
 
-// Bootstrap routes
-require('./config/routes')(app, passport);
-
 // Start the app by listening on <port>
 var port = process.env.PORT || 3000;
-var io = socketio.listen(server);
-server.listen(port);
-console.log('Lacoloc app started on port '+port);
+
+var http = require('http').Server(app);
+var io = socketio(http);
+http.listen(port,function(){
+  console.log('Lacoloc app started on port '+port);  
+});
 
 // Socket settings
 require('./config/socket')(express, io, passportSocketIo, new mongoStore({

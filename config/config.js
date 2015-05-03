@@ -44,7 +44,7 @@ var confg = {
     pub: "6Ldzw-4SAAAAAAans1Cy_y87_fnSEOTvpFmKvPAQ",
     priv: "6Ldzw-4SAAAAAMZr7Ufwj5L1PmXhbzVMxRa3X34A"
   },
-  socket_transports : ['websocket','jsonp-polling', 'xhr-polling'],
+  //socket_transports : ['websocket','jsonp-polling', 'xhr-polling'],
   date_format : 'dd/mm/yyyy',
   analytics: {
     track_id : "UA-33326287-1",

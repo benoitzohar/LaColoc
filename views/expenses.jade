@@ -39,14 +39,13 @@
                           td(width="200")
                             span {{item.date | date:'#{angular_date_format}'}}
                           td(width="200")
-                            span 
-                              {{item.value}} #{req.group.devise}
+                            span {{item.value}} #{req.group.devise}
                           td
                             .hidden
                                 ul(id="destspopover{{item._id}}")
                                   li(ng-repeat='dest in item.dest') 
                                     input(type="checkbox",checked="checked",ng-click='toggleDest(dest)') 
-                                    {{dest.name}}
+                                    | {{dest.name}}
                             button.btn.btn-link(type="button",rel="popover",data-toggle="popover",data-placement="bottom",data-itemid="{{item._id}}")
                               i.glyphicon.glyphicon-user
                             span(style="font-size: 10px;margin-left: -15px;") &nbsp;{{item.dest.length}}
