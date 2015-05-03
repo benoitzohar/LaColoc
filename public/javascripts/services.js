@@ -16,6 +16,10 @@
             });
           },
           emit: function (eventName, data, entity_id, callback) {
+
+            //show loader after 3 seconds (if the response is long to come)
+            app.showLoader(3);
+
             //format data for socket        
             data = {
                 entity_id : entity_id,

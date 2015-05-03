@@ -74,11 +74,32 @@ app = {
         $('#inviteemail').parents('form').submit();
     },
 
-    showLoader: function() {
+    loader : null,
+    showLoader: function(timeout, time) {
+        //save loader start time to avoid duplication if the result came early
+        var current_time = +new Date();
+
+        //check if the time passed is equal to known time
+        if (time) {
+            if (time !== this.loader) {
+                //don't do anything if the timestamp is not the same
+                return false;
+            }
+        }
+
+        this.loader = current_time;
+        //start after a certain time if necessary
+        if (timeout) {
+            setTimeout(function() {
+                app.showLoader(null,current_time);
+            },timeout*1000);
+            return;
+        }
         $('#loader').fadeIn(400);
     },
 
     hideLoader: function() {
+        this.loader = null;
         $('#loader').fadeOut(400);
     }
  

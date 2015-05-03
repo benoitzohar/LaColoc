@@ -6,7 +6,11 @@
 	 lca.controller('ShoppingCtrl', ['$scope', '$location', 'lcSocket', 'filterFilter', function ($scope, $location, lcSocket, filterFilter) {
 		app.showLoader();
 		var shoppings = $scope.shoppings = [];
-		var entity_id = $scope.entity_id = null;
+		$scope.entity_id = null; console.log('reinit entityID');
+		$scope.readonly = null;
+
+		$scope.displayDeleted = false;
+		$scope.displayFinished = true;
 
 		$scope.newShopping = '';
 		$scope.remainingCount = filterFilter(shoppings, {completed: false}).length;
@@ -29,15 +33,20 @@
 	    lcSocket.removeAllListeners('shopping:list');
 		lcSocket.on('shopping:list',function(data) {
 			log(data);
-			entity_id = $scope.entity_id = data.entity_id;
-			$scope.archives = data.archives;
-			//console.log("got shopping:list in ctrl",data);
+			if (data.entity_id) {
+				$scope.entity_id = data.entity_id;
+			}
+			if (data.archives) {
+				$scope.archives = data.archives;
+			}
+
 			$scope.shoppings = shoppings = data.items;
 			app.hideLoader();
 		});
 
 
 		$scope.addShopping = function () {
+			if ($scope.readonly) return false;
 			var newShopping = $scope.newShopping.trim();
 			if (newShopping.length === 0) {
 				return;
@@ -47,44 +56,65 @@
 				completed: false
 			};
 			shoppings.push(shopping);
-			lcSocket.emit('shopping:update',[shopping], entity_id);
+			lcSocket.emit('shopping:update',[shopping], $scope.entity_id);
 
 			$scope.newShopping = '';
 			$scope.remainingCount++;
 		};
 
 		$scope.editShopping = function (shopping) {
+			if ($scope.readonly) return false;
 			$scope.editedShopping = shopping;
 			// Clone the original shopping to restore it on demand.
 			$scope.originalShopping = angular.extend({}, shopping);
 		};
 
 		$scope.doneEditing = function (shopping) {
+			if ($scope.readonly) return false;
 			$scope.editedShopping = null;
 			shopping.title = shopping.title.trim();
 
 			if (!shopping.title) {
 				$scope.removeShopping(shopping);
 			}
-			else lcSocket.emit('shopping:update',[shopping], entity_id);
+			else lcSocket.emit('shopping:update',[shopping], $scope.entity_id);
 		};
 
 		$scope.revertEditing = function (shopping) {
+			if ($scope.readonly) return false;
 			shoppings[shoppings.indexOf(shopping)] = $scope.originalShopping;
 			$scope.doneEditing($scope.originalShopping);
 		};
 
 		$scope.removeShopping = function (shopping) {
+			if ($scope.readonly) return false;
 			$scope.remainingCount -= shopping.completed ? 0 : 1;
 			shoppings.splice(shoppings.indexOf(shopping), 1);
 			if (shopping && shopping._id) {
-				lcSocket.emit('shopping:remove',[shopping._id], entity_id);
+				lcSocket.emit('shopping:remove',[shopping._id], $scope.entity_id);
 			}
 		};
 
 		$scope.shoppingCompleted = function (shopping) {
+			if ($scope.readonly) return false;
 			$scope.remainingCount += shopping.completed ? -1 : 1;
-			lcSocket.emit('shopping:update',[shopping], entity_id);
+			lcSocket.emit('shopping:update',[shopping], $scope.entity_id);
+		};
+
+		$scope.showArchive = function(archive) {
+			console.log('archive',archive.items);
+			console.log('archivedAt',archive.archivedAt);
+			if (archive && archive.archivedAt && archive.items) {
+				$scope.readonly = true;
+				$scope.shoppings = archive.items;
+			}
+		};
+
+		$scope.shoppingFilter = function(row) {
+			if (!$scope.displayFinished && row.completed) return false;
+			if (!$scope.displayDeleted && row.deletedAt) return false;
+
+			return true;
 		};
 
 		//init view

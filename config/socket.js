@@ -156,7 +156,7 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
             }
             
             shopping.save(function(err,saved) {
-              broadcastToGroup(cuser,'shopping:list',{items: saved.items});
+                broadcastToGroup(cuser,'shopping:list',{items: saved.items});
             });
             
           }
@@ -171,16 +171,7 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
           //sync list of items
           if (shopping && shopping.items && data.items){
             for(var k in data.items) {
-              var index = -1;
-              //if shopping exists: go thru them
-              if (data.items[k] && shopping.items.length) {
-                  index = utils.indexof(shopping.items, { _id: data.items[k] });
-              }
-              //if item exist: update it
-              if (~index) {
-                  //remove item from list
-                  shopping.items.splice(index,1);
-              }
+              shopping.removeItem(data.items[k],false); 
             }
             
             shopping.save(function(err,saved) {

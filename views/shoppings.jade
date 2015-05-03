@@ -4,16 +4,15 @@
             header#header
                 h2.app_title #{__('Shopping list')}
                 form#shopping-form(ng-submit='addShopping()')
-                  input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus')
+                  input#new-shopping(placeholder='#{__("Add an item to the list")}', ng-model='newShopping', autofocus='autofocus', ng-hide='readonly')
                   button.btn.btn-primary(type="submit",ng-show='newShopping.length',ng-cloak='ng-cloak')
                     i.glyphicon.glyphicon-plus
-                  img(src="/images/loader.gif",style="position:absolute;top:35px;right:15px;",ng-hide='entity_id')
               section#main(ng-show='shoppings.length', ng-cloak='ng-cloak')
                 ul#shopping-list
-                  li(ng-repeat='shopping in shoppings | filter:statusFilter track by $index', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')
+                  li(ng-repeat='shopping in shoppings | filter:shoppingFilter', ng-class='{completed: shopping.completed, editing: shopping == editedShopping}')
                     .view
-                      input.toggle(type='checkbox', ng-model='shopping.completed', ng-change='shoppingCompleted(shopping)')
-                      label(ng-click='editShopping(shopping)',shoppingfocusinput='') {{shopping.title}}
+                      input.toggle(type='checkbox', ng-model='shopping.completed', ng-change='shoppingCompleted(shopping)', ng-disabled="readonly")
+                      label(ng-click='editShopping(shopping)',shoppingfocusinput='') {{shopping.title}}{{shopping.deletedAt ? #{__("Deleted")} : ''}}
                     form(ng-submit='doneEditing(shopping)')
                       input.edit(ng-trim='false', ng-model='shopping.title', ng-blur='doneEditing(shopping)', shopping-escape='revertEditing(shopping)', shopping-focus='shopping == editedShopping')
 
@@ -23,9 +22,20 @@
                 i.glyphicon.glyphicon-plus
                 | &nbsp;#{__("New list")}
             
-            h5(ng-show='archives.length') &nbsp;#{__("Archives")}:
+            h5(ng-show='archives.length') &nbsp;#{__("Archives")}
             .list-group
               ul
-                li.archive.list-group-item(ng-repeat='archive in archives') {{ archive.archivedAt | date:'mediumDate'}}
+                li.archive.list-group-item(ng-repeat='archive in archives', ng-click='showArchive(archive)') {{ archive.archivedAt | date:'mediumDate'}}
                   span.badge {{ archive.items.length }}
+            h5 &nbsp;#{__("Options")}
+            .list-group
+              ul
+                li.list-group-item 
+                  input(type='checkbox',ng-model="displayDeleted" ) 
+                  | #{__("Display deleted rows")}
+                li.list-group-item 
+                  input(type='checkbox',ng-model="displayFinished" ) 
+                  | #{__("Display finished rows")}
+                li.list-group-item 
+                  p #{__("Order by")}
     

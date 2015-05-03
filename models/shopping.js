@@ -3,12 +3,12 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
+var mongoose = require('mongoose'),
   //, Imager = require('imager')
-  , config = require('../config/config')
-  , Schema = mongoose.Schema
-  , utils = require('../lib/utils')
-  , q = require('promised-io/promise')
+    config = require('../config/config'),
+    Schema = mongoose.Schema,
+    utils = require('../lib/utils'),
+    q = require('promised-io/promise');
 
 
 /**
@@ -21,11 +21,12 @@ var ShoppingSchema = new Schema({
     title: { type : String, default : '' },
     //author: { type : Schema.ObjectId, ref : 'User' },
     completed : Boolean,
-    createdAt: { type : Date, default : Date.now }
+    createdAt: { type : Date, default : Date.now },
+    deletedAt: { type : Date }
   }],
   createdAt  : {type : Date, default : Date.now},
   archivedAt : {type : Date }
-})
+});
 
 
 /**
@@ -46,24 +47,27 @@ ShoppingSchema.methods = {
     
     this.items.push({
       title: title
-    })
+    });
 
-    this.save(cb)
+    this.save(cb);
   },
 
   /**
    * Remove item
    *
    * @param {itemId} String
+   * @param {save} Boolean
    * @param {Function} cb
    * @api private
    */
 
-  removeItem: function (itemId, cb) {
-    var index = utils.indexof(this.items, { id: commentId })
-    if (~index) this.items.splice(index, 1)
-    else return cb('not found')
-    this.save(cb)
+  removeItem: function (itemId, save, cb) {
+    var index = utils.indexof(this.items, { id: itemId });
+    if (~index) this.items[index].deletedAt = new Date();
+    else return cb('not found');
+    if (save) {
+      this.save(cb);
+    }
   },
 
   /**
@@ -75,10 +79,10 @@ ShoppingSchema.methods = {
    */
 
   checkItem: function (itemId, cb) {
-    var index = utils.indexof(this.items, { id: itemId })
-    if (~index) this.comments[index].checked = true;
-    else return cb('not found')
-    this.save(cb)
+    var index = utils.indexof(this.items, { id: itemId });
+    if (~index) this.items[index].checked = true;
+    else return cb('not found');
+    this.save(cb);
   },
 
   /**
@@ -90,13 +94,13 @@ ShoppingSchema.methods = {
    */
 
   unCheckItem: function (itemId, cb) {
-    var index = utils.indexof(this.items, { id: itemId })
-    if (~index) this.comments[index].checked = false;
-    else return cb('not found')
-    this.save(cb)
+    var index = utils.indexof(this.items, { id: itemId });
+    if (~index) this.items[index].checked = false;
+    else return cb('not found');
+    this.save(cb);
   }
 
-}
+};
 
 /**
  * Statics
@@ -115,7 +119,7 @@ ShoppingSchema.statics = {
   load: function (id, cb) {
     this.findOne({ _id : id })
       .populate('group')
-      .exec(cb)
+      .exec(cb);
   },
 
   /**
@@ -132,7 +136,7 @@ ShoppingSchema.statics = {
       .exec(function(err,val){
         if (err) return d.reject(err);
         return d.resolve(val);
-      })
+      });
 
     return d.promise;
   },
@@ -156,6 +160,6 @@ ShoppingSchema.statics = {
     return d.promise;
   }
 
-}
+};
 
-mongoose.model('Shopping', ShoppingSchema)
+mongoose.model('Shopping', ShoppingSchema);
