@@ -10,6 +10,7 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     expressLogger = require('express-logger'),
     bodyParser = require('body-parser'),
+    methodOverride = require('method-override'),
     flash = require('connect-flash'),
     winston = require('winston'),
     helpers = require('view-helpers'),
@@ -77,7 +78,7 @@ module.exports = function (app, config, passport, sessionstore) {
 
   // bodyParser should be above methodOverride
   app.use(bodyParser());
-  app.use(express.methodOverride());
+  app.use(methodOverride());
 
   // express/mongo session storage
   app.use(expressSession({
