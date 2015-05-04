@@ -53,6 +53,10 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
       }
     }
   }
+
+  function onError(err,route) {
+    console.error("[Socket.IO] An error occured for event '"+route+"': ",err);
+  }
   
   /**
    *  Socket routes
@@ -135,52 +139,41 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
     socket.on('shopping:update',function(data) {
       console.log("[Socket.IO] shopping.update request received from=",cuser.email,data);
       if (data && data.entity_id) {
-        Shopping.load(data.entity_id,function(err,shopping) {
+        Shopping.load(data.entity_id)
+        .then(function(shopping) {
           //sync list of items
           if (shopping && shopping.items && data.items){
-            for(var k in data.items) {
-              var index = -1;
-              //if shopping exists: go thru them
-              if (data.items[k]._id && shopping.items.length) {
-                  index = utils.indexof(shopping.items, { _id: data.items[k]._id });
-              }
-              //if item exist: update it
-              if (~index) {
-                  shopping.items[index].title = data.items[k].title;
-                  shopping.items[index].completed = data.items[k].completed;
-              }
-              //otherwise add it to the list
-              else {
-                shopping.items.push(data.items[k]);
-              }
-            }
-            
-            shopping.save(function(err,saved) {
-                broadcastToGroup(cuser,'shopping:list',{items: saved.items});
-            });
-            
+            return shopping.updateItems(data.items,true);
           }
+          return false;
+        })
+        .then(function(saved) {
+          //broadcast to all if everything went well
+          broadcastToGroup(cuser,'shopping:list',{items: saved.items});
+        },
+        function(err){
+          //handle error
+          onError(err,'shopping:update');
         });
       }
     });
 
   socket.on('shopping:remove',function(data) {
-      console.log("[Socket.IO] shopping.remove request received from=",cuser.email,data);
-      if (data && data.entity_id) {
-        Shopping.load(data.entity_id,function(err,shopping) {
-          //sync list of items
-          if (shopping && shopping.items && data.items){
-            for(var k in data.items) {
-              shopping.removeItem(data.items[k],false); 
-            }
-            
-            shopping.save(function(err,saved) {
-              broadcastToGroup(cuser,'shopping:list',{items: saved.items});
-            });
-            
-          }
-        });
-      }
+    console.log("[Socket.IO] shopping.remove request received from=",cuser.email,data);
+    Shopping.load(data.entity_id)
+      .then(function(shopping) {
+        //sync list of items
+        return shopping.removeItems(data.items,true);
+      })
+      .then(function(shopping){
+          //broadcast to all if everything went well
+          broadcastToGroup(cuser,'shopping:list',{items: shopping.items});
+        },
+        function(err){
+          //handle error
+          onError(err,'shopping:remove');
+        }
+      );
     });
 
   //Expense
@@ -220,7 +213,6 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
         Expense.load(data.entity_id,function(err,expense) {
           //add items to list
           if (expense && expense.users && data.items) {
-            console.log('data.items',data.items);
             for(var k in data.items) {
               if (data.items[k] && data.items[k]._id) {
                 expense.updateItem(cuser,data.items[k]);

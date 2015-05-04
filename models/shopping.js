@@ -19,9 +19,10 @@ var ShoppingSchema = new Schema({
   group: { type : Schema.ObjectId, ref : 'Group' },
   items: [{
     title: { type : String, default : '' },
-    //author: { type : Schema.ObjectId, ref : 'User' },
+    author: { type : Schema.ObjectId, ref : 'User' },
     completed : Boolean,
     createdAt: { type : Date, default : Date.now },
+    updatedAt: { type : Date, default : Date.now },
     deletedAt: { type : Date }
   }],
   createdAt  : {type : Date, default : Date.now},
@@ -35,21 +36,86 @@ var ShoppingSchema = new Schema({
 
 ShoppingSchema.methods = {
 
-  /**
-   * Add item
+   /**
+   * Update item
    *
-   * @param {String} title
-   * @param {Function} cb
+   * @param {item} Object
+   * @param {save} Boolean
    * @api private
    */
+  updateItem: function(item,save) {
+    var d = new q.Deferred();
+    if (!item) {
+      d.reject("Could not remove item: item is empty in shopping #"+this.id);
+      return d.promise; 
+    }
 
-  addItem: function (title, cb) {
-    
-    this.items.push({
-      title: title
+    var index = -1;
+    //if shopping exists: go thru them
+    if (item._id && this.items.length) {
+        index = utils.indexof(this.items, { _id: item._id });
+    }
+    //if item exist: update it
+    if (~index) {
+      //ensure that the update is not overriding the database
+      if (!this.items[index].updatedAt || !item.updatedAt || new Date(item.updatedAt) >= this.items[index].updatedAt) {
+        this.items[index].title = item.title;
+        this.items[index].completed = item.completed;
+        if (item.updatedAt) this.items[index].updatedAt = new Date(item.updatedAt);
+        else                this.items[index].updatedAt = new Date();
+        if (item.deletedAt) this.items[index].deletedAt = item.deletedAt;
+      }
+    }
+    //otherwise add it to the list
+    else {
+      this.items.push(item);
+    }
+
+    if (save) {
+      //save if necessary
+      this.save(function(err,saved){
+        if (err) return d.reject(err);
+        return d.resolve(saved);
+      });
+      
+    }
+    else {
+      d.resolve(this);
+    }
+
+    return d.promise;
+  },
+
+  /**
+   * Update items
+   *
+   * @param {items} Array of items 
+   * @param {save} Boolean
+   * @api private
+   */
+  updateItems: function(items,save) {
+    var d = new q.Deferred();
+    var requests = [];
+    //handle arrays as items to remove
+    for(var i=0;i<items.length;i++) {
+      requests.push(this.updateItem(items[i],false));
+    }
+    q.all(requests).then(function(saved){
+      if (save) {
+        this.save(function(err,saved){
+          if (err) return d.reject(err);
+          return d.resolve(saved);
+        });
+      } 
+      else {
+        return d.resolve(this);
+      }
+    }
+    .bind(this),
+    function(err){
+      return d.reject(err);
     });
-
-    this.save(cb);
+    return d.promise;
   },
 
   /**
@@ -57,47 +123,69 @@ ShoppingSchema.methods = {
    *
    * @param {itemId} String
    * @param {save} Boolean
-   * @param {Function} cb
    * @api private
    */
-
-  removeItem: function (itemId, save, cb) {
-    var index = utils.indexof(this.items, { id: itemId });
-    if (~index) this.items[index].deletedAt = new Date();
-    else return cb('not found');
-    if (save) {
-      this.save(cb);
+  removeItem: function (itemId, save) {
+    var d = new q.Deferred();
+    if (!itemId) {
+      d.reject("Could not remove item: itemId is empty in shopping #"+this.id);
+      return d.promise; 
     }
+
+    //remove from one item ID
+    if (this.items && this.items.length) {
+      var index = utils.indexof(this.items, { id: itemId });
+      if (~index) this.items[index].deletedAt = new Date();
+      else {
+        d.reject("Could not remove item '"+itemId+"': item not found in shopping #"+this.id);
+        return d.promise; 
+      }
+    }
+    if (save) {
+      //save if necessary
+      this.save(function(err,saved){
+        if (err) return d.reject(err);
+        return d.resolve(saved);
+      });
+      
+    }
+    else {
+      d.resolve(this);
+    }
+
+    return d.promise;
   },
 
   /**
-   * check item
+   * Remove items
    *
-   * @param {itemId} String
-   * @param {Function} cb
+   * @param {items} Array of items IDs
+   * @param {save} Boolean
    * @api private
    */
-
-  checkItem: function (itemId, cb) {
-    var index = utils.indexof(this.items, { id: itemId });
-    if (~index) this.items[index].checked = true;
-    else return cb('not found');
-    this.save(cb);
-  },
-
-  /**
-   * unCheck item
-   *
-   * @param {itemId} String
-   * @param {Function} cb
-   * @api private
-   */
-
-  unCheckItem: function (itemId, cb) {
-    var index = utils.indexof(this.items, { id: itemId });
-    if (~index) this.items[index].checked = false;
-    else return cb('not found');
-    this.save(cb);
+  removeItems : function(items,save) {
+    var d = new q.Deferred();
+    var requests = [];
+    //handle arrays as items to remove
+    for(var i=0;i<items.length;i++) {
+      requests.push(this.removeItem(items[i],false));
+    }
+    q.all(requests).then(function(saved){
+      if (save) {
+        this.save(function(err,saved){
+          if (err) return d.reject(err);
+          return d.resolve(saved);
+        });
+      } 
+      else {
+        return d.resolve(this);
+      }
+    }
+    .bind(this),
+    function(err){
+      return d.reject(err);
+    });
+    return d.promise;
   }
 
 };
@@ -116,10 +204,10 @@ ShoppingSchema.statics = {
    * @api private
    */
 
-  load: function (id, cb) {
-    this.findOne({ _id : id })
+  load: function (id) {
+    return this.findOne({ _id : id })
       .populate('group')
-      .exec(cb);
+      .exec();
   },
 
   /**
@@ -130,15 +218,9 @@ ShoppingSchema.statics = {
    */
 
   current: function (group) {
-    var d = new q.Deferred();
-    this.findOne({group:group, archivedAt: null})
+    return this.findOne({group:group, archivedAt: null})
       .populate('group')
-      .exec(function(err,val){
-        if (err) return d.reject(err);
-        return d.resolve(val);
-      });
-
-    return d.promise;
+      .exec();
   },
 
   /**
@@ -149,15 +231,10 @@ ShoppingSchema.statics = {
    */
 
   archiveList: function (groupId) {
-    var d = new q.Deferred();
-    this.find({group:groupId, archivedAt: {'$ne': null }}) 
+    return this.find({group:groupId, archivedAt: {'$ne': null }}) 
       .populate('group')
       .sort({'createdAt': -1}) // sort by date
-      .exec(function(err,val){
-        if (err) return d.reject(err);
-        return d.resolve(val);
-      });
-    return d.promise;
+      .exec();
   }
 
 };

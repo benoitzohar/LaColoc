@@ -26,7 +26,7 @@ var log = function(a,b,c,d,e,f) {
  *
  * @type {angular.Module}
  */
-lca = angular.module('lacoloc', ['ngRoute','ui.bootstrap'])
+lca = angular.module('lacoloc', ['ngRoute','ui.bootstrap','oitozero.ngSweetAlert'])
     .config(['$routeProvider', function($routeProvider,$routeParams) {
         $routeProvider
           .when('/expenses', { templateUrl: '/expenses', controller: 'ExpenseCtrl' })

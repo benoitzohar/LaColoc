@@ -60,5 +60,7 @@
 	"Display deleted rows": "Display deleted rows",
 	"Display finished rows": "Display finished rows",
 	"Order by": "Order by",
-	"Deleted": "Deleted"
+	"Deleted": "Deleted",
+	"Archive the current list ?": "Archive the current list ?",
+	"You will not be able to restore the archived list.": "You will not be able to restore the archived list."
 }

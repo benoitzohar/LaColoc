@@ -18,7 +18,7 @@
 
     .col-md-3.col-md-pull-9
         .panel.left-menu
-            a.btn.btn-primary(href='/shopping/new',style="width: 100%;" )
+            button.btn.btn-primary(ng-click='askToArchive("#{__("Archive the current list ?")}","#{__("You will not be able to restore the archived list.")}")',style="width: 100%;" )
                 i.glyphicon.glyphicon-plus
                 | &nbsp;#{__("New list")}
             

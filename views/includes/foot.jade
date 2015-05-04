@@ -1,11 +1,12 @@
 
-script(src='/javascripts/libs/jquery-1.9.1.min.js')
+script(src='/javascripts/libs/jquery-2.1.3.min.js')
 
 - if(req.isAuthenticated())
   script(src='/javascripts/libs/angular.min.js')
   script(src='/javascripts/libs/angular-route.min.js')
-  script(src='/javascripts/libs/ui-bootstrap-tpls-0.11.0.min.js')
-    
+  script(src='/javascripts/libs/ui-bootstrap-tpls.min.js')
+  script(src='/javascripts/libs/ui-bootstrap.min.js')
+  script(src='/javascripts/libs/sweetalert.min.js')
   script(src='/javascripts/libs/socket.io.min.js')
   script(src='/javascripts/libs/bootstrap-datepicker.js')
   - if (locale == 'fr')
@@ -15,6 +16,7 @@ script(src='/javascripts/libs/jquery-1.9.1.min.js')
   script(src='/javascripts/controllers/expenseCtrl.js')
   script(src='/javascripts/services.js')   
   script(src='/javascripts/directives.js')
+  script(src='/javascripts/libs/ngSweetalert.min.js')
   
   
   - var js_cb_parts = ''

@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-	 lca.controller('ShoppingCtrl', ['$scope', '$location', 'lcSocket', 'filterFilter', function ($scope, $location, lcSocket, filterFilter) {
+	 lca.controller('ShoppingCtrl', ['$scope', '$location', 'lcSocket', 'filterFilter','SweetAlert', function ($scope, $location, lcSocket, filterFilter,SweetAlert) {
 		app.showLoader();
 		var shoppings = $scope.shoppings = [];
 		$scope.entity_id = null; console.log('reinit entityID');
@@ -102,8 +102,6 @@
 		};
 
 		$scope.showArchive = function(archive) {
-			console.log('archive',archive.items);
-			console.log('archivedAt',archive.archivedAt);
 			if (archive && archive.archivedAt && archive.items) {
 				$scope.readonly = true;
 				$scope.shoppings = archive.items;
@@ -115,6 +113,19 @@
 			if (!$scope.displayDeleted && row.deletedAt) return false;
 
 			return true;
+		};
+
+		$scope.askToArchive = function(title, text) {
+			SweetAlert.swal({
+			   title: title,
+			   text: text,
+			   type: "warning",
+			   showCancelButton: true,
+			   confirmButtonColor: "#DD6B55",
+			   closeOnConfirm: false}, 
+			function(){ 
+				console.log('ok');
+			});
 		};
 
 		//init view
