@@ -199,6 +199,9 @@
     -webkit-transition: color 0.4s;
     transition: color 0.4s;
 }
+#shoppingapp #shopping-list li label.deleted {
+    color: #ccc;
+}
 
 #shoppingapp #shopping-list li.completed label {
     color: #a9a9a9;
@@ -243,6 +246,14 @@
 
 #shoppingapp #shopping-list li.editing:last-child {
     margin-bottom: -1px;
+}
+
+.left-menu.shopping-menu input[type="checkbox"] {
+  height: 15px;
+  width: 15px;
+  position: absolute;
+  left: -19px;
+  top: 10px;
 }
 
 /*

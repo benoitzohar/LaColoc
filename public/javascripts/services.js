@@ -41,4 +41,41 @@
         };
   });
 
+  /**
+   *  Localstorage helper
+   */
+  lca.factory('$db', ['$window', function($window) {
+
+    var secret = "This is a great lacoloc secret.";
+
+    //encryption layer
+    var encrypt = function(message) {
+      if (!message) return "";
+      return CryptoJS.TripleDES.encrypt(message, secret);
+    };
+
+    var decrypt = function(encrypted) {
+      if (!encrypted) return "";
+      var decrypted = CryptoJS.TripleDES.decrypt(encrypted, secret);  
+      return decrypted.toString(CryptoJS.enc.Utf8);
+    };
+
+
+    return {
+      set: function(key, value) {
+        $window.localStorage[key] = encrypt(value);
+      },
+      get: function(key, defaultValue) {
+        return decrypt($window.localStorage[key]) || defaultValue;
+      },
+      setObject: function(key, value) {
+        $window.localStorage[key] = encrypt(JSON.stringify(value));
+      },
+      getObject: function(key) {
+        return JSON.parse(decrypt($window.localStorage[key]) || '{}');
+      }
+    };
+  }]);
+
+
 })();

@@ -3,14 +3,37 @@
 (function () {
 'use strict';
 
-	 lca.controller('ShoppingCtrl', ['$scope', '$location', 'lcSocket', 'filterFilter','SweetAlert', function ($scope, $location, lcSocket, filterFilter,SweetAlert) {
+	 lca.controller('ShoppingCtrl', function ($scope, $location, lcSocket, filterFilter,SweetAlert, $db, $http) {
 		app.showLoader();
-		var shoppings = $scope.shoppings = [];
-		$scope.entity_id = null; console.log('reinit entityID');
+
+		//get data from the localstorage
+		var storedData = $db.getObject('shopping-alldata');
+		var shoppings = $scope.shoppings = storedData.items;
+		$scope.entity_id = storedData.entity_id;
+		$scope.archives = storedData.archives;
+
+		$scope.entity_id = null;
 		$scope.readonly = null;
 
-		$scope.displayDeleted = false;
-		$scope.displayFinished = true;
+		//var to display deleted rows
+		$scope.displayDeleted = $db.get('shopping-displayDeleted',0)==="1";
+		//watch for change and store it in the localstorage
+		$scope.$watch('displayDeleted', function(val){
+			$db.set('shopping-displayDeleted',val?"1":"0");
+		});
+		//var to display finished rows
+		$scope.displayFinished = $db.get('shopping-displayFinished',"1")==="1";
+		//watch for change and store it in the localstorage
+		$scope.$watch('displayFinished', function(val){
+			$db.set('shopping-displayFinished',val?"1":"0");
+		});
+
+		//display order
+		$scope.orderBy = $db.get('shopping-orderby','date');
+		//watch for change and store it in the localstorage
+		$scope.$watch('orderBy', function(val){
+			$db.set('shopping-orderBy',val);
+		});
 
 		$scope.newShopping = '';
 		$scope.remainingCount = filterFilter(shoppings, {completed: false}).length;
@@ -32,15 +55,25 @@
 
 	    lcSocket.removeAllListeners('shopping:list');
 		lcSocket.on('shopping:list',function(data) {
-			log(data);
-			if (data.entity_id) {
-				$scope.entity_id = data.entity_id;
-			}
-			if (data.archives) {
-				$scope.archives = data.archives;
-			}
+			
+			//reset readonly status
+			$scope.readonly = false;
 
-			$scope.shoppings = shoppings = data.items;
+			//get the stored data (to update it)
+			var storedData = $db.getObject('shopping-alldata');
+
+			//get entity_id
+			if (data.entity_id) {
+				$scope.entity_id = storedData.entity_id = data.entity_id;
+			}
+			//get archives (if passed up)
+			if (data.archives) {
+				$scope.archives = storedData.archives = data.archives;
+			}
+			//save shoppings
+			$scope.shoppings = shoppings = storedData.items = data.items;
+
+			$db.setObject('shopping-alldata',storedData);
 			app.hideLoader();
 		});
 
@@ -63,7 +96,7 @@
 		};
 
 		$scope.editShopping = function (shopping) {
-			if ($scope.readonly) return false;
+			if ($scope.readonly || shopping.deletedAt) return false;
 			$scope.editedShopping = shopping;
 			// Clone the original shopping to restore it on demand.
 			$scope.originalShopping = angular.extend({}, shopping);
@@ -102,10 +135,32 @@
 		};
 
 		$scope.showArchive = function(archive) {
+
+			//if we were already watching an archive
+			if ($scope.readonly) {
+				//if the current archive is the one already clicked, get out
+				if (archive.current) {
+					return $scope.hideArchive();
+				}
+
+				//go thru all the archives to remove the 'current tag'
+				for(var i=0;i<$scope.archives.length;i++) {
+					if ($scope.archives[i].current) {
+						$scope.archives[i].current = false;
+						break;
+					}
+				}
+			} 
+
 			if (archive && archive.archivedAt && archive.items) {
 				$scope.readonly = true;
 				$scope.shoppings = archive.items;
+				//add the current tag to current archive
+				archive.current = true;
 			}
+		};
+		$scope.hideArchive = function() {
+			lcSocket.emit('shopping:get');  
 		};
 
 		$scope.shoppingFilter = function(row) {
@@ -122,14 +177,27 @@
 			   type: "warning",
 			   showCancelButton: true,
 			   confirmButtonColor: "#DD6B55",
-			   closeOnConfirm: false}, 
-			function(){ 
-				console.log('ok');
+			   closeOnConfirm: true
+			}, 
+			function(accepted){ 
+				if (accepted) {
+					//do the action
+					$http.get('/shopping/new')
+						.success(function(){
+							//then reset the list
+							lcSocket.emit('shopping:get');
+						});
+				}
 			});
 		};
 
-		//init view
+		/**
+		 * init view:
+		 **/
+		
+		//get data from the server
 	    lcSocket.emit('shopping:get');  
-	}]);
+
+	});
 
 })();

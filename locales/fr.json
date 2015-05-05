@@ -56,11 +56,13 @@
 	"Invite": "Inviter",
 	"Logout": "Déconnexion",
 	"Invalid email or password, please try again.": "Email ou mot de passe incorrect, merci de réessayer.",
-	"Options": "Options",
-	"Display deleted rows": "Display deleted rows",
-	"Display finished rows": "Display finished rows",
-	"Order by": "Order by",
-	"Deleted": "Deleted",
-	"Archive the current list ?": "Archive the current list ?",
-	"You will not be able to restore the archived list.": "You will not be able to restore the archived list."
+	"Display deleted rows": "Afficher les éléments supprimés",
+	"Display finished rows": "Afficher les éléments terminés",
+	"Order by": "Classer par",
+	"Deleted": "Supprimé",
+	"Archive the current list ?": "Archiver la liste actuelle ?",
+	"You will not be able to restore the archived list.": "Vous ne pourrez pas revenir en arrière.",
+	"Back to current list": "Retour à la liste actuelle",
+	"Finished": "Terminés",
+	"Display": "Affichage"
 }
