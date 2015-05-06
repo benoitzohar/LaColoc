@@ -59,21 +59,30 @@ exports.new = function(req, res){
     Shopping.current(req.group)
     .then(function(cshopping) {
 
+      //if there are no items in the old group
+      if (cshopping.items.length === 0) {
+        //do not archive
+        return res.send("0");
+      }
+
       //archive current list
-      cshopping.archivedAt = new Date;
+      cshopping.archivedAt = new Date();
       cshopping.save(function(err) {
-        if (err) return res.render('500')
+        if (err) return res.render('500');
           // create new list
           var shopping = new Shopping({
             group: req.group
-          })
+          });
           shopping.save(function(err) {
             if (err) res.render('500');
-            res.redirect('/shopping');
-          })
-      })
-    }, function(err) { return res.render('500') })
-}
+            res.send("1");
+          });
+      });
+    }, 
+    function(err) { 
+      return res.render('500'); 
+    });
+};
 
 /**
  * Show
