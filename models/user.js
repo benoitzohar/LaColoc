@@ -2,11 +2,11 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , Schema = mongoose.Schema
-  , crypto = require('crypto')
-  , oAuthTypes = ['twitter', 'facebook', 'google']
-  , utils = require('../lib/utils')
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    crypto = require('crypto'),
+    oAuthTypes = ['twitter', 'facebook', 'google'],
+    utils = require('../lib/utils');
 
 /**
  * User Schema
@@ -31,7 +31,7 @@ var UserSchema = new Schema({
   }],
   current_group: {type : Schema.ObjectId, ref : 'Group' },
   createdAt  : {type : Date, default : Date.now}
-})
+});
 
 /**
  * Virtuals
@@ -40,53 +40,53 @@ var UserSchema = new Schema({
 UserSchema
   .virtual('password')
   .set(function(password) {
-    this._password = password
-    this.salt = this.makeSalt()
-    this.hashed_password = this.encryptPassword(password)
+    this._password = password;
+    this.salt = this.makeSalt();
+    this.hashed_password = this.encryptPassword(password);
   })
-  .get(function() { return this._password })
+  .get(function() { return this._password; });
 
 /**
  * Validations
  */
 
 var validatePresenceOf = function (value) {
-  return value && value.length
-}
+  return value && value.length;
+};
 
 // the below 5 validations only apply if you are signing up traditionally
 
 UserSchema.path('name').validate(function (name) {
-  if (this.doesNotRequireValidation()) return true
-  return name.length
-}, 'Name cannot be blank')
+  if (this.doesNotRequireValidation()) return true;
+  return name.length;
+}, 'Name cannot be blank');
 
 UserSchema.path('email').validate(function (email) {
-  if (this.doesNotRequireValidation()) return true
-  return email.length
-}, 'Email cannot be blank')
+  if (this.doesNotRequireValidation()) return true;
+  return email.length;
+}, 'Email cannot be blank');
 
 UserSchema.path('email').validate(function (email, fn) {
-  var User = mongoose.model('User')
-  if (this.doesNotRequireValidation()) fn(true)
+  var User = mongoose.model('User');
+  if (this.doesNotRequireValidation()) fn(true);
 
   // Check only when it is a new user or when email field is modified
   if (this.isNew || this.isModified('email')) {
     User.find({ email: email }).exec(function (err, users) {
-      fn(!err && users.length === 0)
-    })
-  } else fn(true)
-}, 'Email already exists')
+      fn(!err && users.length === 0);
+    });
+  } else fn(true);
+}, 'Email already exists');
 
 UserSchema.path('username').validate(function (username) {
-  if (this.doesNotRequireValidation()) return true
-  return username.length
-}, 'Username cannot be blank')
+  if (this.doesNotRequireValidation()) return true;
+  return username.length;
+}, 'Username cannot be blank');
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
-  if (this.doesNotRequireValidation()) return true
-  return hashed_password.length
-}, 'Password cannot be blank')
+  if (this.doesNotRequireValidation()) return true;
+  return hashed_password.length;
+}, 'Password cannot be blank');
 
 
 /**
@@ -94,20 +94,36 @@ UserSchema.path('hashed_password').validate(function (hashed_password) {
  */
 
 UserSchema.pre('save', function(next) {
-  if (!this.isNew) return next()
+  if (!this.isNew) return next();
 
-  if (!validatePresenceOf(this.password)
-    && !this.doesNotRequireValidation())
-    next(new Error('Invalid password'))
+  if (!validatePresenceOf(this.password) && !this.doesNotRequireValidation())
+    next(new Error('Invalid password'));
   else
-    next()
-})
+    next();
+});
 
 /**
  * Methods
  */
 
 UserSchema.methods = {
+
+  /**
+   *  Provide a user object that is safe to send to client
+   */
+  getSafeObject: function() {
+      return {
+        _id: this._id,
+        name: this.name,
+        email: this.email,
+        username: this.username,
+        provider: this.provider,
+        picture : this.picture,
+        groups: this.groups,
+        current_group: this.current_group,
+        createdAt: this.createdAt
+      };
+  },
 
   /**
    * Authenticate - check if the passwords are the same
@@ -118,7 +134,7 @@ UserSchema.methods = {
    */
 
   authenticate: function (plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
+    return this.encryptPassword(plainText) === this.hashed_password;
   },
 
   /**
@@ -129,7 +145,7 @@ UserSchema.methods = {
    */
 
   makeSalt: function () {
-    return Math.round((new Date().valueOf() * Math.random())) + ''
+    return Math.round((new Date().valueOf() * Math.random())) + '';
   },
 
   /**
@@ -141,13 +157,13 @@ UserSchema.methods = {
    */
 
   encryptPassword: function (password) {
-    if (!password) return ''
-    var encrypred
+    if (!password) return '';
+    var encrypred;
     try {
-      encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex')
-      return encrypred
+      encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+      return encrypred;
     } catch (err) {
-      return ''
+      return '';
     }
   },
 
@@ -173,7 +189,7 @@ UserSchema.methods = {
     this.groups.push({
       group: group._id,
       rights: rights
-    })
+    });
 
     var user = this;
 
@@ -195,23 +211,23 @@ UserSchema.methods = {
   removeGroup: function (groupId, cb) {
     var user = this;
     var index = this.getGroupIndex(groupId);
-    var Group = mongoose.model('Group')
+    var Group = mongoose.model('Group');
     
     if (~index) {
-        this.groups.splice(index, 1)
+        this.groups.splice(index, 1);
         this.save(function(err) {
           
           Group.load(groupId,function(err,group){
-            if (err) return res.render('500',{error:'Could not load group:'+groupId})
-            group.removeUser(user._id,cb)
-          })
-        })
+            if (err) return res.render('500',{error:'Could not load group:'+groupId});
+            group.removeUser(user._id,cb);
+          });
+        });
     }
     else {
       Group.load(groupId,function(err,group){
-          if (err) return res.render('500',{error:'Could not load group:'+groupId})
-          group.removeUser(user._id,cb)
-        })
+          if (err) return res.render('500',{error:'Could not load group:'+groupId});
+          group.removeUser(user._id,cb);
+        });
     }
   },
 
@@ -234,7 +250,6 @@ UserSchema.methods = {
    */
 
   isInGroup: function(groupId) {
-    console.log('this.getGroupIndex(groupId)',this.getGroupIndex(groupId),"this.groups",this.groups)
     return this.getGroupIndex(groupId) > -1;
   },
 
@@ -270,9 +285,9 @@ UserSchema.methods = {
 
   selectGroup: function (group, cb) {
     this.current_group = group._id;
-    this.save(cb)
+    this.save(cb);
   },
-},
+};
 
 
 /**
@@ -290,12 +305,12 @@ UserSchema.statics = {
    */
 
   load: function (id, cb) {
-    this.findOne({ _id : id })
+    return this.findOne({ _id : id })
       .populate('current_group')
       .populate('groups.group')
-      .exec(cb)
+      .exec(cb);
   }
 
-}
+};
 
-mongoose.model('User', UserSchema)
+mongoose.model('User', UserSchema);

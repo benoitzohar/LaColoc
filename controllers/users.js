@@ -110,11 +110,14 @@ exports.user = function (req, res, next, id) {
     });
 };
 
-exports.redirectToDefaultTab = function (req, res, next) {
-  var user = req.profile;
-  res.render('layout',{
-    user: user
+exports.sendBootstrapLayout = function (req, res, next) {
+  
+  //prepare safe data for angularjs
+  User.load(req.user._id).then(function(u) {
+    var safe_user = u.getSafeObject();
+     res.render('layout',{
+      user:  JSON.stringify(safe_user)
+    });
   });
-  //if (user.last_page)  res.redirect(user.last_page)
-  //else res.redirect('/expenses')
+ 
 };

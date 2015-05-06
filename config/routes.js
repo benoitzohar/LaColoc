@@ -26,11 +26,7 @@ var users = require('../controllers/users'),
  */
 
 var isReady = [auth.requiresLogin, auth.hasGroup];
-
 var groupAuth = [auth.requiresLogin, auth.group.hasAuthorization];
-//var commentAuth = [auth.requiresLogin, auth.comment.hasAuthorization]
-
-
 var recaptcha = new Recaptcha(config.captcha.pub,config.captcha.priv);
 
 /**
@@ -141,17 +137,16 @@ module.exports = function (app, passport) {
   app.param('expid', expenses.load);
   app.param('shopid', shoppings.load);
 
-  // group routes
-  app.get('/groups', auth.requiresLogin, groups.index);
-  app.get('/groups/new', auth.requiresLogin, groups.new);
-  app.post('/groups', auth.requiresLogin, groups.create);
-  app.get('/groups/:groupid/edit', groupAuth, groups.edit);
-  app.get('/groups/:groupid/select', auth.requiresLogin, groups.select);
-  app.get('/groups/:groupid/removeUser', auth.requiresLogin, groups.removeUser);
-  
-  app.get('/groups/:groupid', isReady, groups.show);
-  app.put('/groups/:groupid', groupAuth, groups.update);
-  app.delete('/groups/:groupid', groupAuth, groups.destroy);
+  /**
+   * Group routes
+   **/
+  app.put(    '/groups/',                   auth.requiresLogin, groups.create);
+  app.post(   '/groups/:groupid/edit',      groupAuth,          groups.edit);
+  app.post(   '/groups/:groupid/select',    auth.requiresLogin, groups.select);
+  app.delete( '/groups/:groupid/removeUser',auth.requiresLogin, groups.removeUser);
+  app.get(    '/groups/:groupid',           isReady,            groups.show);
+  app.put(    '/groups/:groupid',           groupAuth,          groups.update);
+  app.delete( '/groups/:groupid',           groupAuth,          groups.destroy);
 
   // expense routes
   app.get('/expenses/new', isReady, expenses.new);
@@ -168,6 +163,6 @@ module.exports = function (app, passport) {
   app.get('/invite/valid',auth.requiresLogin, invites.valid);
   app.post('/invite/valid',auth.requiresLogin, invites.valid);
 
-  app.get('/', isReady, users.redirectToDefaultTab);
+  app.get('/', isReady, users.sendBootstrapLayout);
 
 };

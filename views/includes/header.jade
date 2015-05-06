@@ -1,5 +1,5 @@
 - if (req.isAuthenticated() && req.user.current_group)
-  nav.navbar.navbar-default.navbar-fixed-top(role='navigation')
+  nav.navbar.navbar-default.navbar-fixed-top(role='navigation',ng-controller="MenuCtrl",ng-cloak)
     .container
       .navbar-header
         button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
@@ -32,10 +32,10 @@
               i.icon-basket
               | &nbsp;#{__('Shopping')}
         ul.nav.navbar-nav.navbar-right
-          li.dropdown
-            a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
+          li.dropdown(dropdown)
+            a.btn.btn-default.dropdown-toggle(dropdown-toggle)
               i.icon-home
-              | #{req.user.current_group.name} 
+              | {{user.current_group.name}} 
               b.caret
             ul.dropdown-menu
               li
@@ -61,15 +61,15 @@
                 a(href='/#/groups/new')
                   i.glyphicon.glyphicon-plus
                   | &nbsp;#{__('New coloc')}
-          li.dropdown.menu-user-infos
-            a.btn.btn-default.dropdown-toggle(data-toggle='dropdown', href='#')
-              .pp.pp-small(style='background-image: url('+(req.user.picture || url+'/images/default_user_link150.jpg')+');margin-left:1px;')
-              | &nbsp;#{req.user.name} 
+          li.dropdown.menu-user-infos(dropdown)
+            a.btn.btn-default.dropdown-toggle(dropdown-toggle)
+              .pp.pp-small(style="background-image: url('{{user.picture}}');margin-left:1px;",ng-if="user.picture")
+              | &nbsp;{{user.name}}
               b.caret
             ul.dropdown-menu
-              //li
-              //  a(href="/users/"+req.user.id, title="#{__('Profile')}") #{__('Profile')}
-              //li.divider
+              li
+                a(href="/users/"+req.user.id, title="#{__('Profile')}") #{__('Profile')}
+              li.divider
               li
                 a(href="/logout", title="logout") #{__('Logout')}
 

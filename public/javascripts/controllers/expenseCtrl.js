@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-    lca.controller('ExpenseCtrl', ['$scope', '$location', 'lcSocket', '$filter', function ($scope, $location, lcSocket, $filter) {
+    lca.controller('ExpenseCtrl', function ($rootScope,$scope, $location, lcSocket, $filter) {
         app.showLoader();
         var expenses = $scope.expenses = [];
         $scope.archives = [];
@@ -50,7 +50,7 @@
                         if (!users[i].user || !users[i].user._id) continue;
 
                         users[i].total = Math.round(users[i].total*100)/100;
-                        if (current_user == users[i].user._id) {
+                        if ($rootScope.user._id == users[i].user._id) {
                             users[i].is_current_user = 1;
                             exp.unshift(users[i]);
                             current_user_found = true;
@@ -151,6 +151,6 @@
         //init view
         lcSocket.emit('expense:get');  
 
-    }]);
+    });
 
 })();

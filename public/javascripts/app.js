@@ -6,7 +6,7 @@
 var app = {},
     lca = null,
     socket = null,
-    current_user = null;
+    user = null;
 
 // General functions
 var log = function(a,b,c,d,e,f) {
@@ -29,8 +29,8 @@ var log = function(a,b,c,d,e,f) {
 lca = angular.module('lacoloc', ['ngRoute','ui.bootstrap','oitozero.ngSweetAlert'])
     .config(['$routeProvider', function($routeProvider,$routeParams) {
         $routeProvider
-          .when('/expenses', { templateUrl: '/expenses', controller: 'ExpenseCtrl' })
-          .when('/shopping', { templateUrl: '/shopping', controller: 'ShoppingCtrl' })
+          .when('/expenses', { templateUrl: 'expensesTemplate.html', controller: 'ExpenseCtrl' })
+          .when('/shopping', { templateUrl: 'shoppingTemplate.html', controller: 'ShoppingCtrl' })
           .when('/groups/new', { templateUrl: '/groups/new' })
           .when('/groups/:groupid', { templateUrl: function(args) { return '/groups/'+args.groupid; }})
           .otherwise({ redirectTo: '/expenses' });
@@ -40,15 +40,15 @@ app = {
 
     config : {},
 
-    init: function(url,user,config,cb) {
-        log("app.init(",url,'user',user,');');
+    init: function(url,current_user,config,cb) {
         this.config = config;
         //hide loggin button in facebook frame
         if (window!=window.top) {
             $('.menu-user-infos').remove();
         }
-        current_user = user;
-        this.initSocket(url);
+        user = current_user;
+        
+        this.initSocket(url); 
         this.initPage();
 
         if (cb) cb();
