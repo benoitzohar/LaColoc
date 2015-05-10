@@ -40,7 +40,6 @@ lca = angular.module('lacoloc', ['ngRoute','ngCookies','ui.bootstrap','oitozero.
         return {
           'request': function(config) {
             if(allowedMethods.indexOf(config.method) === -1) {
-              // do something on success
               config.headers[headerName] = $cookies[cookieName];
             }
             return config;

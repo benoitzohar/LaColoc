@@ -6,7 +6,13 @@ var mongoose = require('mongoose'),
     Expense = mongoose.model('Expense'),
     utils = require('../lib/utils'),
     extend = require('util')._extend,
-    q = require('promised-io/promise');
+    q = require('promised-io/promise'),
+    socket = null;
+
+//init the controller with the Socket.IO instance
+exports.initController = function(sock) {
+  socket = sock;
+};
 
 /**
  * Load

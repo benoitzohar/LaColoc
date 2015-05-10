@@ -6,7 +6,13 @@ var mongoose = require('mongoose'),
     Group = mongoose.model('Group'),
     User = mongoose.model('User'),
     utils = require('../lib/utils'),
-    extend = require('util')._extend;
+    extend = require('util')._extend,
+    socket = null;
+
+//init the controller with the Socket.IO instance
+exports.initController = function(sock) {
+  socket = sock;
+};
 
 /**
  * Load

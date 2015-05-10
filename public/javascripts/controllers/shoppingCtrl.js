@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-	 lca.controller('ShoppingCtrl', function ($scope, $location, lcSocket, filterFilter,SweetAlert, $db, $http) {
+	 lca.controller('ShoppingCtrl', function ($scope, $location, lcSocket, lcApi, filterFilter,SweetAlert, $db, $http) {
 		app.showLoader();
 
 		//get data from the localstorage
@@ -50,14 +50,12 @@
 		});
 
 		//change menu highlights
-	    $('.nav li').removeClass('active');
-	    $('.nav li.shopping-link').addClass('active');
+    $('.nav li').removeClass('active');
+    $('.nav li.shopping-link').addClass('active');
 
-	    lcSocket.removeAllListeners('shopping:list');
-		lcSocket.on('shopping:list',function(data) {
-			
-			//reset readonly status
-			$scope.readonly = false;
+		var handleData = function(data) {
+
+			if ($scope.readonly) return false;
 
 			//get the stored data (to update it)
 			var storedData = $db.getObject('shopping-alldata');
@@ -75,8 +73,29 @@
 
 			$db.setObject('shopping-alldata',storedData);
 			app.hideLoader();
-		});
+		};
 
+		var getData = function(cb) {
+			lcApi.get('/shopping')
+				.then(function(data) {
+					if (cb) cb();
+					handleData(data);
+				},
+				function(err){
+					//custom handling of the error 
+					//(the main handling is done in the service)
+					app.hideLoader();
+				});
+		};
+
+		lcSocket.removeAllListeners('shopping:list');
+		lcSocket.on('shopping:list',handleData);
+
+		var doUpdateItems = function(action,items) {
+
+			lcApi.post('/shopping/'+$scope.entity_id+'/'+action+'Item',{items: items})
+			.then(handleData);
+		}
 
 		$scope.addShopping = function () {
 			if ($scope.readonly) return false;
@@ -89,7 +108,7 @@
 				completed: false
 			};
 			shoppings.push(shopping);
-			lcSocket.emit('shopping:update',[shopping], $scope.entity_id);
+			doUpdateItems('update',[shopping])
 
 			$scope.newShopping = '';
 			$scope.remainingCount++;
@@ -110,7 +129,7 @@
 			if (!shopping.title) {
 				$scope.removeShopping(shopping);
 			}
-			else lcSocket.emit('shopping:update',[shopping], $scope.entity_id);
+			else doUpdateItems('update',[shopping])
 		};
 
 		$scope.revertEditing = function (shopping) {
@@ -124,14 +143,14 @@
 			$scope.remainingCount -= shopping.completed ? 0 : 1;
 			shoppings.splice(shoppings.indexOf(shopping), 1);
 			if (shopping && shopping._id) {
-				lcSocket.emit('shopping:remove',[shopping._id], $scope.entity_id);
+				doUpdateItems('remove',[shopping._id])
 			}
 		};
 
 		$scope.shoppingCompleted = function (shopping) {
 			if ($scope.readonly) return false;
 			$scope.remainingCount += shopping.completed ? -1 : 1;
-			lcSocket.emit('shopping:update',[shopping], $scope.entity_id);
+			doUpdateItems('update',[shopping])
 		};
 
 		$scope.showArchive = function(archive) {
@@ -160,7 +179,9 @@
 			}
 		};
 		$scope.hideArchive = function() {
-			lcSocket.emit('shopping:get');  
+			getData(function(){
+				$scope.readonly = false;
+			});
 		};
 
 		$scope.shoppingFilter = function(row) {
@@ -182,11 +203,9 @@
 			function(accepted){ 
 				if (accepted) {
 					//do the action
-					$http.get('/shopping/new')
-						.success(function(){
-							//then reset the list
-							lcSocket.emit('shopping:get');
-						});
+					lcApi.put('/shopping')
+						.then(handleData, 
+						app.hideLoader);
 				}
 			});
 		};
@@ -196,7 +215,7 @@
 		 **/
 		
 		//get data from the server
-	    lcSocket.emit('shopping:get');  
+		getData();
 
 	});
 

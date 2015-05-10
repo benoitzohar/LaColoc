@@ -47,8 +47,11 @@ var sessionstore = new mongoStore({
     collection : 'sessions',
 });
 
+// Socket settings
+var socket = require('./config/socket')();
+
 // express settings
-require('./config/express')(app, config, passport, sessionstore);
+require('./config/express')(app, config, passport, sessionstore, socket);
 
 // Start the app by listening on <port>
 var port = process.env.PORT || 3000;
@@ -59,8 +62,8 @@ http.listen(port,function(){
   console.log('Lacoloc app started on port '+port);  
 });
 
-// Socket settings
-require('./config/socket')(express, io, passportSocketIo, new mongoStore({
+//init socket
+socket.initSocket(express, io, passportSocketIo, new mongoStore({
     url: config.db,
     collection : 'sessions',
 }));

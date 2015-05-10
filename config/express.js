@@ -29,7 +29,7 @@ i18n.configure({
     defaultLocale: config.locale,
 });
 
-module.exports = function (app, config, passport, sessionstore) {
+module.exports = function (app, config, passport, sessionstore, socket) {
 
   if (env == 'development') {
     app.set('showStackError', true);
@@ -153,7 +153,7 @@ module.exports = function (app, config, passport, sessionstore) {
 
 
   // Bootstrap routes
-  require('./routes')(app, passport);
+  require('./routes')(app, passport, socket);
 
   // assume "not found" in the error msgs
   // is a 404. this is somewhat silly, but

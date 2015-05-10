@@ -1,3 +1,6 @@
+/**
+ *  Requires and models
+ **/
 var   mongoose = require('mongoose'),
       utils = require('../lib/utils'),
       User = mongoose.model('User'),
@@ -7,13 +10,22 @@ var   mongoose = require('mongoose'),
       config = require('./config'),
       cookieParser = require('cookie-parser'),
       q = require('promised-io/promise');
+
 /**
- * Expose socket config
- */
+ *  Local vars
+ **/
 
-module.exports = function (express, io, passportSocketIo, sessionstore) {
+var sock_grps = {};
 
-  // set authorization for socket.io
+/**
+ * Socket functions
+ **/
+
+function initSocket(express, io, passportSocketIo, sessionstore) {
+
+    console.log('initialized socket');
+
+    // set authorization for socket.io
   io.set('authorization', passportSocketIo.authorize({
     cookieParser: cookieParser,
     key:         'lacoloc.sid',       // the name of the cookie where express/connect stores its session_id
@@ -27,36 +39,6 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
 // providers do not allow you to create servers that listen on a port different than 80 or their
 // default port)
 //io.set('transports', config.socket_transports);
-
-  function onAuthorizeSuccess(data, accept){
-    /*console.log('successful connection to socket.io');*/
-    // The accept-callback still allows us to decide whether to
-    // accept the connection or not.
-    accept(null, true);
-  }
-
-  function onAuthorizeFail(data, message, error, accept){
-    if(error)
-      throw new Error(message);
-    console.log('failed connection to socket.io:', message);
-    // We use this callback to log all of our failed connections.
-    accept(null, false);
-  }
-
-  var sock_grps = {};
-
- // broadcast data only to users of current group
-  function broadcastToGroup(user,eventname,data) {
-    if (user && user.current_group && sock_grps[user.current_group]) {
-      for(var i=0;i<sock_grps[user.current_group].length;i++) {
-        sock_grps[user.current_group][i].emit(eventname,data);
-      }
-    }
-  }
-
-  function onError(err,route) {
-    console.error("[Socket.IO] An error occured for event '"+route+"': ",err);
-  }
   
   /**
    *  Socket routes
@@ -83,18 +65,6 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
     });
 
     //Shopping
-    socket.on('shopping:get',function(data) {
-      console.log("[Socket.IO] shopping:get request received from=",cuser.email);
-    
-      q.all(Shopping.current(cuser.current_group),Shopping.archiveList(cuser.current_group))
-      .then(function(res) {
-        if(res[0] && res[0].items) {
-          socket.emit('shopping:list',{entity_id: res[0]._id, items: res[0].items, archives: res[1] });
-        }
-      });
-
-    });
-
     socket.on('shopping:sync',function(data) {
       console.log("[Socket.IO] shopping.sync request received from=",cuser.email,data);
       if (data && data.entity_id) {
@@ -134,46 +104,6 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
           }
         });
       }
-    });
-
-    socket.on('shopping:update',function(data) {
-      console.log("[Socket.IO] shopping.update request received from=",cuser.email,data);
-      if (data && data.entity_id) {
-        Shopping.load(data.entity_id)
-        .then(function(shopping) {
-          //sync list of items
-          if (shopping && shopping.items && data.items){
-            return shopping.updateItems(data.items,true);
-          }
-          return false;
-        })
-        .then(function(saved) {
-          //broadcast to all if everything went well
-          broadcastToGroup(cuser,'shopping:list',{items: saved.items});
-        },
-        function(err){
-          //handle error
-          onError(err,'shopping:update');
-        });
-      }
-    });
-
-  socket.on('shopping:remove',function(data) {
-    console.log("[Socket.IO] shopping.remove request received from=",cuser.email,data);
-    Shopping.load(data.entity_id)
-      .then(function(shopping) {
-        //sync list of items
-        return shopping.removeItems(data.items,true);
-      })
-      .then(function(shopping){
-          //broadcast to all if everything went well
-          broadcastToGroup(cuser,'shopping:list',{items: shopping.items});
-        },
-        function(err){
-          //handle error
-          onError(err,'shopping:remove');
-        }
-      );
     });
 
   //Expense
@@ -251,5 +181,57 @@ module.exports = function (express, io, passportSocketIo, sessionstore) {
     });
     
   });
+}
+
+function onAuthorizeSuccess(data, accept){
+  /*console.log('successful connection to socket.io');*/
+  // The accept-callback still allows us to decide whether to
+  // accept the connection or not.
+  accept(null, true);
+}
+
+function onAuthorizeFail(data, message, error, accept){
+  if(error)
+    throw new Error(message);
+  console.error('failed connection to socket.io:', message);
+  // We use this callback to log all of our failed connections.
+  accept(null, false);
+}
+
+//error logger for the socket
+function onError(err,route) {
+  console.error("[Socket.IO] An error occured for event '"+route+"': ",err);
+}
+
+// broadcast data only to users of current group
+function broadcastToGroup(user,eventname,data) {
+
+  if (!user || !user.current_group) {
+    return false;
+  }
+
+  var groupid = user.current_group;
+  if (typeof user.current_group == "object" && user.current_group._id) {
+    groupid = user.current_group._id;
+  } 
+
+  if (sock_grps[groupid]) {
+    for(var i=0;i<sock_grps[groupid].length;i++) {
+      sock_grps[groupid][i].emit(eventname,data);
+    }
+  }
+}
+
+
+/**
+ * Expose socket config
+ */
+
+module.exports = function () {
+
+  return {
+    initSocket : initSocket,
+    broadcastToGroup: broadcastToGroup
+  };
 
 };

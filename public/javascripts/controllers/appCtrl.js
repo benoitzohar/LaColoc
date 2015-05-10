@@ -24,8 +24,10 @@
           });
         }
         else {
-          //Redirect to main app :expenses
-          $location.path('/expenses');
+          //Redirect to main app if nothing is set :expenses
+          if (!$location.path()) {
+            $location.path('/expenses');
+          }
         }
 
     });

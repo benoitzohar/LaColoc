@@ -7,7 +7,13 @@ var mongoose = require('mongoose'),
     Group = mongoose.model('Group'),
     utils = require('../lib/utils'),
     config = require('../config/config'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    socket = null;
+
+//init the controller with the Socket.IO instance
+exports.initController = function(sock) {
+  socket = sock;
+};
 
 /**
  * Load

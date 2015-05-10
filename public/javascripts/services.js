@@ -42,6 +42,77 @@
   });
 
   /**
+   * Service that handle the API
+  */
+  lca.factory('lcApi', function ($rootScope, $http, $q) {
+
+    var csrf = null;
+
+    var doRequest = function(method,route,data, use_csrf) {
+
+      //show loader after 3 seconds (if the response is long to come)
+      app.showLoader(3);
+
+      var d = $q.defer();
+
+      var doReject = function(err) {
+        if (!err) err = "Unkown error";
+
+        //@TODO: handle displaying errors
+        d.reject(err);
+
+        return false;
+      };
+
+      //prepare data
+      if (use_csrf && csrf) {
+        if (!data) data = {};
+        data._csrf = csrf;
+      }
+
+      //do the request
+      method(route,data)
+        .success(function(data, status, headers, config) {
+          if  (!data || data.err) {
+            return doReject(data.err);
+          }
+          else if (!data.data) {
+           return doReject("Missing data for route "+route); 
+          }
+
+          //save CSRF for next token
+          if (data.csrf) {
+            csrf = data.csrf;
+          }
+
+          d.resolve(data.data);
+        })
+        .error(function(data, status, headers, config) {
+          console.error('Error data for route '+route,data);
+          return doReject(data);
+        });
+
+      return d.promise;
+
+    };
+
+    return {
+      get: function (route) {
+        return doRequest($http.get,route);
+      },
+      post: function (route, data) {
+        return doRequest($http.post,route, data, true);
+      },
+      put: function(route, data) {
+        return doRequest($http.put,route, data, true);
+      },
+      delete: function(route) {
+        return doRequest($http.delete,route, null, true);
+      }
+    };
+  });
+
+  /**
    *  Localstorage helper
    */
   lca.factory('$db', ['$window', function($window) {

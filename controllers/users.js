@@ -6,13 +6,21 @@
 var mongoose = require('mongoose'),
     User = mongoose.model('User'),
     utils = require('../lib/utils'),
-    config = require('../config/config');
+    config = require('../config/config'),
+    socket = null;
+
+//init the controller with the Socket.IO instance
+exports.initController = function(sock) {
+  socket = sock;
+};
 
 var login = function (req, res) {
   var redirectTo = req.session.returnTo ? req.session.returnTo : '/';
   delete req.session.returnTo;
   res.redirect(redirectTo);
 };
+
+
 
 exports.signin = function (req, res) {
   res.redirect('/');

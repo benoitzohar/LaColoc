@@ -2,37 +2,49 @@
  * Module dependencies.
  */
 
-var async = require('async'),
-    mongoose = require('mongoose'),
-    Recaptcha = require('re-captcha'),
-    User = mongoose.model('User'),
-    config = require('./config'),
-    i18n = require("i18n");
+ var async = require('async'),
+     mongoose = require('mongoose'),
+     Recaptcha = require('re-captcha'),
+     User = mongoose.model('User'),
+     config = require('./config'),
+     i18n = require("i18n");
 
 /**
  * Controllers
  */
 
-var users = require('../controllers/users'),
-    groups = require('../controllers/groups'),
-    shoppings = require('../controllers/shoppings'),
-    expenses = require('../controllers/expenses'),
-    invites = require('../controllers/invites'),
-    auth = require('./authorization');
-  
+ var users = require('../controllers/users'),
+     groups = require('../controllers/groups'),
+     shoppings = require('../controllers/shoppings'),
+     expenses = require('../controllers/expenses'),
+     invites = require('../controllers/invites'),
+     auth = require('./authorization');
 
-/**
+     /**
  * Route middlewares
  */
 
-var isReady = [auth.requiresLogin, auth.hasGroup];
-var groupAuth = [auth.requiresLogin, auth.group.hasAuthorization];
-var recaptcha = new Recaptcha(config.captcha.pub,config.captcha.priv);
+ var isReady = [auth.requiresLogin, auth.hasGroup];
+ var groupAuth = [auth.requiresLogin, auth.group.hasAuthorization];
+ var recaptcha = new Recaptcha(config.captcha.pub,config.captcha.priv);
 
 /**
  * Expose routes
  */
-module.exports = function (app, passport) {
+ module.exports = function (app, passport, socket) {
+
+
+
+  /**
+   *  init controllers
+   **/
+
+   users.initController(socket);
+   groups.initController(socket);
+   shoppings.initController(socket);
+   expenses.initController(socket);
+   invites.initController(socket);
+
 
   //preload the user at  all request
   app.use(function(req, res, next) {
@@ -40,14 +52,14 @@ module.exports = function (app, passport) {
 
     if (req.user) {
       User.load(req.user._id)
-        .then(function(user) {
-          if (!user) return next(new Error('not found'));
-          req.user = user;
-          next();
-        },
-        function(err){
-          next(err || "Error loading the user "+req.user._id);
-        });
+      .then(function(user) {
+        if (!user) return next(new Error('not found'));
+        req.user = user;
+        next();
+      },
+      function(err){
+        next(err || "Error loading the user "+req.user._id);
+      });
     }
     else next();
   });
@@ -104,12 +116,12 @@ module.exports = function (app, passport) {
     }), users.signin);
   app.get('/auth/facebook/canvas/autologin', function( req, res ){
     res.send( '<!DOCTYPE html>' +
-              '<body>' +
-                '<script type="text/javascript">' +
-                  'top.location.href = "/auth/facebook/canvas";' +
-                '</script>' +
-              '</body>' +
-            '</html>' );
+      '<body>' +
+      '<script type="text/javascript">' +
+      'top.location.href = "/auth/facebook/canvas";' +
+      '</script>' +
+      '</body>' +
+      '</html>' );
   });
   app.get('/auth/twitter',
     passport.authenticate('twitter', {
@@ -123,8 +135,8 @@ module.exports = function (app, passport) {
     passport.authenticate('google', {
       failureRedirect: '/login',
       scope: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
+      'https://www.googleapis.com/auth/userinfo.profile',
+      'https://www.googleapis.com/auth/userinfo.email'
       ]
     }), users.signin);
   app.get('/auth/google/callback',
@@ -142,14 +154,14 @@ module.exports = function (app, passport) {
   /**
    * Group routes
    **/
-  app.get(    '/groups/new/:isModal',       auth.requiresLogin, groups.new);
-  app.put(    '/groups/',                   auth.requiresLogin, groups.create);
-  app.post(   '/groups/:groupid/edit',      groupAuth,          groups.edit);
-  app.post(   '/groups/:groupid/select',    auth.requiresLogin, groups.select);
-  app.delete( '/groups/:groupid/removeUser',auth.requiresLogin, groups.removeUser);
-  app.get(    '/groups/:groupid',           isReady,            groups.show);
-  app.put(    '/groups/:groupid',           groupAuth,          groups.update);
-  app.delete( '/groups/:groupid',           groupAuth,          groups.destroy);
+   app.get(    '/groups/new/:isModal',       auth.requiresLogin, groups.new);
+   app.put(    '/groups/',                   auth.requiresLogin, groups.create);
+   app.post(   '/groups/:groupid/edit',      groupAuth,          groups.edit);
+   app.post(   '/groups/:groupid/select',    auth.requiresLogin, groups.select);
+   app.delete( '/groups/:groupid/removeUser',auth.requiresLogin, groups.removeUser);
+   app.get(    '/groups/:groupid',           isReady,            groups.show);
+   app.put(    '/groups/:groupid',           groupAuth,          groups.update);
+   app.delete( '/groups/:groupid',           groupAuth,          groups.destroy);
 
   // expense routes
   app.get('/expenses/new', isReady, expenses.new);
@@ -157,9 +169,11 @@ module.exports = function (app, passport) {
   app.get('/expenses', isReady, expenses.index);
 
   // shopping routes
-  app.get('/shopping/new', isReady, shoppings.new);
-  app.get('/shopping/:shopid', isReady, shoppings.show);
-  app.get('/shopping', isReady, shoppings.index);
+  app.get('/shopping', isReady, shoppings.get); //get current shopping object
+  app.put('/shopping', isReady, shoppings.new);
+  app.post('/shopping/:shopid/updateItem', isReady, shoppings.updateItem);
+  app.post('/shopping/:shopid/removeItem', isReady, shoppings.removeItem);
+
   
   //invit routes
   app.post('/invite/send',isReady, invites.send);
