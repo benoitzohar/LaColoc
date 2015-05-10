@@ -29,7 +29,7 @@
 		});
 
 		//display order
-		$scope.orderBy = $db.get('shopping-orderby','date');
+		$scope.orderBy = $db.get('shopping-orderBy','date');
 		//watch for change and store it in the localstorage
 		$scope.$watch('orderBy', function(val){
 			$db.set('shopping-orderBy',val);
