@@ -2,9 +2,10 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , Schema = mongoose.Schema
-  , utils = require('../lib/utils')
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    q = require('promised-io/promise'),
+    utils = require('../lib/utils');
 
 /**
  * Group Schema
@@ -17,7 +18,7 @@ var GroupSchema = new Schema({
   users: [{type : Schema.ObjectId, ref : 'User' }],
   createdAt  : {type : Date, default : Date.now},
   updatedAt  : {type : Date, default : Date.now}
-})
+});
 
 
 /**
@@ -25,39 +26,39 @@ var GroupSchema = new Schema({
  */
 
 var validatePresenceOf = function (value) {
-  return value && value.length
-}
+  return value && value.length;
+};
 
 // the below 5 validations only apply if you are signing up traditionally
 
 GroupSchema.path('name').validate(function (name) {
-  return name.length
-}, 'Name cannot be blank')
+  return name.length;
+}, 'Name cannot be blank');
 
 
 GroupSchema.path('name').validate(function (name, fn) {
-  var Group = mongoose.model('Group')
+  var Group = mongoose.model('Group');
 
   // Check only when it is a new user or when email field is modified
   if (this.isNew || this.isModified('name')) {
     Group.find({ name: name }).exec(function (err, groups) {
-      fn(!err && groups.length === 0)
-    })
-  } else fn(true)
-}, 'Group already exists')
+      fn(!err && groups.length === 0);
+    });
+  } else fn(true);
+}, 'Group already exists');
 
 /**
  * Pre-save hook
  */
 
 GroupSchema.pre('save', function(next) {
-  if (!this.isNew) return next()
+  if (!this.isNew) return next();
 
   if (!validatePresenceOf(this.name))
-    next(new Error('Invalid name'))
+    next(new Error('Invalid name'));
   else
-    next()
-})
+    next();
+});
 
 /**
  * Methods
@@ -66,44 +67,28 @@ GroupSchema.pre('save', function(next) {
 GroupSchema.methods = {
 
   /**
-   * Encrypt password
-   *
-   * @param {String} password
-   * @return {String}
-   * @api public
-   */
-
-  encryptPassword: function (password) {
-    /*if (!password) return ''
-    var encrypred
-    try {
-      encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex')
-      return encrypred
-    } catch (err) {
-      return ''
-    }*/
-  },
-
-  /**
    * Add user to group
    *
    * @param {User Object} user
-   * @param {Function} cb
    * @api public
    */
-
-  addUser: function(user,cb) {
+  addUser: function(user) {
     this.users.push(user);
-    this.save(cb);
+    return this.save();
   },
 
-  removeUser: function(userId,cb) {
-    var index = this.getUserIndex(userId)
-    console.log('index:',index,' userId:',userId,' this.users:',this.users)
+  /**
+   * Remove user from group
+   *
+   * @param {User Object} user
+   * @api public
+   */
+  removeUser: function(userId) {
+    var index = this.getUserIndex(userId);
     if (~index) {
-      this.users.splice(index, 1)
+      this.users.splice(index, 1);
     }
-    this.save(cb)
+    return this.save();
   },
 
   getUserIndex: function(userId) {
@@ -119,7 +104,7 @@ GroupSchema.methods = {
     return this.getUserIndex(userId) !== -1;
   }
 
-},
+};
 
 /**
  * Statics
@@ -131,16 +116,15 @@ GroupSchema.statics = {
    * Find group by id
    *
    * @param {ObjectId} id
-   * @param {Function} cb
    * @api private
    */
 
-  load: function (id, cb) {
-    this.findOne({ _id : id })
+  load: function (id) {
+    return this.findOne({ _id : id })
       .populate('users')
-      .exec(cb)
+      .exec();
   }
 
-}
+};
 
-mongoose.model('Group', GroupSchema)
+mongoose.model('Group', GroupSchema);

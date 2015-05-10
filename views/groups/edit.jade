@@ -1,0 +1,17 @@
+form.form-horizontal(role="form", ng-submit="processForm('"+action+"','"+(group.isNew?"1":"0")+"')")
+
+  input(type="hidden", name="_csrf", value="#{csrf_token}")
+
+  .form-group
+    label.col-sm-2.control-label(for='name') #{__("Name")}
+    .col-sm-10
+      input.form-control#title(type='text', value=group.name, placeholder='#{__("Enter the name")}', ng-model="formData.name")
+
+  .form-group
+    label.col-sm-2.control-label(for='desc') #{__("Description")}
+    .col-sm-10
+      textarea.form-control#desc(rows="5", placeholder='#{__("Enter the description")}', ng-model="formData.description")=group.description
+
+  .form-group
+    .col-sm-offset-2.col-sm-10
+      button.btn.btn-primary(type='submit') #{__("Save")}

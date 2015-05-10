@@ -8,12 +8,12 @@ var express = require('express'),
     expressSession = require('express-session'),
     compression = require('compression'),
     favicon = require('serve-favicon'),
-    expressLogger = require('express-logger'),
     bodyParser = require('body-parser'),
     methodOverride = require('method-override'),
     csrf = require('csurf'),
     flash = require('connect-flash'),
     winston = require('winston'),
+    expressWinston = require('express-winston'),
     helpers = require('view-helpers'),
     pkg = require('../package.json'),
     config = require('./config'),
@@ -46,29 +46,9 @@ module.exports = function (app, config, passport, sessionstore) {
   app.use(favicon("public/images/favicon_"+config.locale+".png"));
   app.use(express.static(config.root + '/public'));
 
-  // Logging
-  // Use winston on production
-  var log;
-  if (env !== 'development') {
-    log = {
-      stream: {
-        write: function (message, encoding) {
-          winston.info(message);
-        }
-      }
-    };
-  } else {
-    log = 'dev';
-  }
-
-  // Don't log during tests
-  //if (env !== 'test') app.use(expressLogger(log));
-
   // set views path, template engine and default layout
   app.set('views', config.root + '/views');
   app.set('view engine', 'jade');
-
-
 
   // expose package.json to views
   app.use(function (req, res, next) {
@@ -207,6 +187,15 @@ module.exports = function (app, config, passport, sessionstore) {
       error: 'Not found'
     });
   });
+
+  app.use(expressWinston.errorLogger({
+      transports: [
+        new winston.transports.Console({
+          json: true,
+          colorize: true
+        })
+      ]
+    }));
 
 
   // development env config

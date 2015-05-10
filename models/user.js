@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     crypto = require('crypto'),
     oAuthTypes = ['twitter', 'facebook', 'google'],
+    q = require('promised-io/promise'),
     utils = require('../lib/utils');
 
 /**
@@ -186,6 +187,8 @@ UserSchema.methods = {
 
   addGroup: function (group, rights, cb) {
 
+    var d = new q.Deferred();
+
     this.groups.push({
       group: group._id,
       rights: rights
@@ -194,41 +197,61 @@ UserSchema.methods = {
     var user = this;
 
     this.save(function(err) {
-      if (err) return cb(err);
+      if (err) return d.reject(err);
       //add user to group (for cross references)
-      group.addUser(user,cb);
+      group.addUser(user)
+        .then(function(group) {
+          return d.resolve(group);
+        });
     });
+
+    return d.promise;
   },
 
   /**
    * Remove group
    *
    * @param {groupId} String
-   * @param {Function} cb
    * @api private
    */
 
-  removeGroup: function (groupId, cb) {
+  removeGroup: function (groupId) {
+
+    var d = new q.Deferred();
+
     var user = this;
     var index = this.getGroupIndex(groupId);
     var Group = mongoose.model('Group');
+    var actions = [];
     
+    //if group was found locally
     if (~index) {
         this.groups.splice(index, 1);
-        this.save(function(err) {
-          
-          Group.load(groupId,function(err,group){
-            if (err) return res.render('500',{error:'Could not load group:'+groupId});
-            group.removeUser(user._id,cb);
-          });
-        });
+        //add save action first
+        actions.push(this.save());
+       
     }
-    else {
-      Group.load(groupId,function(err,group){
-          if (err) return res.render('500',{error:'Could not load group:'+groupId});
-          group.removeUser(user._id,cb);
-        });
-    }
+    //otherwise, the actions are empty
+    //we're using "all()" to perform conditionnal action this
+
+    q.all(actions)
+      .then(function(){
+        //load group from ID
+        return Group.load(groupId);
+      })
+      .then(function(group){
+        //remove user from group as well
+        return group.removeUser(user._id);
+      })
+      .then(function(){
+        //send the user back to the caller
+        d.resolve(user); 
+      },
+      function(err){
+        d.reject("Could not load group:"+groupId+": "+err);
+      });
+
+    return d.promise;
   },
 
   /**
@@ -279,13 +302,12 @@ UserSchema.methods = {
    * selectGroup
    *
    * @param {Group} group
-   * @param {Function} cb
    * @api private
    */
 
-  selectGroup: function (group, cb) {
+  selectGroup: function (group) {
     this.current_group = group._id;
-    this.save(cb);
+    return this.save();
   },
 };
 
@@ -300,15 +322,14 @@ UserSchema.statics = {
    * Find article by id
    *
    * @param {ObjectId} id
-   * @param {Function} cb
    * @api private
    */
 
-  load: function (id, cb) {
+  load: function (id) {
     return this.findOne({ _id : id })
       .populate('current_group')
       .populate('groups.group')
-      .exec(cb);
+      .exec();
   }
 
 };

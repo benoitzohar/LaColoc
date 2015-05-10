@@ -43,7 +43,7 @@
   total: Number,
   createdAt  : {type : Date, default : Date.now},
   archivedAt : {type : Date }
-})
+});
 
 /**
  * Pre-save hook
@@ -309,7 +309,7 @@ getItemIndexForUserId: function(userId, itemId) {
    */
 
    load: function (id, cb) {
-    this.findOne({ _id : id })
+    return this.findOne({ _id : id })
     .populate('group')
     .populate('users.user')
     .populate('users.items.dest')
@@ -326,20 +326,16 @@ getItemIndexForUserId: function(userId, itemId) {
    * @api private
    */
 
-   current: function (group,cb) {
-    var d = new q.Deferred();
-    this.findOne({group:group, archivedAt: null})
+   current: function (group) {
+
+    return this.findOne({group:group, archivedAt: null})
     .populate('group')
     .populate('users.user')
     .populate('users.items.dest')
     .populate('owes.from')
     .populate('owes.to')
-    .exec(function(err,val){
-      if (err) return d.reject(err);
-      return d.resolve(val);
-    });
+    .exec();
 
-    return d.promise;
   },
 
   /**

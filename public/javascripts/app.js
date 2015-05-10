@@ -26,14 +26,50 @@ var log = function(a,b,c,d,e,f) {
  *
  * @type {angular.Module}
  */
-lca = angular.module('lacoloc', ['ngRoute','ui.bootstrap','oitozero.ngSweetAlert'])
+lca = angular.module('lacoloc', ['ngRoute','ngCookies','ui.bootstrap','oitozero.ngSweetAlert'])
+    //configure CSRF middleware
+    .provider('csurf',[function(){
+      var headerName = 'x-csrf-token';
+      var cookieName = '_csrf';
+      var allowedMethods = ['GET'];
+
+      this.setHeaderName = function(n) { headerName = n; };
+      this.setCookieName = function(n) { cookieName = n; };
+      this.setAllowedMethods = function(n) { allowedMethods = n; };
+      this.$get = ['$cookies', function($cookies){
+        return {
+          'request': function(config) {
+            if(allowedMethods.indexOf(config.method) === -1) {
+              // do something on success
+              config.headers[headerName] = $cookies[cookieName];
+            }
+            return config;
+          }
+        };
+      }];
+    }]).config(function($httpProvider) {
+      $httpProvider.interceptors.push('csurf');
+    })
+
+    //Routing
     .config(['$routeProvider', function($routeProvider,$routeParams) {
         $routeProvider
-          .when('/expenses', { templateUrl: 'expensesTemplate.html', controller: 'ExpenseCtrl' })
-          .when('/shopping', { templateUrl: 'shoppingTemplate.html', controller: 'ShoppingCtrl' })
-          .when('/groups/new', { templateUrl: '/groups/new' })
-          .when('/groups/:groupid', { templateUrl: function(args) { return '/groups/'+args.groupid; }})
-          .otherwise({ redirectTo: '/expenses' });
+          .when('/expenses', { 
+            templateUrl: 'expensesTemplate.html', 
+            controller: 'ExpenseCtrl' 
+          })
+          .when('/shopping', { 
+            templateUrl: 'shoppingTemplate.html', 
+            controller: 'ShoppingCtrl' 
+          })
+          .when('/groups/new/:isModal', { 
+            templateUrl: function(args) { return '/groups/new/'+args.isModal; },
+            controller: 'GroupCtrl' 
+           })
+          .when('/groups/:groupid', { 
+            templateUrl: function(args) { return '/groups/'+args.groupid; },
+            controller: 'GroupCtrl' 
+          });
       }]);
 
 app = {

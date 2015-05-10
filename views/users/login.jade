@@ -56,6 +56,5 @@ block container
             button.btn.btn-primary.pull-right#signupbutton(type='submit') #{__("Sign up")}
   script.
     setTimeout(function() {
-      console.log($('input[disabled]'));
       $('input[disabled]').prop("disabled",false);
     },1000);

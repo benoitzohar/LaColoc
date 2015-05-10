@@ -8,7 +8,7 @@
 
 		//get data from the localstorage
 		var storedData = $db.getObject('shopping-alldata');
-		var shoppings = $scope.shoppings = storedData.items;
+		var shoppings = $scope.shoppings = (storedData.items && storedData.items.length ? storedData.items : []);
 		$scope.entity_id = storedData.entity_id;
 		$scope.archives = storedData.archives;
 

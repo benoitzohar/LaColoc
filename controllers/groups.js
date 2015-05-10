@@ -4,6 +4,7 @@
 
 var mongoose = require('mongoose'),
     Group = mongoose.model('Group'),
+    User = mongoose.model('User'),
     utils = require('../lib/utils'),
     extend = require('util')._extend;
 
@@ -12,51 +13,29 @@ var mongoose = require('mongoose'),
  */
 
 exports.load = function(req, res, next, id){
-  var Group = mongoose.model('Group');
 
-  Group.load(id, function (err, group) {
-    if (err) return next(err);
-    if (!group) return next(new Error('not found'));
-    req.group = group;
+  Group.load(id)
+    .then(function(group) {
+      if (!group) return next(new Error('not found'));
+      req.group = group;
 
-    next();
-  });
-};
-
-/**
- * List
- */
-
-exports.index = function(req, res){
-  /*var page = (req.param('page') > 0 ? req.param('page') : 1) - 1
-  var perPage = 30
-  var options = {
-    perPage: perPage,
-    page: page
-  }
-
-  Group.list(options, function(err, groups) {
-    if (err) return res.render('500')
-    group.count().exec(function (err, count) {
-      res.render('groups/index', {
-        title: 'groups',
-        groups: groups,
-        page: page + 1,
-        pages: Math.ceil(count / perPage)
-      })
-    })
-  })*/
-  res.redirect('/');
+      next();
+    },
+    function(err){
+      return next(err || "Error loading the group "+id);
+    });
 };
 
 /**
  * New group
  */
 
-exports.new = function(req, res){
+//GET
+exports.new = function(req, res) {
   res.render('groups/new', {
-    title: 'New group',
-    group: new Group({})
+    group: new Group({}),
+    isModal: req.params.isModal,
+    action: "/groups"
   });
 };
 
@@ -64,34 +43,31 @@ exports.new = function(req, res){
  * Create a group
  */
 
+//PUT
 exports.create = function (req, res) {
   var group = new Group(req.body);
 
-  group.save(function(err) {
-    if (err) {
-      res.render('groups/new', {
-        group: group,
-        error: utils.errors(err.errors || err)
-      });
-    } 
-
-    //add current user  (as admin)
-    req.user.addGroup(group,1,function(err) {
-      if (err) {
-        console.log('addGrouperr',err);
-        //TODO qqchose pour eviter que le groupe ne soit créé sans user
-      }
-
-      //select group as current for user
-      req.user.selectGroup(group,function(err) {
-        if (err) res.redirect('/');
-        res.redirect('/groups/'+group._id);
-      });
-      
+  group.save()
+    .then(function(group){
+      //add current user  (as admin)
+      return req.user.addGroup(group,1);
+    })
+    .then(function(group){
+      //add current user  (as admin)
+      return req.user.selectGroup(group);
+    })
+    .then(function(){
+       //get safe user object
+        return User.load(req.user._id);
+    })
+    .then(function(user) {
+        var safe_user = user.getSafeObject();
+        return utils.sendJSON(res,null,{user: safe_user});
+    },
+    function(err) {
+      return utils.sendJSON(res,utils.errors(err.errors || err));
     });
-   
     
-  });
 };
 
 /**

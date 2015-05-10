@@ -1,0 +1,23 @@
+- if (typeof info != 'undefined' && info.length)
+  .fade.in.alert.alert-info
+    ul
+      - each inf in info
+        li!= inf
+
+- if (typeof errors != 'undefined' && errors.length)
+  .fade.in.alert.alert-danger
+    ul
+      - each error in errors
+        li!= error
+
+- if (typeof success != 'undefined' && success.length)
+  .fade.in.alert.alert-success
+    ul
+      - each succ in success
+        li!= succ
+
+- if (typeof warning != 'undefined' && warning.length)
+  .fade.in.alert.alert-warning
+    ul
+      - each warn in warning
+        li!= warn

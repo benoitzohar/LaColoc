@@ -1,10 +1,10 @@
-var mongoose = require('mongoose')
-  , LocalStrategy = require('passport-local').Strategy
-  , TwitterStrategy = require('passport-twitter').Strategy
-  , FacebookStrategy = require('passport-facebook').Strategy
-  , FacebookCanvasStrategy = require('passport-facebook-canvas').Strategy
-  , GoogleStrategy = require('passport-google-oauth').OAuth2Strategy
-  , User = mongoose.model('User')
+var mongoose = require('mongoose'),
+    LocalStrategy = require('passport-local').Strategy,
+    TwitterStrategy = require('passport-twitter').Strategy,
+    FacebookStrategy = require('passport-facebook').Strategy,
+    FacebookCanvasStrategy = require('passport-facebook-canvas').Strategy,
+    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
+    User = mongoose.model('User');
 
 
 module.exports = function (passport, config) {
@@ -12,14 +12,14 @@ module.exports = function (passport, config) {
 
   // serialize sessions
   passport.serializeUser(function(user, done) {
-    done(null, user.id)
-  })
+    done(null, user.id);
+  });
 
   passport.deserializeUser(function(id, done) {
     User.findOne({ _id: id }, function (err, user) {
-      done(err, user)
-    })
-  })
+      done(err, user);
+    });
+  });
 
   // use local strategy
   passport.use(new LocalStrategy({
@@ -28,17 +28,17 @@ module.exports = function (passport, config) {
     },
     function(email, password, done) {
       User.findOne({ email: email }, function (err, user) {
-        if (err) { return done(err) }
+        if (err) { return done(err); }
         if (!user) {
-          return done(null, false, { message: 'Unknown user' })
+          return done(null, false, { message: 'Unknown user' });
         }
         if (!user.authenticate(password)) {
-          return done(null, false, { message: 'Invalid password' })
+          return done(null, false, { message: 'Invalid password' });
         }
-        return done(null, user)
-      })
+        return done(null, user);
+      });
     }
-  ))
+  ));
 
   // use twitter strategy
   passport.use(new TwitterStrategy({

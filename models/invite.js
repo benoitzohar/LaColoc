@@ -2,8 +2,9 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , Schema = mongoose.Schema
+var mongoose = require('mongoose'),
+    q = require('promised-io/promise'),
+    Schema = mongoose.Schema;
 
 /**
  * Invite Schema
@@ -15,7 +16,7 @@ var InviteSchema = new Schema({
   group: {type : Schema.ObjectId, ref : 'Group' },
   createdAt  : {type : Date, default : Date.now},
   usedAt  : {type : Date}
-})
+});
 
 
 /**
@@ -23,21 +24,21 @@ var InviteSchema = new Schema({
  */
 
 var validatePresenceOf = function (value) {
-  return value && value.length
-}
+  return value && value.length;
+};
 
 /**
  * Pre-save hook
  */
 
 InviteSchema.pre('save', function(next) {
-  if (!this.isNew) return next()
+  if (!this.isNew) return next();
 
   if (!validatePresenceOf(this.code))
-    next(new Error('Invalid code'))
+    next(new Error('Invalid code'));
   else
-    next()
-})
+    next();
+});
 
 /**
  * Methods
@@ -49,30 +50,42 @@ InviteSchema.methods = {
    * use the code
    *
    * @param user : current user
-   * @param {Function} cb
    * @api public
    */
 
-  use: function (user,cb) {
-    if (this.usedAt) return cb("Code already used")
-    this.usedAt = new Date;
-    this.save(function(err,invite) {
-      if (err |!invite) res.render('500')
-      var Group = mongoose.model('Group')
+  use: function (user) {
 
-      Group.load(invite.group,function(err,group){
-        if (err) res.render('500')
-        user.addGroup(group,0,function(err){
-          if (err) res.render('500')
-          user.selectGroup(group,cb)
+    var d = new q.Deferred();
+
+    if (this.usedAt) {
+      d.reject("Code already used");
+    }
+    else {
+      this.usedAt = new Date();
+      this.save()
+        .then(function(invite) {
+          //load group from invite
+          var Group = mongoose.model('Group');
+          return Group.load(invite.group);
         })
-      })
+        .then(function(group){
+          return user.addGroup(group,0);
+        })
+        .then(function(group) {
+            return user.selectGroup(group);
+        })
+        .then(function() {
+          d.resolve();
+        }, 
+        function(err){
+          d.reject("Error while using an invite code :"+err);
+        });
+    }
 
-    });
-
+    return d.promise;
 
   }
 
-}
+};
 
-mongoose.model('Invite', InviteSchema)
+mongoose.model('Invite', InviteSchema);

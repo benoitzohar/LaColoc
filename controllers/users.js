@@ -111,13 +111,9 @@ exports.user = function (req, res, next, id) {
 };
 
 exports.sendBootstrapLayout = function (req, res, next) {
-  
-  //prepare safe data for angularjs
-  User.load(req.user._id).then(function(u) {
-    var safe_user = u.getSafeObject();
-     res.render('layout',{
-      user:  JSON.stringify(safe_user)
-    });
+   //prepare safe data for angularjs
+  var safe_user = req.user.getSafeObject();
+   res.render('layout',{
+    user:  JSON.stringify(safe_user)
   });
- 
 };

@@ -2,11 +2,11 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , Shopping = mongoose.model('Shopping')
-  , utils = require('../lib/utils')
-  , extend = require('util')._extend
-  , q = require('promised-io/promise')
+var mongoose = require('mongoose'),
+    Shopping = mongoose.model('Shopping'),
+    utils = require('../lib/utils'),
+    extend = require('util')._extend,
+    q = require('promised-io/promise');
 
 /**
  * Load
@@ -14,13 +14,16 @@ var mongoose = require('mongoose')
 
 exports.load = function(req, res, next, id){
   
-  Shopping.load(id, function (err, shopping) {
-    if (err) return next(err)
-    if (!shopping) return next(new Error('not found'))
-    req.shopping = shopping
-    next()
-  })
-}
+  Shopping.load(id)
+    .then(function(shopping) {
+      if (!shopping) return next(new Error('not found'));
+      req.shopping = shopping;
+      next();
+    },
+    function(err){
+      return next(err || "Error loading the shopping "+id);
+    });
+};
 
 /**
  * List
@@ -103,5 +106,5 @@ exports.show = function(req, res){
   }
 
   
-}
+};
 

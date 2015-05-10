@@ -32,22 +32,24 @@ var recaptcha = new Recaptcha(config.captcha.pub,config.captcha.priv);
 /**
  * Expose routes
  */
-
 module.exports = function (app, passport) {
 
+  //preload the user at  all request
   app.use(function(req, res, next) {
     var User = mongoose.model('User');
 
     if (req.user) {
-      User.load(req.user._id, function (err, user) {
-        if (err) return next(err);
-        if (!user) return next(new Error('not found'));
-        req.user = user;
-        next();
-      });
+      User.load(req.user._id)
+        .then(function(user) {
+          if (!user) return next(new Error('not found'));
+          req.user = user;
+          next();
+        },
+        function(err){
+          next(err || "Error loading the user "+req.user._id);
+        });
     }
     else next();
-
   });
 
   // user routes
@@ -140,6 +142,7 @@ module.exports = function (app, passport) {
   /**
    * Group routes
    **/
+  app.get(    '/groups/new/:isModal',       auth.requiresLogin, groups.new);
   app.put(    '/groups/',                   auth.requiresLogin, groups.create);
   app.post(   '/groups/:groupid/edit',      groupAuth,          groups.edit);
   app.post(   '/groups/:groupid/select',    auth.requiresLogin, groups.select);
@@ -163,6 +166,6 @@ module.exports = function (app, passport) {
   app.get('/invite/valid',auth.requiresLogin, invites.valid);
   app.post('/invite/valid',auth.requiresLogin, invites.valid);
 
-  app.get('/', isReady, users.sendBootstrapLayout);
+  app.get('/', auth.requiresLogin, users.sendBootstrapLayout);
 
 };

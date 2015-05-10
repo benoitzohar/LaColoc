@@ -2,27 +2,30 @@
  * Module dependencies.
  */
 
-var mongoose = require('mongoose')
-  , Invite = mongoose.model('Invite')
-  , Group = mongoose.model('Group')
-  , utils = require('../lib/utils')
-  , config = require('../config/config')
-  , crypto = require('crypto')
+var mongoose = require('mongoose'),
+    Invite = mongoose.model('Invite'),
+    Group = mongoose.model('Group'),
+    utils = require('../lib/utils'),
+    config = require('../config/config'),
+    crypto = require('crypto');
 
 /**
  * Load
  */
 
 exports.load = function(req, res, next, id){
-  var Group = mongoose.model('Group')
+  var Group = mongoose.model('Group');
 
-  Group.load(id, function (err, group) {
-    if (err) return next(err)
-    if (!group) return next(new Error('not found'))
-    req.group = group
-    next()
-  })
-}
+  Group.load(id)
+    .then(function (group) {
+      if (!group) return next(new Error('not found'));
+      req.group = group;
+      next();
+    },
+    function(err){
+      return next(err || "Error loading the invite "+id);
+    });
+};
 
 /**
  * send
@@ -89,14 +92,15 @@ exports.valid = function(req, res){
   var code = req.body.code || req.query.code;
   //console.log('Trying to valid invite rcode=',code);  
   if (!code) res.render('500');
-  Invite.findOne({'code' : code, 'usedAt': null })
-  .exec(function(err,invite){
-    if (err || !invite) return res.render('500');
-    invite.use(req.user,function(err){
-      if (err) res.render('500')
-      res.redirect('/')
+  Invite.findOne({'code' : code, 'usedAt': null }).exec()
+    .then(function(invite){
+      return invite.use(req.user);
+    })
+    .then(function(){
+      res.redirect('/');
+    },
+    function(err){
+      console.error(err);
+      return res.render('500');
     });
-  })
-
-
-}
+};
