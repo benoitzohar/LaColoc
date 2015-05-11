@@ -3,12 +3,19 @@
 (function () {
 'use strict';
 
-    lca.controller('ExpenseCtrl', function ($rootScope,$scope, $location, lcSocket, $filter) {
+    lca.controller('ExpenseCtrl', function ($rootScope,$scope, $location, lcSocket, lcApi, $filter) {
+
+        //change menu highlights
+        $('.nav li').removeClass('active');
+        $('.nav li.expenses-link').addClass('active');
+
+        //show loader
         app.showLoader();
+
         var expenses = $scope.expenses = [];
         $scope.archives = [];
         var owes = $scope.owes = [];
-        var entity_id = $scope.entity_id = null;
+        $scope.entity_id = null;
 
         $scope.newExpenseTitle = '';
         $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
@@ -17,25 +24,16 @@
         $scope.editedExpense = null;
         $scope.newExpenseDateObject = new Date().getTime();
 
-        if ($location.path() === '') {
-            $location.path('/');
-        }
-
         $scope.location = $location;
 
         $scope.$watch('remainingCount == 0', function (val) {
             $scope.allChecked = val;
         });
 
-        //change menu highlights
-        $('.nav li').removeClass('active');
-        $('.nav li.expenses-link').addClass('active');
-
-        //remove existing listeners from socket
-        lcSocket.removeAllListeners('expense:list');
-        lcSocket.on('expense:list',function(data) {
+      
+        var handleData = function(data) {
             log(data);
-            if (data.entity_id) entity_id = $scope.entity_id = data.entity_id;
+            if (data.entity_id) $scope.entity_id = data.entity_id;
             $scope.archives = data.archives;
             var expense = data.expense;
             if (expense) {
@@ -62,7 +60,7 @@
                     //make sure the current user can get things done
                     if (!current_user_found) {
                         exp.unshift({
-                            user: current_user,
+                            user: user,
                             items : []
                         });
                     }
@@ -78,8 +76,35 @@
 
                 $scope.grandTotal = Math.round(expense.total*100)/100;
             }
+
             app.hideLoader();
-        });
+        };
+
+        var getData = function(cb) {
+            lcApi.get('/expense')
+                .then(function(data) {
+                    if (cb) cb();
+                    handleData(data);
+                },
+                function(err){
+                    //custom handling of the error 
+                    //(the main handling is done in the service)
+                    app.hideLoader();
+                });
+        };
+
+        //remove existing listeners from socket
+        lcSocket.removeAllListeners('expense:list');
+        lcSocket.on('expense:list',handleData);
+
+        var doUpdateItems = function(action,items) {
+            lcApi.post('/expense/'+$scope.entity_id+'/'+action+'Item',{items: items})
+            .then(handleData);
+        }
+
+        /**
+         *  Scope Functions
+         */
 
         $scope.addExpense = function () {
 
@@ -105,7 +130,7 @@
             if (!expenses[0].items) expenses[0].items = [];
             expenses[0].items.push(expense);
 
-            lcSocket.emit('expense:add', [expense], entity_id);
+            doUpdateItems('update',[expense])
 
             $scope.newExpenseTitle = '';
             $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
@@ -128,7 +153,7 @@
             if (!expense.title) {
                 $scope.removeExpense(expense);
             }
-            else lcSocket.emit('expense:update',[expense], entity_id);
+            else doUpdateItems('update',[expense])
         };
 
         $scope.revertEditing = function (expense) {
@@ -140,7 +165,7 @@
             var id = expense._id;
             expenses[0].items.splice(expenses[0].items.indexOf(expense), 1);
             if (id) {
-                lcSocket.emit('expense:remove',[id], entity_id);
+                doUpdateItems('remove',[id])
             }
         };
 
@@ -148,8 +173,21 @@
             log('dest',dest);
         };
 
-        //init view
-        lcSocket.emit('expense:get');  
+        $scope.doArchive = function() {
+            //do the action
+            lcApi.put('/expense')
+                .then(handleData, 
+                app.hideLoader);
+        };
+
+
+       
+        /**
+         * init view:
+         **/
+        
+        //get data from the server
+        getData();
 
     });
 

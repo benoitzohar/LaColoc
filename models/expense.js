@@ -50,7 +50,7 @@
  */
 
  ExpenseSchema.pre('save', function (next) {
-  
+
   //calculate all totals and shit (and prepare lines for owes)
 
   var grand_total = 0,
@@ -206,7 +206,7 @@
 
           if (distar.length > 0) {
             error = true;
-            console.log('calcul error',that);
+            console.error('calcul error',that);
           }
 
 
@@ -225,15 +225,170 @@ else {
 
  ExpenseSchema.methods = {
 
-  /**
-   * Add item
+   /**
+   * Update item
    *
-   * @param {User} user
-   * @param {Function} cb
+   * @param {item} Object
+   * @param {user} Object
+   * @param {save} Boolean
    * @api private
    */
+   updateItem: function(item,user,save) {
+    var d = new q.Deferred();
+    if (!item) {
+      d.reject("Could not update item: item is empty in expense #"+this.id);
+      return d.promise; 
+    }
 
-   addItem: function (user, item, cb) {
+    var indexUser = this.getUserIndex(user._id);
+    var indexItem = this.getItemIndexForUserId(user._id,item._id);
+
+    if (!~indexUser) {
+       d.reject("Could not update item: could not find the user:"+user._id);
+      return d.promise;
+    }
+
+    //if item exist: update it
+    if (~indexItem) {
+      //@TODO: ensure that the update is not overriding the database
+      //if (!this.items[index].updatedAt || !item.updatedAt || new Date(item.updatedAt) >= this.items[index].updatedAt) {
+      this.users[indexUser].items[indexItem].title = item.title;
+      this.users[indexUser].items[indexItem].value = item.value;
+      this.users[indexUser].items[indexItem].date = item.date;
+    }
+    //otherwise add it to the list
+    else {
+     this.users[indexUser].items.push(item);
+    }
+
+    if (save) {
+      //save if necessary
+      this.save(function(err,saved){
+        if (err) return d.reject(err);
+        return d.resolve(saved);
+      });
+      
+    }
+    else {
+      d.resolve(this);
+    }
+
+    return d.promise;
+  },
+
+  /**
+   * Update items
+   *
+   * @param {items} Array of items 
+   * @param {user} Object
+   * @param {save} Boolean
+   * @api private
+   */
+   updateItems: function(items,user,save) {
+    var d = new q.Deferred();
+    var requests = [];
+    //handle arrays as items to remove
+    for(var i=0;i<items.length;i++) {
+      requests.push(this.updateItem(items[i],user,false));
+    }
+    q.all(requests).then(function(saved){
+      if (save) {
+        this.save(function(err,saved){
+          if (err) return d.reject(err);
+          return d.resolve(saved);
+        });
+      } 
+      else {
+        return d.resolve(this);
+      }
+    }
+    .bind(this),
+    function(err){
+      return d.reject(err);
+    });
+    return d.promise;
+  },
+
+  /**
+   * Remove item
+   *
+   * @param {itemId} String
+   * @param {user} Object
+   * @param {save} Boolean
+   * @api private
+   */
+   removeItem: function (itemId, user, save) {
+    var d = new q.Deferred();
+    if (!itemId) {
+      d.reject("Could not remove item: itemId is empty in expense #"+this.id);
+      return d.promise; 
+    }
+
+    var indexUser = this.getUserIndex(user._id);
+    if (!~indexUser) {
+       d.reject("Could not remove item: could not find the user:"+user._id);
+      return d.promise;
+    }
+
+    var indexItem = this.getItemIndexForUserId(user._id,itemId);
+    if (~indexItem) {
+      this.users[indexUser].items.splice(indexItem,1);
+    }
+    else {
+      d.reject("Could not remove item '"+itemId+"': item not found in expense #"+this.id);
+      return d.promise; 
+    }
+
+    if (save) {
+      //save if necessary
+      this.save(function(err,saved){
+        if (err) return d.reject(err);
+        return d.resolve(saved);
+      });
+      
+    }
+    else {
+      d.resolve(this);
+    }
+
+    return d.promise;
+  },
+
+  /**
+   * Remove items
+   *
+   * @param {items} Array of items IDs
+   * @param {user} Object
+   * @param {save} Boolean
+   * @api private
+   */
+   removeItems : function(items,user,save) {
+    var d = new q.Deferred();
+    var requests = [];
+    //handle arrays as items to remove
+    for(var i=0;i<items.length;i++) {
+      requests.push(this.removeItem(items[i],user,false));
+    }
+    q.all(requests).then(function(saved){
+      if (save) {
+        this.save(function(err,saved){
+          if (err) return d.reject(err);
+          return d.resolve(saved);
+        });
+      } 
+      else {
+        return d.resolve(this);
+      }
+    }
+    .bind(this),
+    function(err){
+      return d.reject(err);
+    });
+    return d.promise;
+  },
+
+
+  /* addItem: function (user, item, cb) {
     
     var index = this.getUserIndex(user._id);
     if (!~index) {
@@ -270,7 +425,7 @@ else {
         if (cb) this.save(cb);
       }
     }
-  },
+  },*/
 
   getUserIndex: function(userId) {
    for (var i=0;i<this.users.length;i++) {

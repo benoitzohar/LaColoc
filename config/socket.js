@@ -106,81 +106,8 @@ function initSocket(express, io, passportSocketIo, sessionstore) {
       }
     });
 
-  //Expense
-    socket.on('expense:get',function(data) {
-      console.log("[Socket.IO] expense:get request received from=",cuser.email);
-
-      q.all(Expense.current(cuser.current_group),Expense.archiveList(cuser.current_group))
-      .then(function(res) {
-        if (res[0] && res[1]) {
-          socket.emit('expense:list',{entity_id: res[0]._id, expense: res[0],  archives : res[1]});
-        }
-      });
-
-    });
-    socket.on('expense:add',function(data) {
-      console.log("[Socket.IO] expense.add request received from=",cuser.email,data);
-      if (data && data.entity_id) {
-        Expense.load(data.entity_id,function(err,expense) {
-          //add items to list
-          if (expense && expense.users && data.items) {
-            for(var k in data.items) {
-              expense.addItem(cuser,data.items[k]);
-            }
-            expense.save(function(err) {
-              Expense.load(data.entity_id,function(err,saved) {
-                broadcastToGroup(cuser,'expense:list',saved);
-              });
-            }) ;
-          }
-        });
-      }
-    });
-
-    socket.on('expense:update',function(data) {
-      console.log("[Socket.IO] expense.update request received from=",cuser.email,data);
-      if (data && data.entity_id) {
-        Expense.load(data.entity_id,function(err,expense) {
-          //add items to list
-          if (expense && expense.users && data.items) {
-            for(var k in data.items) {
-              if (data.items[k] && data.items[k]._id) {
-                expense.updateItem(cuser,data.items[k]);
-              }
-            }
-            expense.save(function(err) {
-              Expense.load(data.entity_id,function(err,saved) {
-                broadcastToGroup(cuser,'expense:list',saved);
-              });
-            });
-          }
-        });
-      }
-    });
-
-    socket.on('expense:remove',function(data) {
-      console.log("[Socket.IO] expense.remove request received from=",cuser.email,data);
-      if (data && data.entity_id) {
-        Expense.load(data.entity_id,function(err,expense) {
-          //add items to list
-          if (expense && expense.users && data.items) {
-            console.log('data.items',data.items);
-            for(var k in data.items) {
-              if (data.items[k]) {
-                expense.removeItem(cuser,data.items[k]);
-              }
-            }
-            expense.save(function(err) {
-              Expense.load(data.entity_id,function(err,saved) {
-                broadcastToGroup(cuser,'expense:list',saved);
-              });
-            });
-          }
-        });
-      }
-    });
-    
   });
+
 }
 
 function onAuthorizeSuccess(data, accept){

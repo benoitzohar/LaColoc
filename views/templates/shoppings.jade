@@ -19,9 +19,18 @@ script(type="text/ng-template",id="shoppingTemplate.html")
 
     .col-md-3.col-md-pull-9
       .panel.left-menu.shopping-menu
-        button.btn.btn-primary(ng-click='askToArchive("#{__("Archive the current list ?")}","#{__("You will not be able to restore the archived list.")}")',style="width: 100%;", ng-if="!readonly" )
-          i.glyphicon.glyphicon-plus
-          | &nbsp;#{__("New list")}
+        a#new-list-button.btn.btn-primary(href='#',style="width: 100%;",, ng-if="!readonly" ,need-confirmation)
+              i.glyphicon.glyphicon-plus
+              | &nbsp;#{__("New list")}
+          div#new-list-button-confirmation.confirmation-panel.hidden
+            span #{__("Do you really want to archive this list and create a new one ?")}
+            span.sub #{__("You will not be able to restore the archived list.")}
+            a.btn.btn-success(ng-click="doArchive()",style="width: 50%;",need-confirmation)
+              i.icon-checkmark
+              | &nbsp;#{__("Yes")}
+            a.btn.btn-warning(href='#',style="width: 50%;",need-confirmation)
+              i.icon-close
+              | &nbsp;#{__("No")}
         button.btn.btn-primary(ng-click='hideArchive()',style="width: 100%;", ng-if="readonly" )
           i.glyphicon.glyphicon-triangle-top
           | &nbsp;#{__("Back to current list")}

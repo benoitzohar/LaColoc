@@ -164,9 +164,11 @@
    app.delete( '/groups/:groupid',           groupAuth,          groups.destroy);
 
   // expense routes
-  app.get('/expenses/new', isReady, expenses.new);
-  app.get('/expenses/:expid', isReady, expenses.show);
-  app.get('/expenses', isReady, expenses.index);
+  app.get('/expense', isReady, expenses.get);
+  app.put('/expense', isReady, expenses.new);
+  app.post('/expense/:expid/updateItem', isReady, expenses.updateItem);
+  app.post('/expense/:expid/removeItem', isReady, expenses.removeItem); 
+  
 
   // shopping routes
   app.get('/shopping', isReady, shoppings.get); //get current shopping object

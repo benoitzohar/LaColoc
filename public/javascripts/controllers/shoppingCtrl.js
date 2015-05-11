@@ -4,6 +4,12 @@
 'use strict';
 
 	 lca.controller('ShoppingCtrl', function ($scope, $location, lcSocket, lcApi, filterFilter,SweetAlert, $db, $http) {
+
+		//change menu highlights
+    $('.nav li').removeClass('active');
+    $('.nav li.shopping-link').addClass('active');
+
+    //show loader
 		app.showLoader();
 
 		//get data from the localstorage
@@ -39,19 +45,12 @@
 		$scope.remainingCount = filterFilter(shoppings, {completed: false}).length;
 		$scope.editedShopping = null;
 
-		if ($location.path() === '') {
-			$location.path('/');
-		}
-
 		$scope.location = $location;
 
 		$scope.$watch('remainingCount == 0', function (val) {
 			$scope.allChecked = val;
 		});
 
-		//change menu highlights
-    $('.nav li').removeClass('active');
-    $('.nav li.shopping-link').addClass('active');
 
 		var handleData = function(data) {
 
@@ -92,10 +91,13 @@
 		lcSocket.on('shopping:list',handleData);
 
 		var doUpdateItems = function(action,items) {
-
 			lcApi.post('/shopping/'+$scope.entity_id+'/'+action+'Item',{items: items})
 			.then(handleData);
 		}
+
+		/**
+		 *	Scope Functions
+		 */
 
 		$scope.addShopping = function () {
 			if ($scope.readonly) return false;
@@ -173,15 +175,29 @@
 
 			if (archive && archive.archivedAt && archive.items) {
 				$scope.readonly = true;
+
 				$scope.shoppings = archive.items;
 				//add the current tag to current archive
 				archive.current = true;
 			}
 		};
 		$scope.hideArchive = function() {
-			getData(function(){
-				$scope.readonly = false;
-			});
+
+			//start by showing the local cache
+			var storedData = $db.getObject('shopping-alldata');
+			var shoppings = $scope.shoppings = (storedData.items && storedData.items.length ? storedData.items : []);
+
+			$scope.readonly = false;
+
+			//go thru all the archives and remove the status
+			if ($scope.archives) {
+				for(var i=0;i<$scope.archives.length;i++) {
+					if ($scope.archives[i].current) $scope.archives[i].current = false;
+				}
+			}
+
+			//then request the server for updates
+			getData();
 		};
 
 		$scope.shoppingFilter = function(row) {
@@ -191,23 +207,11 @@
 			return true;
 		};
 
-		$scope.askToArchive = function(title, text) {
-			SweetAlert.swal({
-			   title: title,
-			   text: text,
-			   type: "warning",
-			   showCancelButton: true,
-			   confirmButtonColor: "#DD6B55",
-			   closeOnConfirm: true
-			}, 
-			function(accepted){ 
-				if (accepted) {
-					//do the action
-					lcApi.put('/shopping')
-						.then(handleData, 
-						app.hideLoader);
-				}
-			});
+		$scope.doArchive = function() {
+			//do the action
+			lcApi.put('/shopping')
+				.then(handleData, 
+				app.hideLoader);
 		};
 
 		/**

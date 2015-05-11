@@ -1,5 +1,5 @@
 - if (req.isAuthenticated() && req.user.current_group)
-  nav.navbar.navbar-default.navbar-fixed-top(role='navigation',ng-controller="MenuCtrl",ng-cloak)
+  nav.navbar.navbar-default.navbar-fixed-top(role='navigation',ng-controller="MenuCtrl",ng-cloak='ng-cloak')
     .container
       .navbar-header
         button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
@@ -39,7 +39,7 @@
               b.caret
             ul.dropdown-menu
               li
-                a(href='/#/groups/'+req.user.current_group.id,title="#{__('Profile')}")
+                a(ng-click="openModal('/groups/"+req.user.current_group.id+"')",title="#{__('Profile')}")
                   | #{__('Profile')}
               if (req.user.groups && req.user.groups.length > 1)
                 li.divider

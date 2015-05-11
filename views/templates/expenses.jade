@@ -60,7 +60,8 @@ script(type="text/ng-template",id="expensesTemplate.html")
                 | &nbsp;#{__("New list")}
             div#new-list-button-confirmation.confirmation-panel.hidden
               span #{__("Do you really want to archive this list and create a new one ?")}
-              a.btn.btn-success(href='/expenses/new',style="width: 50%;" )
+              span #{__("You will not be able to restore the archived list.")}
+              a.btn.btn-success(ng-click='doArchive()',style="width: 50%;",need-confirmation)
                 i.icon-checkmark
                 | &nbsp;#{__("Yes")}
               a.btn.btn-warning(href='#',style="width: 50%;",need-confirmation)

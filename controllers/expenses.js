@@ -30,36 +30,61 @@ exports.load = function(req, res, next, id){
   });
 };
 
+var getCurrentExpenseListData = function(group, user) {
+  var d = new q.Deferred();
+
+  q.all(
+    Expense.current(group),
+    Expense.archiveList(group)
+    )
+  .then(function(data) {
+
+    //if the current expense list does not exist, create it 
+    if (!data[0]) {
+      var new_expense = new Expense({
+       group: group,
+       users: [{
+        user: user,
+        items : []
+       }]
+      })
+      new_expense.save(function(err, new_expense_saved) {
+        d.resolve({entity_id: new_expense_saved._id, expense: new_expense_saved, archives: data[1] });
+      });
+    }
+    else  {
+      //send result with current expense
+      d.resolve({entity_id: data[0]._id, expense: data[0], archives: data[1] });
+    }
+
+  },
+  function(err){
+    console.error('Error while getting the current expense list ',err);
+    d.reject(err);
+  });
+
+  return d.promise;
+}
+
 /**
- * List
+ * Get current expense list
  */
 
-exports.index = function(req, res){
+exports.get = function(req, res) {
 
-  Expense.current(req.group)
-  .then(function(expense) {
+  if (!req.user || !req.user.current_group || !req.user.current_group._id) {
+    return utils.sendJSON(res,"Unknown current group id.");
+  }
 
-    var cb = function(err) {
-      res.render('expenses', {
-        expense: expense
-      });
-    };
-
-    if (!expense) {
-      expense = new Expense({
-        group: req.group,
-        users : [ {
-          user: req.user,
-          items : []
-        }]
-      });
-      expense.save(cb);
-    }
-    else {
-      cb();
-    }
+  getCurrentExpenseListData(req.group, req.user)
+  .then(function(data){
+     utils.sendJSON(res,null,data);
   },
-  function(err) { return res.render('500'); });
+  function(err){
+    console.error('Error while getting a expense list',err);
+    utils.sendJSON(res,"Could not get the expense list");
+  });
+
 };
 
 /**
@@ -71,26 +96,93 @@ exports.new = function(req, res){
     Expense.current(req.group)
     .then(function(cexpense) {
 
-      //archive current list
-      cexpense.archivedAt = new Date();
-      cexpense.save(function(err) {
-        if (err) return res.render('500');
-          // create new list
-          var expense = new Expense({
-           group: req.group,
-           users: [{
-            user: req.user,
-            items : []
-           }]
-          })
-          expense.save(function(err) {
-            if (err) res.render('500');
-            res.redirect('/#/expenses');
-          })
+      if (!cexpense) {
+      return utils.sendJSON(res,"No current expense list for group");
+    }
+
+    //if there are no items in the old group
+    if (cexpense.items.length === 0) {
+      //do not archive
+      return utils.sendJSON(res,"The current expense list for group is empty");
+    }
+
+    //archive current list
+    cexpense.archivedAt = new Date();
+
+    //save the current list
+    return cexpense.save();
+  })
+  .then(function() {
+    // create new list
+    var expense = new Expense({
+      group: req.group,
+       users: [{
+        user: req.user,
+        items : []
+       }]
       })
-    },
-    function(err) { return res.render('500'); });
-}
+    return expense.save();
+  })
+  .then(function() {
+    //get the current list complete data
+    return getCurrentExpenseListData(req.group, req.user);
+  })
+  .then(function(data) {
+    // broadcast to rest of group
+    socket.broadcastToGroup(req.user,'expense:list',data);
+    //send the complete data to the client
+    utils.sendJSON(res,null,data);
+  },
+    function(err) { 
+      console.error('An error occured',err);
+      return utils.sendJSON(res,"An error occured :"+err);
+    });
+};
+
+exports.updateItem = function(req, res) {
+  if (req.expense && req.body.items){
+    req.expense.updateItems(req.body.items,req.user,true)
+    .then(function(saved){
+
+        // broadcast to rest of group
+        socket.broadcastToGroup(req.user,'expense:list',saved);
+
+        //send answer to current user
+        utils.sendJSON(res,null,saved);
+
+      },
+      function(err){
+        console.error('Error while updating a expense list item',err);
+        utils.sendJSON(res,"Could not update the expense list");
+      });
+  }
+  else {
+    utils.sendJSON(res,"Could not update the expense list: Missing parameters");
+  }
+};
+
+exports.removeItem = function(req, res) {
+  if (req.expense && req.body.items){
+    req.expense.removeItems(req.body.items,req.user,true)
+    .then(function(saved){
+
+        //broadcast to rest of group
+        socket.broadcastToGroup(req.user,'expense:list',saved);
+
+        //send answer to current user
+        utils.sendJSON(res,null,saved);
+
+      },
+      function(err){
+        console.error('Error while deleting a expense list item',err);
+        utils.sendJSON(res,"Could not delete the expense list item");
+      });
+  }
+  else {
+    utils.sendJSON(res,"Could not delete the expense list item: Missing parameters");
+  }
+
+};
 
 /**
  * Show
