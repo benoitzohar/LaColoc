@@ -59,9 +59,11 @@
 	"Display finished rows": "Afficher les éléments terminés",
 	"Order by": "Classer par",
 	"Deleted": "Supprimé",
-	"Archive the current list ?": "Archiver la liste actuelle ?",
 	"You will not be able to restore the archived list.": "Vous ne pourrez pas revenir en arrière.",
 	"Back to current list": "Retour à la liste actuelle",
 	"Finished": "Terminés",
-	"Display": "Affichage"
+	"Display": "Affichage",
+	"Edit": "Modifier",
+	"Close": "Fermer",
+	"New": "Nouveau"
 }

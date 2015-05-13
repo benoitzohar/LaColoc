@@ -54,6 +54,13 @@
 .nav .open>a, .nav .open>a:focus, .nav .open>a:hover {
     border-color: #A9A8A8;
 }
+.modal-backdrop {
+    background-color: #D1CEC8;
+}
+.modal-content {
+    border-radius: 1px;
+    background-color: #D9D5CD;
+}
 
 
 /******* icomoon *******/

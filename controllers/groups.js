@@ -81,9 +81,11 @@ exports.create = function (req, res) {
  */
 
 exports.edit = function (req, res) {
+  console.log('req.group',req.group);
   res.render('groups/edit', {
-    title: 'Edit ' + req.group.name,
-    group: req.group
+    group: req.group,
+    isModal: req.params.isModal,
+    action: "/groups/"+req.group._id
   });
 };
 

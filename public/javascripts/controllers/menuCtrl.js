@@ -3,7 +3,7 @@
 (function () {
 'use strict';
 
-    lca.controller('MenuCtrl', function ($scope, $location,$modal, lcApi) {
+    lca.controller('MenuCtrl', function ($scope, $location,$modal,$log, lcApi) {
 
       $scope.openModal = function (url) {
 

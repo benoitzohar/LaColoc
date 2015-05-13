@@ -156,11 +156,12 @@
    **/
    app.get(    '/groups/new/:isModal',       auth.requiresLogin, groups.new);
    app.put(    '/groups/',                   auth.requiresLogin, groups.create);
-   app.post(   '/groups/:groupid/edit',      groupAuth,          groups.edit);
+
+   app.get(    '/groups/:groupid/:isModal',  groupAuth,          groups.edit);
    app.post(   '/groups/:groupid/select',    auth.requiresLogin, groups.select);
    app.delete( '/groups/:groupid/removeUser',auth.requiresLogin, groups.removeUser);
    app.get(    '/groups/:groupid',           isReady,            groups.show);
-   app.put(    '/groups/:groupid',           groupAuth,          groups.update);
+   app.post(   '/groups/:groupid',           groupAuth,          groups.update);
    app.delete( '/groups/:groupid',           groupAuth,          groups.destroy);
 
   // expense routes
