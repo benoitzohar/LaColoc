@@ -1,20 +1,20 @@
 doctype html
 html(lang='#{locale}', ng-app="lacoloc", xmlns='http://www.w3.org/1999/xhtml', xmlns:fb='https://www.facebook.com/2008/fbml', itemscope='itemscope', itemtype='http://schema.org/Product')
-  include includes/head
-  if (req.isAuthenticated())
-    body(ng-controller="AppCtrl")
-      include includes/header
-      .container(ng-view)
+    include includes/head
+    if (req.isAuthenticated())
+        body(ng-controller="AppCtrl")
+            include includes/header
+            .container(ui-view)
 
-      include templates/expenses
-      include templates/shoppings
+            include templates/expenses
+            include templates/shoppings
 
-      include includes/footer
-      
-  else 
-    body
-      .container
-        include includes/messages
-        block container
+            include includes/footer
 
-  include includes/foot
+    else 
+        body
+            .container
+                include includes/messages
+                block container
+
+    include includes/foot

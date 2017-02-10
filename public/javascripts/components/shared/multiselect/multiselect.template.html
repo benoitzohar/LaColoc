@@ -1,0 +1,17 @@
+<div class="btn-group" ng-class={open:open}>
+<button type="button" class="multiselect dropdown-toggle btn btn-default" title="None selected" ng-click="toggledropdown()">
+    <span class="multiselect-selected-text">{{model.toggletext}}</span>
+</button>
+<ul class="multiselect-container dropdown-menu">
+    <li class="multiselect-item filter" value="0">
+        <div class="input-group">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+            <input class="form-control multiselect-search" type="text" placeholder="Search" ng-model="model.query"><span class="input-group-btn">
+                <button class="btn btn-default multiselect-clear-filter" ng-click="clearsearch()" type="button"><i class="glyphicon glyphicon-remove-circle"></i></button>
+            </span>
+        </div>
+    </li>
+    <li class="multiselect-item multiselect-all"><label style="padding: 3px 20px 3px 40px;margin-top:0px;margin-bottom:0px" class="checkbox"><input type="checkbox" ng-model="model.selectall" ng-change="toggleselectall()">Select all</label></li>
+    <li ng-repeat="option in (filteredOptions = (multiselectoptions| filter:model.query))"><label style="padding: 3px 20px 3px 40px;margin-top:0px;margin-bottom:0px" class="checkbox"><input type="checkbox" ng-checked="isselected(option)" ng-model="option.Selected" ng-change="toggleselecteditem(option);doOnChangeOfCheckBox()">{{option.Text}}</label></li>
+</ul>
+</div>

@@ -1,7 +1,7 @@
 /**
  * French translation for bootstrap-datepicker
  * Nico Mollet <nico.mollet@gmail.com>
- */
+ *
 ;(function($){
 	$.fn.datepicker.dates['fr'] = {
 		days: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"],
@@ -15,3 +15,4 @@
 		format: "dd/mm/yyyy"
 	};
 }(jQuery));
+*/

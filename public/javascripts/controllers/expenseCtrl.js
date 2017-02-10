@@ -1,9 +1,9 @@
 /*global angular,lca,socket,$,app,log,current_user */
 /*jshint unused:false */
-(function () {
-'use strict';
+(function() {
+    'use strict';
 
-    lca.controller('ExpenseCtrl', function ($rootScope,$scope, $location, lcSocket, lcApi, $filter) {
+    lca.controller('ExpenseCtrl', function($rootScope, $scope, $location, lcSocket, lcApi, $filter) {
 
         //change menu highlights
         $('.nav li').removeClass('active');
@@ -17,20 +17,30 @@
         var owes = $scope.owes = [];
         $scope.entity_id = null;
 
+        $scope.dateOptions = {
+            formatYear: 'yy',
+            maxDate: new Date(2020, 5, 22),
+            minDate: new Date(),
+            startingDay: 1
+        };
+
+
         $scope.newExpenseTitle = '';
-        $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
+        $scope.newExpenseDate = $filter('date')(new Date(), app.config.angular_date_format);
         $scope.newExpenseValue = '';
         $scope.grandTotal = 0;
         $scope.editedExpense = null;
         $scope.newExpenseDateObject = new Date().getTime();
+        $scope.newExpenseWho = [];
+        $scope.multiselectoptions = [];
 
         $scope.location = $location;
 
-        $scope.$watch('remainingCount == 0', function (val) {
+        $scope.$watch('remainingCount == 0', function(val) {
             $scope.allChecked = val;
         });
 
-      
+
         var handleData = function(data) {
             log(data);
             if (data.entity_id) $scope.entity_id = data.entity_id;
@@ -44,16 +54,15 @@
                         exp = [],
                         current_user_found = false;
 
-                    for(var i=0;i<users.length;i++) {
+                    for (var i = 0; i < users.length; i++) {
                         if (!users[i].user || !users[i].user._id) continue;
 
-                        users[i].total = Math.round(users[i].total*100)/100;
+                        users[i].total = Math.round(users[i].total * 100) / 100;
                         if ($rootScope.user._id == users[i].user._id) {
                             users[i].is_current_user = 1;
                             exp.unshift(users[i]);
                             current_user_found = true;
-                        }
-                        else   
+                        } else
                             exp.push(users[i]);
                     }
 
@@ -61,7 +70,7 @@
                     if (!current_user_found) {
                         exp.unshift({
                             user: user,
-                            items : []
+                            items: []
                         });
                     }
 
@@ -74,7 +83,7 @@
                     owes = expense.owes;
                 }
 
-                $scope.grandTotal = Math.round(expense.total*100)/100;
+                $scope.grandTotal = Math.round(expense.total * 100) / 100;
             }
 
             app.hideLoader();
@@ -83,41 +92,43 @@
         var getData = function(cb) {
             lcApi.get('/expense')
                 .then(function(data) {
-                    if (cb) cb();
-                    handleData(data);
-                },
-                function(err){
-                    //custom handling of the error 
-                    //(the main handling is done in the service)
-                    app.hideLoader();
-                });
+                        if (cb) cb();
+                        handleData(data);
+                    },
+                    function(err) {
+                        //custom handling of the error
+                        //(the main handling is done in the service)
+                        app.hideLoader();
+                    });
         };
 
         //remove existing listeners from socket
         lcSocket.removeAllListeners('expense:list');
-        lcSocket.on('expense:list',handleData);
+        lcSocket.on('expense:list', handleData);
 
-        var doUpdateItems = function(action,items) {
-            lcApi.post('/expense/'+$scope.entity_id+'/'+action+'Item',{items: items})
-            .then(handleData);
+        var doUpdateItems = function(action, items) {
+            lcApi.post('/expense/' + $scope.entity_id + '/' + action + 'Item', {
+                    items: items
+                })
+                .then(handleData);
         }
 
         /**
          *  Scope Functions
          */
 
-        $scope.addExpense = function () {
+        $scope.addExpense = function() {
 
             if (!$scope.addexpenseform.$valid) return;
 
             var newExpenseTitle = $scope.newExpenseTitle ? $scope.newExpenseTitle.trim() : '',
                 newExpenseDate = $scope.newExpenseDateObject,
-                newExpenseValue = $scope.newExpenseValue ? $scope.newExpenseValue.trim().replace(',','.') : '';
+                newExpenseValue = $scope.newExpenseValue ? $scope.newExpenseValue.trim().replace(',', '.') : '';
 
             if (isNaN(newExpenseValue)) {
                 return;
             }
-            
+
             if (newExpenseTitle.length === 0 || newExpenseDate.length === 0) {
                 return;
             }
@@ -127,65 +138,64 @@
                 value: newExpenseValue
             };
 
-            if (!expenses[0].items) expenses[0].items = [];
-            expenses[0].items.push(expense);
+            //if (!$scope.expenses[0].items) $scope.expenses[0].items = [];
+            //$scope.expenses[0].items.push(expense);
 
-            doUpdateItems('update',[expense])
+            doUpdateItems('update', [expense])
 
             $scope.newExpenseTitle = '';
-            $scope.newExpenseDate = $filter('date')(new Date(),app.config.angular_date_format);
+            $scope.newExpenseDate = $filter('date')(new Date(), app.config.angular_date_format);
             $scope.newExpenseValue = '';
             $scope.newExpenseDateObject = new Date().getTime();
 
             $scope.addexpenseform.$setPristine();
         };
 
-        $scope.editExpense = function (expense) {
+        $scope.editExpense = function(expense) {
             $scope.editedExpense = expense;
             // Clone the original expense to restore it on demand.
             $scope.originalExpense = angular.extend({}, expense);
         };
 
-        $scope.doneEditing = function (expense) {
+        $scope.doneEditing = function(expense) {
             $scope.editedExpense = null;
             expense.title = expense.title.trim();
 
             if (!expense.title) {
                 $scope.removeExpense(expense);
-            }
-            else doUpdateItems('update',[expense])
+            } else doUpdateItems('update', [expense])
         };
 
-        $scope.revertEditing = function (expense) {
+        $scope.revertEditing = function(expense) {
             expenses[expenses.indexOf(expense)] = $scope.originalExpense;
             $scope.doneEditing($scope.originalExpense);
         };
 
-        $scope.removeExpense = function (expense) {
+        $scope.removeExpense = function(expense) {
             var id = expense._id;
             expenses[0].items.splice(expenses[0].items.indexOf(expense), 1);
             if (id) {
-                doUpdateItems('remove',[id])
+                doUpdateItems('remove', [id])
             }
         };
 
         $scope.toggleDest = function(dest) {
-            log('dest',dest);
+            log('dest', dest);
         };
 
         $scope.doArchive = function() {
             //do the action
             lcApi.put('/expense')
-                .then(handleData, 
-                app.hideLoader);
+                .then(handleData,
+                    app.hideLoader);
         };
 
 
-       
+
         /**
          * init view:
          **/
-        
+
         //get data from the server
         getData();
 

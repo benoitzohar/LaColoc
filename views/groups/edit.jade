@@ -1,21 +1,20 @@
 if isModal
-  .modal-header
-    button.close(type='button', data-dismiss='modal', aria-label='Close')
-        span(aria-hidden='true') &times;
-    h4#myModalLabel.modal-title 
-      if group.isNew
-        | #{__("New")}
-      else
-        | #{__("Edit")}
+    .modal-header
+        button.close(type='button', ng-click='$close()', aria-label='#{__("Close")')
+            span(aria-hidden='true') &times;
+        h4#myModalLabel.modal-title 
+            if group.isNew
+                | #{__("New")}
+            else
+                | #{__("Edit")}
 
-  .modal-body
-    include editform
+    .modal-body
+        include editform
 
 
-  .modal-footer
-    button.btn.btn-default(type='button', data-dismiss='modal') #{__("Close")}
-    button.btn.btn-primary(type='button') #{__("Save")}
+    .modal-footer
+        button.btn.btn-default(type='button', ng-click='$close()', aria-label='#{__("Close")') #{__("Close")}
+        button.btn.btn-primary(type='button', ng-click="processForm('"+action+"',"+(group.isNew?"true":"false")+");$close()") #{__("Save")}
 
 else
-   include editform
-
+    include editform

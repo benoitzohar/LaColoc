@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -13,28 +12,38 @@ var express = require('express'),
     mongoStore = require('connect-mongo')(expressSession),
     os = require("os"),
     config = require('./config/config');
-  
- // Connect to mongodb
-var connect = function () {
-  var options = { server: { socketOptions: { keepAlive: 1 }, auto_reconnect:true } };
-  mongoose.connect(config.db, options);
+
+// Connect to mongodb
+var connect = function() {
+    var options = {
+        server: {
+            socketOptions: {
+                keepAlive: 1
+            },
+            auto_reconnect: true
+        }
+    };
+    mongoose.connect(config.db, options);
 };
 connect();
 
 // Error handler
-mongoose.connection.on('error', function (err) {
-  console.log(err);
+mongoose.connection.on('error', function(err) {
+    console.log(err);
 });
 
 // Reconnect when closed
-mongoose.connection.on('disconnected', function () {
-  connect();
+mongoose.connection.on('disconnected', function() {
+    connect();
 });
+
+// Use native promises
+mongoose.Promise = global.Promise;
 
 // Bootstrap models
 var models_path = __dirname + '/models';
-fs.readdirSync(models_path).forEach(function (file) {
-  if (~file.indexOf('.js')) require(models_path + '/' + file);
+fs.readdirSync(models_path).forEach(function(file) {
+    if (~file.indexOf('.js')) require(models_path + '/' + file);
 });
 
 // bootstrap passport config
@@ -44,7 +53,7 @@ var app = express();
 
 var sessionstore = new mongoStore({
     url: config.db,
-    collection : 'sessions',
+    collection: 'sessions',
 });
 
 // Socket settings
@@ -58,14 +67,14 @@ var port = process.env.PORT || 3000;
 
 var http = require('http').Server(app);
 var io = socketio(http);
-http.listen(port,function(){
-  console.log('Lacoloc app started on port '+port);  
+http.listen(port, function() {
+    console.log('Lacoloc app started on port ' + port);
 });
 
 //init socket
 socket.initSocket(express, io, passportSocketIo, new mongoStore({
     url: config.db,
-    collection : 'sessions',
+    collection: 'sessions',
 }));
 
 // expose app
