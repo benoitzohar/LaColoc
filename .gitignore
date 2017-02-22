@@ -1,5 +1,5 @@
 node_modules/*
 sftp-config.json
 npm-debug.log
-./config.*.json
-!/config.examnple.json
+config.*.json
+!config.example.json
