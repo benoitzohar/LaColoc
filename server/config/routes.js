@@ -1,14 +1,13 @@
 import express from 'express'
-import userRoutes from '../core/user/user.route'
+import path from 'path'
+
+import apiRoutes from '../core/api.route'
 
 const router = express.Router()
 
-/** GET /ping - Check service health */
-router.get('/ping', (req, res) =>
-  res.send('Pong!')
-);
+/** GET / - Get Client's main entry point html file */
+router.get('/', (req, res) => res.sendFile(path.join(__dirname, '../../client', 'index.html')));
 
-// mount user routes at /users
-router.use('/users', userRoutes);
+router.use('/api', apiRoutes)
 
-export default router;
+export default router
