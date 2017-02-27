@@ -30,7 +30,7 @@
   },
   "scripts": {
     "start": "gulp serve",
-    "start:debug": "cross-env DEBUG=lacoloc:* yarn start",
+    "debug": "cross-env DEBUG=lacoloc:* yarn start",
     "build": "gulp",
     "precommit": "yarn test",
     "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --compilers js:babel-core/register 'server/**/*.test.js' --recursive",
@@ -40,6 +40,7 @@
     "report-coverage": "coveralls < ./coverage/lcov.info"
   },
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "1.15.2",
     "compression": "1.6.2",
     "cookie-parser": "1.4.3",
@@ -52,9 +53,14 @@
     "helmet": "3.1.0",
     "http-status": "^0.2.0",
     "joi": "^10.2.2",
+    "jsonwebtoken": "^7.3.0",
+    "lodash": "^4.17.4",
     "method-override": "^2.3.5",
     "mongoose": "4.7.4",
+    "mongoose-timestamp": "^0.6.0",
     "morgan": "1.7.0",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.1",
     "winston": "2.3.0"
   },
   "devDependencies": {

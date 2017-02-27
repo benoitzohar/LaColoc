@@ -10,8 +10,7 @@ const debug = require('debug')('lacoloc:index')
 mongoose.Promise = Promise
 
 // connect to mongo db
-const mongoUri = `${config.mongo.host}:${config.mongo.port}`
-mongoose.connect(mongoUri, {
+mongoose.connect(config.mongo_uri, {
   server: {
     socketOptions: {
       keepAlive: 1

@@ -5,12 +5,10 @@ const env = process.env
 
 const config = {
   env: env.NODE_ENV,
+  secret: env.SECRET,
   port: env.PORT,
   mongooseDebug: env.MONGOOSE_DEBUG,
-  mongo: {
-    host: env.MONGO_HOST,
-    port: env.MONGO_PORT
-  }
+  mongo_uri: env.MONGO_URI + ('test' === env.NODE_ENV ? '-test' : '')
 }
 
 export default config

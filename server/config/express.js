@@ -13,6 +13,7 @@ import winstonInstance from './winston'
 
 import routes from './routes'
 import config from './config'
+import passport from './passport'
 import APIError from '../helpers/APIError'
 
 const app = express()
@@ -36,6 +37,9 @@ app.use(helmet())
 
 // enable CORS - Cross Origin Resource Sharing
 app.use(cors())
+
+// Use passport for auth
+app.use(passport.initialize())
 
 // enable detailed API logging in dev env
 if (config.env === 'dev') {
@@ -80,11 +84,16 @@ if (config.env !== 'test') {
 }
 
 // error handler, send stacktrace only during development
-app.use((err, req, res, next) =>
-  res.status(err.status).json({
-    message: err.isPublic ? err.message : httpStatus[err.status],
-    stack: config.env === 'dev' ? err.stack : {}
-  })
-)
+app.use((err, req, res, next) => {
+  const data = {
+    message: err.isPublic ? err.message : httpStatus[err.status]
+  }
+
+  if (config.env === 'dev') {
+    data.private_message = err.message
+    data.stack = err.stack
+  }
+  res.status(err.status).json(data)
+})
 
 export default app

@@ -1,37 +1,79 @@
+import _ from 'lodash'
 import mongoose from 'mongoose'
 import httpStatus from 'http-status'
+import bcrypt from 'bcrypt'
+import mongooseTimestamp from 'mongoose-timestamp'
 import APIError from '../../helpers/APIError'
 
 /**
  * User Schema
  */
 const UserSchema = new mongoose.Schema({
-  username: {
+  email: {
+    type: String,
+    lowercase: true,
+    unique: true,
+    required: true
+  },
+  password: {
     type: String,
     required: true
   },
-  mobileNumber: {
+  name: {
     type: String,
-    required: true,
-    match: [/^[1-9][0-9]{9}$/, 'The value of path {PATH} ({VALUE}) is not a valid mobile number.']
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now
+    required: true
   }
+
 })
 
 /**
- * Add your
- * - pre-save hooks
- * - validations
- * - virtuals
+ *  Plugins
  */
+UserSchema.plugin(mongooseTimestamp)
+
+/**
+ *  Hooks
+ */
+UserSchema.pre('save', function (next) {
+  if (this.isModified('password') || this.isNew) {
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) {
+        return next(err)
+      }
+      bcrypt.hash(this.password, salt, (err, hash) => {
+        if (err) {
+          return next(err)
+        }
+        this.password = hash
+        next()
+      })
+    })
+  } else {
+    return next()
+  }
+})
+
 
 /**
  * Methods
  */
-UserSchema.method({})
+UserSchema.method({
+  // remove password from user object
+  getSafeObject: function () {
+    return _.omit(this.toObject(), 'password')
+  },
+  // compare 2 passwords
+  comparePassword: function (password) {
+    return new Promise((resolve, reject) => {
+      bcrypt.compare(password, this.password, (err, isMatch) => {
+        if (err) {
+          reject(err)
+        }
+        resolve(isMatch)
+      })
+    })
+  }
+})
 
 /**
  * Statics

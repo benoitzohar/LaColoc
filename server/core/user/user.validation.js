@@ -2,21 +2,31 @@ import Joi from 'joi'
 
 export default {
   // POST /api/users
-  createUser: {
+  create: {
     body: {
-      username: Joi.string().required(),
-      mobileNumber: Joi.string().regex(/^[1-9][0-9]{9}$/).required()
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+      name: Joi.string().required(),
     }
   },
 
   // UPDATE /api/users/:userId
-  updateUser: {
+  update: {
     body: {
-      username: Joi.string().required(),
-      mobileNumber: Joi.string().regex(/^[1-9][0-9]{9}$/).required()
+      email: Joi.string().email().required(),
+      name: Joi.string().required(),
+      password: Joi.string()
     },
     params: {
       userId: Joi.string().hex().required()
     }
-  }
+  },
+
+  // POST /api/users/login
+  login: {
+    body: {
+      email: Joi.string().email().required(),
+      password: Joi.string().required()
+    }
+  },
 }

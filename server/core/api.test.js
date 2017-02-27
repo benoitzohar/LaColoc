@@ -50,11 +50,12 @@ describe('## Api and Routes', () => {
       request(app)
         .post('/api/users')
         .send({
-          mobileNumber: '1234567890'
+          email: 'test@test.test',
+          password: 'pwd'
         })
         .expect(httpStatus.BAD_REQUEST)
         .then((res) => {
-          expect(res.body.message).to.equal('"username" is required')
+          expect(res.body.message).to.equal('"name" is required')
           done()
         })
         .catch(done)
