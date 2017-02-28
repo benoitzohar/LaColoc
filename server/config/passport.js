@@ -8,16 +8,16 @@ import config from './config'
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeader(),
+  ignoreExpiration: true,
   secretOrKey: config.secret
 }
 
 passport.use(new JwtStrategy(opts, (jwtPayload, next) => {
   User.findOne({
-      id: jwtPayload.id
-    })
-    .then((user) => next(null, user || false))
-    .catch((err) => next(err, false))
+    id: jwtPayload.id
+  })
+  .then(user => next(null, user || false))
+  .catch(err => next(err, false))
 }))
-
 
 export default passport
