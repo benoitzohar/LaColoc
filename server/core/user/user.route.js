@@ -3,7 +3,7 @@ import validate from 'express-validation';
 import paramValidation from './user.validation';
 import userCtrl from './user.controller';
 
-const router = express.Router();
+const router = new express.Router();
 
 router.route('/')
   /** GET /api/users - Get list of users */

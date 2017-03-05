@@ -159,8 +159,6 @@ function login(req, res, next) {
     .catch(e => next(e))
 }
 
-
-
 export default {
   load,
   get,
