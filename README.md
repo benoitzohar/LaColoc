@@ -46,7 +46,7 @@ DEBUG=lacoloc:* yarn start
 yarn debug
 
 ```
-Refer [debug](https://www.npmjs.com/package/debug) to know how to selectively turn on logs.
+Refer to [debug](https://www.npmjs.com/package/debug) to know how to selectively turn on logs.
 
 
 Tests:
