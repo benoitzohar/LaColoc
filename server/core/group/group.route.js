@@ -1,9 +1,9 @@
-import express from 'express';
-import validate from 'express-validation';
-import paramValidation from './group.validation';
-import groupCtrl from './group.controller';
+import express from 'express'
+import validate from 'express-validation'
+import paramValidation from './group.validation'
+import groupCtrl from './group.controller'
 
-const router = new express.Router();
+const router = new express.Router()
 
 router.route('/')
   /** GET /api/groups - Get list of groups */
@@ -26,4 +26,4 @@ router.route('/:groupId')
 /** Load group when API with groupId route parameter is hit */
 router.param('groupId', groupCtrl.load)
 
-export default router;
+export default router

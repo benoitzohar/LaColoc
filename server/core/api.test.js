@@ -5,9 +5,9 @@ import chai, {
 } from 'chai'
 import app from '../../index'
 
-chai.config.includeStack = true
 
-describe('## Api and Routes', () => {
+
+describe('# Api and Routes', () => {
   describe('# GET /api/ping', () => {
     it('should return Pong!', (done) => {
       request(app)

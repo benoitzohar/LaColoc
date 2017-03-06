@@ -6,39 +6,42 @@ import chai, {
 } from 'chai'
 import app from '../../../index'
 
-chai.config.includeStack = true
-
-/**
- * root level hooks
- */
-before((done) => {
-  // clean collection before running test
-  mongoose.connection.collections.groups.drop(() => done())
-})
-
-
-after((done) => {
-  // required because https://github.com/Automattic/mongoose/issues/1251#issuecomment-65793092
-  mongoose.models = {}
-  mongoose.modelSchemas = {}
-  mongoose.connection.close()
-  done()
-})
-
-describe('## Group APIs', () => {
-    let group
-  const group1 = {
+let group
+const group1 = {
     name: 'Group 1',
     description: 'descr',
     currency: '$'
-  }
+}
 
-  describe('# POST /api/groups', () => {
+describe('# Rights ', () => {
+
+  [
+      ['get', '/api/groups'],
+      ['post', '/api/groups'],
+      ['get', '/api/groups/123'],
+      ['post', '/api/groups/123'],
+      ['delete', '/api/groups/123'],
+
+  ]
+  .forEach(([type, route]) => {
+      it(`should be secure on [${type}] ${route}`, (done) => {
+        request(app)[type](route)
+          .expect(httpStatus.UNAUTHORIZED)
+          .then((res) => {
+            done()
+          })
+          .catch(done)
+      })
+  })
+})
+
+describe('# POST /api/groups', () => {
 
     it('should create a new group', (done) => {
       request(app)
         .post('/api/groups')
         .send(group1)
+        .set('Authorization', token)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.name).to.equal(group1.name)
@@ -54,6 +57,7 @@ describe('## Group APIs', () => {
       request(app)
         .post('/api/groups')
         .send(group1)
+        .set('Authorization', token)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.have.property('createdAt')
@@ -62,12 +66,14 @@ describe('## Group APIs', () => {
         })
         .catch(done)
     })
-  })
 
-  describe('# GET /api/groups/:groupId', () => {
+})
+
+describe('# GET /api/groups/:groupId', () => {
     it('should get group details', (done) => {
       request(app)
         .get(`/api/groups/${group._id}`)
+        .set('Authorization', token)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.email).to.equal(group.email)
@@ -80,6 +86,7 @@ describe('## Group APIs', () => {
     it('should report error with message - Not found, when group does not exists', (done) => {
       request(app)
         .get('/api/groups/56c787ccc67fc16ccc1a5e92')
+        .set('Authorization', token)
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
           expect(res.body.message).to.equal('Not Found')
@@ -87,13 +94,14 @@ describe('## Group APIs', () => {
         })
         .catch(done)
     })
-  })
+})
 
-  describe('# PUT /api/groups/:groupId', () => {
+describe('# PUT /api/groups/:groupId', () => {
     it('should update group details', (done) => {
       group.name = 'KK'
       request(app)
         .put(`/api/groups/${group._id}`)
+        .set('Authorization', token)
         .send(group)
         .expect(httpStatus.OK)
         .then((res) => {
@@ -104,33 +112,32 @@ describe('## Group APIs', () => {
         .catch(done)
     })
 
-  })
-
-
-  //  describe('# GET /api/groups/', () => {
-  //    it('should get all groups', (done) => {
-  //      request(app)
-  //        .get('/api/groups')
-  //        .expect(httpStatus.OK)
-  //        .then((res) => {
-  //          expect(res.body).to.be.an('array')
-  //          done()
-  //        })
-  //        .catch(done)
-  //    })
-  //  })
-
-  // describe('# DELETE /api/groups/', () => {
-  //    it('should delete group', (done) => {
-  //      request(app)
-  //        .delete(`/api/groups/${group._id}`)
-  //        .expect(httpStatus.OK)
-  //        .then((res) => {
-  //          expect(res.body.groupname).to.equal('KK')
-  //          expect(res.body.mobileNumber).to.equal(group.mobileNumber)
-  //          done()
-  //        })
-  //        .catch(done)
-  //    })
-  // })
 })
+
+
+//  describe('# GET /api/groups/', () => {
+//    it('should get all groups', (done) => {
+//      request(app)
+//        .get('/api/groups')
+//        .expect(httpStatus.OK)
+//        .then((res) => {
+//          expect(res.body).to.be.an('array')
+//          done()
+//        })
+//        .catch(done)
+//    })
+//  })
+
+// describe('# DELETE /api/groups/', () => {
+//    it('should delete group', (done) => {
+//      request(app)
+//        .delete(`/api/groups/${group._id}`)
+//        .expect(httpStatus.OK)
+//        .then((res) => {
+//          expect(res.body.groupname).to.equal('KK')
+//          expect(res.body.mobileNumber).to.equal(group.mobileNumber)
+//          done()
+//        })
+//        .catch(done)
+//    })
+// })

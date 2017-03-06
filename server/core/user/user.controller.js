@@ -11,7 +11,7 @@ import config from '../../config/config'
 function load(req, res, next, id) {
   User.get(id)
     .then((user) => {
-      req.user = user
+      req.routeUser = user
       return next()
     })
     .catch(e => next(e))
@@ -22,7 +22,7 @@ function load(req, res, next, id) {
  * @returns {User}
  */
 function get(req, res) {
-  return res.json(req.user)
+  return res.json(req.routeUser.getSafeObject())
 }
 
 /**
@@ -70,7 +70,7 @@ function create(req, res, next) {
  * @returns {User}
  */
 function update(req, res, next) {
-  const user = req.user
+  const user = req.routeUser
 
   _.each(['email', 'name'], (key) => {
     user[key] = req.body[key]
@@ -109,7 +109,8 @@ function list(req, res, next) {
  * @returns {User}
  */
 function remove(req, res, next) {
-  const user = req.user
+  const user = req.routeUser
+
   user.remove()
     .then(deletedUser => res.json(deletedUser))
     .catch(e => next(e))
@@ -164,7 +165,6 @@ export default {
   get,
   create,
   update,
-  list,
   remove,
   login
 }

@@ -24,8 +24,9 @@ function get(req, res) {
 
 /**
  * Create new group
- * @property {string} req.body.groupname - The groupname of group.
- * @property {string} req.body.mobileNumber - The mobileNumber of group.
+ * @property {string} req.body.name
+ * @property {string} req.body.description
+ * @property {string} req.body.currency
  * @returns {Group}
  */
 function create(req, res, next) {

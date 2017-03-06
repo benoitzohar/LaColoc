@@ -1,14 +1,14 @@
-import express from 'express';
-import validate from 'express-validation';
-import paramValidation from './user.validation';
-import userCtrl from './user.controller';
+import express from 'express'
+import validate from 'express-validation'
+import passport from '../../config/passport'
 
-const router = new express.Router();
+import paramValidation from './user.validation'
+import userCtrl from './user.controller'
+import userRight from './user.right'
+
+const router = new express.Router()
 
 router.route('/')
-  /** GET /api/users - Get list of users */
-  //.get(userCtrl.list)
-
   /** POST /api/users - Create new user */
   .post(validate(paramValidation.create), userCtrl.create)
 
@@ -17,15 +17,15 @@ router.post('/login', validate(paramValidation.login), userCtrl.login)
 
 router.route('/:userId')
   /** GET /api/users/:userId - Get user */
-  .get(userCtrl.get)
+  .get(passport.auth(), userRight.current, userCtrl.get)
 
   /** PUT /api/users/:userId - Update user */
-  .put(validate(paramValidation.update), userCtrl.update)
+  .put(passport.auth(), userRight.current, validate(paramValidation.update), userCtrl.update)
 
-/** DELETE /api/users/:userId - Delete user */
-//.delete(userCtrl.remove)
+  /** DELETE /api/users/:userId - Delete user */
+  .delete(passport.auth(), userRight.current, userCtrl.remove)
 
 /** Load user when API with userId route parameter is hit */
 router.param('userId', userCtrl.load)
 
-export default router;
+export default router

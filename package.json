@@ -33,9 +33,9 @@
     "debug": "cross-env DEBUG=lacoloc:* yarn start",
     "build": "gulp",
     "precommit": "yarn test",
-    "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --compilers js:babel-core/register 'server/**/*.test.js' --recursive",
+    "test": "cross-env NODE_ENV=test ./node_modules/.bin/mocha --ui bdd --reporter spec --colors --compilers js:babel-core/register 'server/server.test.js' --recursive",
     "test:watch": "yarn test -- --watch",
-    "test:coverage": "cross-env NODE_ENV=test ./node_modules/.bin/istanbul cover _mocha -- --ui bdd --reporter spec --colors --compilers js:babel-core/register 'server/**/*.test.js' --recursive",
+    "test:coverage": "cross-env NODE_ENV=test ./node_modules/.bin/istanbul cover _mocha -- --ui bdd --reporter spec --colors --compilers js:babel-core/register 'server/server.test.js' --recursive",
     "test:check-coverage": "yarn test:coverage && istanbul check-coverage",
     "report-coverage": "coveralls < ./coverage/lcov.info"
   },
@@ -61,6 +61,7 @@
     "morgan": "1.8.1",
     "passport": "^0.3.2",
     "passport-jwt": "^2.2.1",
+    "uuid": "^3.0.1",
     "winston": "2.3.1"
   },
   "devDependencies": {
