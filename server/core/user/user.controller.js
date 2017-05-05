@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import jwt from 'jsonwebtoken';
+import _ from 'lodash'
+import jwt from 'jsonwebtoken'
 
-import User from './user.model';
-import APIError from '../../helpers/APIError';
-import config from '../../config/config';
+import User from './user.model'
+import APIError from '../../helpers/APIError'
+import config from '../../config/config'
 
 /**
  * Load user and append to req.
@@ -11,10 +11,10 @@ import config from '../../config/config';
 function load(req, res, next, id) {
   User.get(id)
     .then(user => {
-      req.routeUser = user;
-      return next();
+      req.routeUser = user
+      return next()
     })
-    .catch(e => next(e));
+    .catch(e => next(e))
 }
 
 /**
@@ -22,7 +22,7 @@ function load(req, res, next, id) {
  * @returns {User}
  */
 function get(req, res) {
-  return res.json(req.routeUser.getSafeObject());
+  return res.json(req.routeUser.getSafeObject())
 }
 
 /**
@@ -32,7 +32,7 @@ function get(req, res) {
  * @returns {User}
  */
 function create(req, res, next) {
-  const { email, password, name } = req.body;
+  const { email, password, name } = req.body
 
   User.findOne({
     email
@@ -41,19 +41,19 @@ function create(req, res, next) {
       if (existingUser) {
         return Promise.reject(
           new APIError('This email address has already been taken', 400, true)
-        );
+        )
       }
 
       const user = new User({
         email,
         password,
         name
-      });
+      })
 
-      return user.save();
+      return user.save()
     })
     .then(savedUser => res.json(savedUser.getSafeObject()))
-    .catch(e => next(e));
+    .catch(e => next(e))
 }
 
 /**
@@ -64,21 +64,21 @@ function create(req, res, next) {
  * @returns {User}
  */
 function update(req, res, next) {
-  const user = req.routeUser;
+  const user = req.routeUser
 
   _.each(['email', 'name'], key => {
-    user[key] = req.body[key];
-  });
+    user[key] = req.body[key]
+  })
 
   // only update the password if it's set
   if (req.body.password) {
-    user.password = req.body.password;
+    user.password = req.body.password
   }
 
   user
     .save()
     .then(savedUser => res.json(savedUser.getSafeObject()))
-    .catch(e => next(e));
+    .catch(e => next(e))
 }
 
 /**
@@ -88,13 +88,13 @@ function update(req, res, next) {
  * @returns {User[]}
  */
 function list(req, res, next) {
-  const { limit = 50, skip = 0 } = req.query;
+  const { limit = 50, skip = 0 } = req.query
   User.list({
     limit,
     skip
   })
     .then(users => res.json(users))
-    .catch(e => next(e));
+    .catch(e => next(e))
 }
 
 /**
@@ -102,9 +102,9 @@ function list(req, res, next) {
  * @returns {User}
  */
 function remove(req, res, next) {
-  const user = req.routeUser;
+  const user = req.routeUser
 
-  user.remove().then(deletedUser => res.json(deletedUser)).catch(e => next(e));
+  user.remove().then(deletedUser => res.json(deletedUser)).catch(e => next(e))
 }
 
 /**
@@ -112,38 +112,38 @@ function remove(req, res, next) {
  * @returns {JWTToken}
  */
 function login(req, res, next) {
-  const { email, password } = req.body;
+  const { email, password } = req.body
 
-  let foundUser = null;
+  let foundUser = null
 
   User.findOne({
     email
   })
     .then(user => {
       if (!user) {
-        return Promise.reject(new APIError('Wrong email address', 400, true));
+        return Promise.reject(new APIError('Wrong email address', 400, true))
       }
 
-      foundUser = user;
+      foundUser = user
 
       // Check if password matches
-      return foundUser.comparePassword(password);
+      return foundUser.comparePassword(password)
     })
     .then(isMatch => {
       if (isMatch) {
         // Create token if the password matched and no error was thrown
         var token = jwt.sign(foundUser, config.secret, {
           expiresIn: 10080 // in seconds
-        });
+        })
         res.json({
           success: true,
           token: 'JWT ' + token
-        });
+        })
       } else {
-        return Promise.reject(new APIError('Wrong password', 400, true));
+        return Promise.reject(new APIError('Wrong password', 400, true))
       }
     })
-    .catch(e => next(e));
+    .catch(e => next(e))
 }
 
 export default {
@@ -153,4 +153,4 @@ export default {
   update,
   remove,
   login
-};
+}

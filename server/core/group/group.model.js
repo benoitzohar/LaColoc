@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import bcrypt from 'bcrypt';
-import mongooseTimestamp from 'mongoose-timestamp';
-import APIError from '../../helpers/APIError';
+import _ from 'lodash'
+import mongoose from 'mongoose'
+import httpStatus from 'http-status'
+import bcrypt from 'bcrypt'
+import mongooseTimestamp from 'mongoose-timestamp'
+import APIError from '../../helpers/APIError'
 
 /**
  * Group Schema
@@ -27,12 +27,12 @@ const GroupSchema = new mongoose.Schema({
       ref: 'User'
     }
   ]
-});
+})
 
 /**
  *  Plugins
  */
-GroupSchema.plugin(mongooseTimestamp);
+GroupSchema.plugin(mongooseTimestamp)
 
 /**
  * Methods
@@ -40,9 +40,9 @@ GroupSchema.plugin(mongooseTimestamp);
 GroupSchema.method({
   // remove password from group object
   getSafeObject: function() {
-    return this.toObject();
+    return this.toObject()
   }
-});
+})
 
 /**
  * Statics
@@ -56,11 +56,11 @@ GroupSchema.statics = {
   get(id) {
     return this.findById(id).exec().then(group => {
       if (group) {
-        return group;
+        return group
       }
-      const err = new APIError('No such group exists!', httpStatus.NOT_FOUND);
-      return Promise.reject(err);
-    });
+      const err = new APIError('No such group exists!', httpStatus.NOT_FOUND)
+      return Promise.reject(err)
+    })
   },
 
   /**
@@ -76,11 +76,11 @@ GroupSchema.statics = {
       })
       .skip(skip)
       .limit(limit)
-      .exec();
+      .exec()
   }
-};
+}
 
 /**
  * @typedef Group
  */
-export default mongoose.model('Group', GroupSchema);
+export default mongoose.model('Group', GroupSchema)

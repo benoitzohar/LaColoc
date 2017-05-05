@@ -1,8 +1,8 @@
-import _ from 'lodash';
-import mongoose from 'mongoose';
-import httpStatus from 'http-status';
-import mongooseTimestamp from 'mongoose-timestamp';
-import APIError from '../../helpers/APIError';
+import _ from 'lodash'
+import mongoose from 'mongoose'
+import httpStatus from 'http-status'
+import mongooseTimestamp from 'mongoose-timestamp'
+import APIError from '../../helpers/APIError'
 
 /**
  * Invite Schema
@@ -28,12 +28,12 @@ const InviteSchema = new mongoose.Schema({
   usedAt: {
     type: Date
   }
-});
+})
 
 /**
  *  Plugins
  */
-InviteSchema.plugin(mongooseTimestamp);
+InviteSchema.plugin(mongooseTimestamp)
 
 /**
  * Methods
@@ -41,9 +41,9 @@ InviteSchema.plugin(mongooseTimestamp);
 InviteSchema.method({
   // remove password from invite object
   getSafeObject: function() {
-    return this.toObject();
+    return this.toObject()
   }
-});
+})
 
 /**
  * Statics
@@ -57,11 +57,11 @@ InviteSchema.statics = {
   get(id) {
     return this.findById(id).exec().then(invite => {
       if (invite) {
-        return invite;
+        return invite
       }
-      const err = new APIError('No such invite exists!', httpStatus.NOT_FOUND);
-      return Promise.reject(err);
-    });
+      const err = new APIError('No such invite exists!', httpStatus.NOT_FOUND)
+      return Promise.reject(err)
+    })
   },
 
   /**
@@ -77,11 +77,11 @@ InviteSchema.statics = {
       })
       .skip(skip)
       .limit(limit)
-      .exec();
+      .exec()
   }
-};
+}
 
 /**
  * @typedef Invite
  */
-export default mongoose.model('Invite', InviteSchema);
+export default mongoose.model('Invite', InviteSchema)

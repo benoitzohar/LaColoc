@@ -1,26 +1,26 @@
-import mongoose from 'mongoose';
-import request from 'supertest-as-promised';
-import httpStatus from 'http-status';
-import chai, { expect } from 'chai';
-import app from '../../../index';
+import mongoose from 'mongoose'
+import request from 'supertest-as-promised'
+import httpStatus from 'http-status'
+import chai, { expect } from 'chai'
+import app from '../../../index'
 
-let invite;
+let invite
 const invite1 = {
   email: 'test-invite@test.test',
   group: '1234'
-};
+}
 
 before(done => {
   // clean collection before running test
   if (mongoose.connection.collections.invites) {
-    mongoose.connection.collections.invites.drop(() => done());
+    mongoose.connection.collections.invites.drop(() => done())
   } else {
-    done();
+    done()
   }
-});
+})
 
 describe('# Rights ', () => {
-  [
+  ;[
     ['get', '/api/invites'],
     ['post', '/api/invites'],
     ['get', '/api/invites/123'],
@@ -32,12 +32,12 @@ describe('# Rights ', () => {
         [type](route)
         .expect(httpStatus.UNAUTHORIZED)
         .then(res => {
-          done();
+          done()
         })
-        .catch(done);
-    });
-  });
-});
+        .catch(done)
+    })
+  })
+})
 /* TODO: finish tests
 describe('# POST /api/invites', () => {
 

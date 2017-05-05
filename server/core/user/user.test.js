@@ -1,16 +1,16 @@
-import request from 'supertest-as-promised';
-import httpStatus from 'http-status';
-import chai, { expect } from 'chai';
-import app from '../../../index';
+import request from 'supertest-as-promised'
+import httpStatus from 'http-status'
+import chai, { expect } from 'chai'
+import app from '../../../index'
 
-let user;
-let otherUserId;
-let token;
+let user
+let otherUserId
+let token
 const user1 = {
   email: 'test@test.test',
   password: 'password',
   name: 'test'
-};
+}
 
 describe('# POST /api/users', () => {
   it('should create a new user', done => {
@@ -19,13 +19,13 @@ describe('# POST /api/users', () => {
       .send(user1)
       .expect(httpStatus.OK)
       .then(res => {
-        expect(res.body.email).to.equal(user1.email);
-        expect(res.body.name).to.equal(user1.name);
-        user = res.body;
-        done();
+        expect(res.body.email).to.equal(user1.email)
+        expect(res.body.name).to.equal(user1.name)
+        user = res.body
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should not allow to create another user with the same email', done => {
     request(app)
@@ -35,11 +35,11 @@ describe('# POST /api/users', () => {
       .then(res => {
         expect(res.body.message).to.equal(
           'This email address has already been taken'
-        );
-        done();
+        )
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should not contain the password', done => {
     request(app)
@@ -51,11 +51,11 @@ describe('# POST /api/users', () => {
       })
       .expect(httpStatus.OK)
       .then(res => {
-        expect(res.body).to.not.have.property('password');
-        done();
+        expect(res.body).to.not.have.property('password')
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should contain the timestampo', done => {
     request(app)
@@ -67,14 +67,14 @@ describe('# POST /api/users', () => {
       })
       .expect(httpStatus.OK)
       .then(res => {
-        expect(res.body).to.have.property('createdAt');
-        expect(res.body).to.have.property('updatedAt');
-        otherUserId = res.body._id;
-        done();
+        expect(res.body).to.have.property('createdAt')
+        expect(res.body).to.have.property('updatedAt')
+        otherUserId = res.body._id
+        done()
       })
-      .catch(done);
-  });
-});
+      .catch(done)
+  })
+})
 
 describe('# POST /api/users/login', () => {
   it('should sign user in properly', done => {
@@ -86,14 +86,14 @@ describe('# POST /api/users/login', () => {
       })
       .expect(httpStatus.OK)
       .then(res => {
-        expect(res.body.success).to.equal(true);
-        expect(res.body.token).to.not.be.empty;
-        token = res.body.token;
-        global.token = token;
-        done();
+        expect(res.body.success).to.equal(true)
+        expect(res.body.token).to.not.be.empty
+        token = res.body.token
+        global.token = token
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should fail to login with wrong email', done => {
     request(app)
@@ -104,11 +104,11 @@ describe('# POST /api/users/login', () => {
       })
       .expect(httpStatus.BAD_REQUEST)
       .then(res => {
-        expect(res.body.message).to.equal('Wrong email address');
-        done();
+        expect(res.body.message).to.equal('Wrong email address')
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should fail to login with wrong password', done => {
     request(app)
@@ -119,12 +119,12 @@ describe('# POST /api/users/login', () => {
       })
       .expect(httpStatus.BAD_REQUEST)
       .then(res => {
-        expect(res.body.message).to.equal('Wrong password');
-        done();
+        expect(res.body.message).to.equal('Wrong password')
+        done()
       })
-      .catch(done);
-  });
-});
+      .catch(done)
+  })
+})
 
 describe('# GET /api/users/:userId', () => {
   it('should get user details', done => {
@@ -133,12 +133,12 @@ describe('# GET /api/users/:userId', () => {
       .set('Authorization', token)
       .expect(httpStatus.OK)
       .then(res => {
-        expect(res.body.email).to.equal(user.email);
-        expect(res.body.name).to.equal(user.name);
-        done();
+        expect(res.body.email).to.equal(user.email)
+        expect(res.body.name).to.equal(user.name)
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should report error with message - Not found, when user does not exists', done => {
     request(app)
@@ -146,31 +146,31 @@ describe('# GET /api/users/:userId', () => {
       .set('Authorization', token)
       .expect(httpStatus.NOT_FOUND)
       .then(res => {
-        expect(res.body.message).to.equal('Not Found');
-        done();
+        expect(res.body.message).to.equal('Not Found')
+        done()
       })
-      .catch(done);
-  });
-});
+      .catch(done)
+  })
+})
 
 describe('# PUT /api/users/:userId', () => {
   it('should update user details', done => {
-    user.name = 'KK';
+    user.name = 'KK'
     request(app)
       .put(`/api/users/${user._id}`)
       .send(user)
       .set('Authorization', token)
       .expect(httpStatus.OK)
       .then(res => {
-        expect(res.body.name).to.equal('KK');
-        expect(res.body.email).to.equal(user.email);
-        done();
+        expect(res.body.name).to.equal('KK')
+        expect(res.body.email).to.equal(user.email)
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
 
   it('should not update other user details', done => {
-    user.name = 'KK';
+    user.name = 'KK'
     request(app)
       .put(`/api/users/${otherUserId}`)
       .send({
@@ -180,11 +180,11 @@ describe('# PUT /api/users/:userId', () => {
       .set('Authorization', token)
       .expect(httpStatus.BAD_REQUEST)
       .then(res => {
-        done();
+        done()
       })
-      .catch(done);
-  });
-});
+      .catch(done)
+  })
+})
 
 describe('# DELETE /api/users/', () => {
   it('should not delete another user', done => {
@@ -193,18 +193,18 @@ describe('# DELETE /api/users/', () => {
       .set('Authorization', token)
       .expect(httpStatus.BAD_REQUEST)
       .then(res => {
-        done();
+        done()
       })
-      .catch(done);
-  });
+      .catch(done)
+  })
   it('should delete current user', done => {
     request(app)
       .delete(`/api/users/${user._id}`)
       .set('Authorization', token)
       .expect(httpStatus.OK)
       .then(res => {
-        done();
+        done()
       })
-      .catch(done);
-  });
-});
+      .catch(done)
+  })
+})
