@@ -10,7 +10,7 @@ describe('# Api and Routes', () => {
         .get('/api/ping')
         .expect(httpStatus.OK)
         .then(res => {
-          expect(res.text).to.equal('Pongs!')
+          expect(res.text).to.equal('Pong!')
           done()
         })
         .catch(done)
