@@ -6,6 +6,8 @@ services:
   - mongodb
 env:
   - CXX=g++-4.8
+  - SECRET=test
+  - PORT=3000
 script:
   - yarn test:check-coverage
 after_script:
