@@ -1,48 +1,43 @@
-import mongoose from 'mongoose'
-import request from 'supertest-as-promised'
-import httpStatus from 'http-status'
-import chai, {
-  expect
-} from 'chai'
-import app from '../../../index'
+import mongoose from 'mongoose';
+import request from 'supertest-as-promised';
+import httpStatus from 'http-status';
+import chai, { expect } from 'chai';
+import app from '../../../index';
 
-
-let invite
+let invite;
 const invite1 = {
-    email: 'test-invite@test.test',
-    group: '1234'
-}
+  email: 'test-invite@test.test',
+  group: '1234'
+};
 
-before((done) => {
+before(done => {
   // clean collection before running test
-    if (mongoose.connection.collections.invites) {
-        mongoose.connection.collections.invites.drop(() => done())
-    } else {
-        done()
-    }
-})
+  if (mongoose.connection.collections.invites) {
+    mongoose.connection.collections.invites.drop(() => done());
+  } else {
+    done();
+  }
+});
 
 describe('# Rights ', () => {
-
   [
-      ['get', '/api/invites'],
-      ['post', '/api/invites'],
-      ['get', '/api/invites/123'],
-      ['post', '/api/invites/123'],
-      ['delete', '/api/invites/123'],
-
-  ]
-  .forEach(([type, route]) => {
-      it(`should be secure on [${type}] ${route}`, (done) => {
-        request(app)[type](route)
-          .expect(httpStatus.UNAUTHORIZED)
-          .then((res) => {
-            done()
-          })
-          .catch(done)
-      })
-  })
-})
+    ['get', '/api/invites'],
+    ['post', '/api/invites'],
+    ['get', '/api/invites/123'],
+    ['post', '/api/invites/123'],
+    ['delete', '/api/invites/123']
+  ].forEach(([type, route]) => {
+    it(`should be secure on [${type}] ${route}`, done => {
+      request(app)
+        [type](route)
+        .expect(httpStatus.UNAUTHORIZED)
+        .then(res => {
+          done();
+        })
+        .catch(done);
+    });
+  });
+});
 /* TODO: finish tests
 describe('# POST /api/invites', () => {
 

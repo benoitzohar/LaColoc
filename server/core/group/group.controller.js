@@ -1,17 +1,17 @@
-import _ from 'lodash'
+import _ from 'lodash';
 
-import Group from './group.model'
+import Group from './group.model';
 
 /**
  * Load group and append to req.
  */
 function load(req, res, next, id) {
   Group.get(id)
-    .then((group) => {
-      req.group = group
-      return next()
+    .then(group => {
+      req.group = group;
+      return next();
     })
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -19,7 +19,7 @@ function load(req, res, next, id) {
  * @returns {Group}
  */
 function get(req, res) {
-  return res.json(req.group)
+  return res.json(req.group);
 }
 
 /**
@@ -30,21 +30,18 @@ function get(req, res) {
  * @returns {Group}
  */
 function create(req, res, next) {
-  const {
-      name,
-      description,
-      currency
-  } = req.body
+  const { name, description, currency } = req.body;
 
   const group = new Group({
     name,
     description,
     currency
-  })
+  });
 
-  group.save()
+  group
+    .save()
     .then(savedGroup => res.json(savedGroup.getSafeObject()))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -55,15 +52,16 @@ function create(req, res, next) {
  * @returns {Group}
  */
 function update(req, res, next) {
-  const group = req.group
+  const group = req.group;
 
-  _.each(['name', 'description', 'currency'], (key) => {
-    group[key] = req.body[key]
-  })
+  _.each(['name', 'description', 'currency'], key => {
+    group[key] = req.body[key];
+  });
 
-  group.save()
+  group
+    .save()
     .then(savedGroup => res.json(savedGroup.getSafeObject()))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -73,15 +71,13 @@ function update(req, res, next) {
  * @returns {Group[]}
  */
 function list(req, res, next) {
-  const {
-    limit = 50, skip = 0
-  } = req.query
+  const { limit = 50, skip = 0 } = req.query;
   Group.list({
-      limit,
-      skip
-    })
+    limit,
+    skip
+  })
     .then(groups => res.json(groups))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -89,10 +85,11 @@ function list(req, res, next) {
  * @returns {Group}
  */
 function remove(req, res, next) {
-  const group = req.group
-  group.remove()
+  const group = req.group;
+  group
+    .remove()
     .then(deletedGroup => res.json(deletedGroup))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 export default {
@@ -102,4 +99,4 @@ export default {
   update,
   list,
   remove
-}
+};

@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi from 'joi';
 
 export default {
   // POST /api/users
@@ -6,7 +6,7 @@ export default {
     body: {
       email: Joi.string().email().required(),
       password: Joi.string().required(),
-      name: Joi.string().required(),
+      name: Joi.string().required()
     }
   },
 
@@ -28,5 +28,5 @@ export default {
       email: Joi.string().email().required(),
       password: Joi.string().required()
     }
-  },
-}
+  }
+};

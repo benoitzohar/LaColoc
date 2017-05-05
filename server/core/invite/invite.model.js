@@ -1,8 +1,8 @@
-import _ from 'lodash'
-import mongoose from 'mongoose'
-import httpStatus from 'http-status'
-import mongooseTimestamp from 'mongoose-timestamp'
-import APIError from '../../helpers/APIError'
+import _ from 'lodash';
+import mongoose from 'mongoose';
+import httpStatus from 'http-status';
+import mongooseTimestamp from 'mongoose-timestamp';
+import APIError from '../../helpers/APIError';
 
 /**
  * Invite Schema
@@ -28,22 +28,22 @@ const InviteSchema = new mongoose.Schema({
   usedAt: {
     type: Date
   }
-})
+});
 
 /**
  *  Plugins
  */
-InviteSchema.plugin(mongooseTimestamp)
+InviteSchema.plugin(mongooseTimestamp);
 
 /**
  * Methods
  */
 InviteSchema.method({
   // remove password from invite object
-  getSafeObject: function () {
+  getSafeObject: function() {
     return this.toObject();
   }
-})
+});
 
 /**
  * Statics
@@ -55,15 +55,13 @@ InviteSchema.statics = {
    * @returns {Promise<Invite, APIError>}
    */
   get(id) {
-    return this.findById(id)
-      .exec()
-      .then((invite) => {
-        if (invite) {
-          return invite
-        }
-        const err = new APIError('No such invite exists!', httpStatus.NOT_FOUND)
-        return Promise.reject(err)
-      })
+    return this.findById(id).exec().then(invite => {
+      if (invite) {
+        return invite;
+      }
+      const err = new APIError('No such invite exists!', httpStatus.NOT_FOUND);
+      return Promise.reject(err);
+    });
   },
 
   /**
@@ -72,21 +70,18 @@ InviteSchema.statics = {
    * @param {number} limit - Limit number of invites to be returned.
    * @returns {Promise<Invite[]>}
    */
-  list({
-    skip = 0,
-    limit = 50
-  } = {}) {
+  list({ skip = 0, limit = 50 } = {}) {
     return this.find()
       .sort({
         createdAt: -1
       })
       .skip(skip)
       .limit(limit)
-      .exec()
+      .exec();
   }
-}
+};
 
 /**
  * @typedef Invite
  */
-export default mongoose.model('Invite', InviteSchema)
+export default mongoose.model('Invite', InviteSchema);

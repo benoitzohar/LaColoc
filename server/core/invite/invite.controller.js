@@ -1,18 +1,18 @@
-import _ from 'lodash'
-import uuid from 'uuid'
+import _ from 'lodash';
+import uuid from 'uuid';
 
-import Invite from './invite.model'
+import Invite from './invite.model';
 
 /**
  * Load invite and append to req.
  */
 function load(req, res, next, id) {
   Invite.get(id)
-    .then((invite) => {
-      req.invite = invite
-      return next()
+    .then(invite => {
+      req.invite = invite;
+      return next();
     })
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -22,23 +22,21 @@ function load(req, res, next, id) {
  * @returns {Invite}
  */
 function create(req, res, next) {
-  const {
-      email,
-      group
-  } = req.body
+  const { email, group } = req.body;
 
   const invite = new Invite({
     email,
     code: uuid.v4(),
     group,
     author: req.user
-  })
+  });
 
   //TODO: send email
 
-  invite.save()
+  invite
+    .save()
     .then(savedInvite => res.json(savedInvite.getSafeObject()))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -46,13 +44,14 @@ function create(req, res, next) {
  * @returns {Invite}
  */
 function accept(req, res, next, code) {
-  const invite = req.invite
+  const invite = req.invite;
 
   //TODO
 
-  invite.save()
+  invite
+    .save()
     .then(savedInvite => res.json(savedInvite.getSafeObject()))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -62,15 +61,13 @@ function accept(req, res, next, code) {
  * @returns {Invite[]}
  */
 function list(req, res, next) {
-  const {
-    limit = 50, skip = 0
-  } = req.query
+  const { limit = 50, skip = 0 } = req.query;
   Invite.list({
-      limit,
-      skip
-    })
+    limit,
+    skip
+  })
     .then(invites => res.json(invites))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 /**
@@ -78,10 +75,11 @@ function list(req, res, next) {
  * @returns {Invite}
  */
 function remove(req, res, next) {
-  const invite = req.invite
-  invite.remove()
+  const invite = req.invite;
+  invite
+    .remove()
     .then(deletedInvite => res.json(deletedInvite))
-    .catch(e => next(e))
+    .catch(e => next(e));
 }
 
 export default {
@@ -90,4 +88,4 @@ export default {
   accept,
   list,
   remove
-}
+};
