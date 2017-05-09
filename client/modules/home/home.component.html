@@ -1,0 +1,35 @@
+<div *ngIf="!authService.isLoggedIn()" class="home-background background"></div>
+<div *ngIf="!authService.isLoggedIn()" class="home-background filter"></div>
+<div *ngIf="!authService.isLoggedIn()" class="home-container full-height">
+    <div class="form-container container flex full-height direction-row col-lg-3 col-lg-offset-7 col-md-4 col-md-offset-6 col-sm-5 col-sm-offset-6 col-xs-6 col-xs-offset-5">
+        <div class="logo-container flex">
+            <div class="logo-part logo-left">
+                FLAT
+            </div>
+            <div class="logo-part logo-right">
+                BUDDY
+            </div>
+        </div>
+        <div class="sign-container flex-1 align-self-center">
+            <span class="login-separator"></span>
+            <login *ngIf="mode === 'login'" (onChangeMode)="onChangeMode($event)"></login>
+            <register *ngIf="mode === 'register'" (onChangeMode)="onChangeMode($event)"></register>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="authService.isLoggedIn()" class="home-container-logged container full-height">
+
+    <div class="col-md-4">
+        <group-list></group-list>
+    </div>
+    <div class="col-md-8">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </div>
+
+
+</div>

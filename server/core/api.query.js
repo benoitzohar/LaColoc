@@ -19,7 +19,8 @@ export default new GraphQLObjectType({
       args: {
         token: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve: (obj, args, { user }) => {
+      resolve: (obj, args, request) => {
+        console.log('[debug] request', request)
         if (args.token !== 'coucou') {
           throw new UserError('Invalid token.')
         }

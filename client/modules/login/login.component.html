@@ -1,0 +1,25 @@
+<form class="login-form" name="form"
+      (ngSubmit)="f.form.valid && login()"
+      #f="ngForm" novalidate>
+    <div class="form-group has-feedback"
+         [ngClass]="{ 'has-error': !email.valid && email.dirty, 'has-success': email.valid && email.dirty}">
+       <input id="email" type="email" placeholder="Enter your email" class="form-control" name="email"
+              tabindex="1"
+               [(ngModel)]="model.email" #email="ngModel" required
+               pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
+        <i class="material-icons form-control-feedback">mail</i>
+    </div>
+    <div class="form-group has-feedback form-bottom-margin"
+         [ngClass]="{ 'has-error': !password.valid && password.dirty, 'has-success': password.valid && password.dirty}">
+        <input id="password" type="password" placeholder="Password" class="form-control" name="password" tabindex="2"
+               [(ngModel)]="model.password" #password="ngModel" required/>
+        <i class="material-icons form-control-feedback">lock</i>
+    </div>
+    <div class="form-group flex direction-row justify-end">
+        <button [disabled]="loading" class="btn btn-link" (click)="register()" tabindex="4">Sign up</button>
+        <button [disabled]="loading" class="btn btn-default last-btn" tabindex="3">Open a session</button>
+    </div>
+    <div class="form-group">
+        <div *ngIf="error" class="alert alert-danger">{{error}}</div>
+    </div>
+</form>

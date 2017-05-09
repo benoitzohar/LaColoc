@@ -1,0 +1,13 @@
+<div class="groups-container">
+    <div class="group-row">
+        <P *ngIf="!groups.length">You do not belong to any group at the moment.</P>
+        <div *ngFor="let group of groups">
+            {{ group | json }}
+        </div>
+    </div>
+    <div class="actions-container form-group flex direction-row justify-end">
+        <button [disabled]="loading" (click)="createGroup()" class="btn btn-default">create a new group</button>
+        <!--<button [disabled]="loading" class="btn btn-default last-btn" tabindex="3">Open a session</button>-->
+    </div>
+</div>
+

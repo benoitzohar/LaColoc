@@ -1,0 +1,58 @@
+.home-background {
+  position: absolute;
+  min-height: 500px;
+  height: calc(100% + 50px);
+  width: 100%;
+  top: -50px;
+  left: 0;
+  z-index: -1;
+
+  &.background {
+    // background: url(../../assets/images/montreal.jpg) no-repeat center center;
+    // background-size: cover;
+    // transform: scaleX(-1);
+  }
+
+  &.filter {
+    background-color: black;
+    opacity: 0.0;
+  }
+}
+
+.home-container {
+  height: calc(100% + 72px);
+}
+.form-container {
+  background-color: rgba(0, 0, 0, 0.6);
+  .logo-container {
+    position: absolute;
+    left: -115px;
+    top: calc(10%);
+
+    .logo-part {
+      font-size: 35px;
+      border-top: 3px solid;
+      border-bottom: 3px solid;
+      padding-top: 5px;
+      padding-bottom: 3px;
+
+      &.logo-left {
+        border-left: 3px solid;
+        color: #3a3a3a;
+        padding-right: 5px;
+        padding-left: 25px;
+      }
+
+      &.logo-right {
+        border-right: 3px solid;
+        color: whitesmoke;
+        padding-left: 5px;
+        padding-right: 25px;
+      }
+    }
+  }
+
+  .login-separator {
+
+  }
+}

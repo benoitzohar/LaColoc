@@ -1,0 +1,38 @@
+<form name="form" (ngSubmit)="f.form.valid && register()" #f="ngForm" novalidate>
+    <div class="form-group has-feedback"
+         [ngClass]="{ 'has-error': !name.valid  && name.dirty, 'has-success': name.valid && name.dirty}">
+        <label for="name">Name</label>
+        <input id="name" placeholder="Enter your name" type="text" class="form-control form-bottom-margin" name="name"
+               [(ngModel)]="model.name" #name="ngModel"
+               required/>
+        <i *ngIf="name.valid && name.touched" class="material-icons form-control-feedback icon-label">check</i>
+    </div>
+    <div class="form-group has-feedback"
+         [ngClass]="{ 'has-error': !email.valid && email.dirty, 'has-success': email.valid && email.dirty}">
+        <label for="email">Email</label>
+        <input id="email" placeholder="Enter your email" type="email" class="form-control form-bottom-margin"
+               name="email" [(ngModel)]="model.email" #email="ngModel"
+               required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"/>
+        <i *ngIf="email.valid && email.touched" class="material-icons form-control-feedback icon-label" >check</i>
+    </div>
+    <div class="form-group has-feedback"
+         [ngClass]="{ 'has-error':!password.valid  && password.dirty, 'has-success': password.valid && password.dirty}">
+        <label for="password">Password</label>
+        <input id="password" placeholder="Enter your password" type="password" class="form-control" name="password"
+               [(ngModel)]="model.password"
+               #password="ngModel" required/>
+        <i *ngIf="password.valid && password.touched" class="material-icons form-control-feedback icon-label">check</i>
+    </div>
+    <div class="form-group has-feedback"
+         [ngClass]="{ 'has-error': !repeatPassword.valid  && repeatPassword.dirty && password !== repeatPassword, 'has-success': repeatPassword.valid && repeatPassword.dirty && password === repeatPassword}">
+        <input id="repeat-password" placeholder="Confirm your password" type="password"
+               class="form-control form-bottom-margin" name="repeat-password" [(ngModel)]="model.repeatPassword"
+               #repeatPassword="ngModel" required/>
+        <i *ngIf="repeatPassword.valid && repeatPassword.touched && model.password === model.repeatPassword" class="material-icons form-control-feedback">check</i>
+    </div>
+    <div class="form-group form-group flex direction-row justify-end">
+
+        <button (click)="login()" class="btn btn-link">back to login</button>
+        <button [disabled]="loading" class="btn btn-default last-btn">Register</button>
+    </div>
+</form>

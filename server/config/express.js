@@ -66,8 +66,7 @@ app.use('/', routes)
 app.use(
   '/graphql',
   graphqlHTTP({
-    schema: graphqlSchema,
-    graphiql: config.env === 'dev'
+    schema: graphqlSchema
   })
 )
 
